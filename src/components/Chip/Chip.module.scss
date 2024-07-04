@@ -1,24 +1,45 @@
+$br: 0.5rem;
+
 .chip {
+  $badge-size: 0.5rem;
+  $offset: -0.25;
+
+  position: relative;
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: repeat(2, 1fr);
   width: fit-content;
-  overflow: hidden;
   background-color: white;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 0.5rem;
+  border-radius: $br;
+
+  &::after {
+    position: absolute;
+    top: $offset * $badge-size;
+    right: $offset * $badge-size;
+    display: block;
+    width: $badge-size;
+    aspect-ratio: 1 / 1;
+    content: '';
+    border-radius: 512rem;
+  }
 
   &-srgb {
-    border-color: blue;
+    &::after {
+      display: none;
+      background-color: oklch(0% 0 0deg / 0%);
+    }
   }
 
   &-p3 {
-    border-color: green;
+    &::after {
+      background-color: oklch(80% 0.16 75deg);
+    }
   }
 
   &-out {
-    border-color: red;
+    &::after {
+      background-color: oklch(60% 0.24 30deg);
+    }
   }
 }
 
@@ -27,24 +48,38 @@
   grid-column: 1;
   height: 100%;
   aspect-ratio: 1 / 1;
+  border-radius: $br 0 0 $br;
 }
 
 .info {
+  $gx: 0.75rem;
+  $gy: 0.25rem;
+  $px: 1rem;
+  $pt: 1rem;
+  $pb: 0.75rem;
+  $font-size: 0.75rem;
+  $line-height: 100%;
+
   display: grid;
   grid-template-rows: subgrid();
   grid-template-columns: min-content min-content;
   grid-row: 1;
   grid-column: 2;
-  gap: 0.5rem 0.75rem;
-  padding-block: 0.75rem;
-  padding-inline: 1rem;
-  font-size: 0.75rem;
+  gap: $gy $gx;
+  padding-block: $pt $pb;
+  padding-inline: $px;
+  font-size: $font-size;
+  line-height: 100%;
 
   &__label {
+    $font-weight: 300;
+    $font-width: 75;
+    $color: oklch(50% 0 0deg);
+
     grid-column: 1;
-    font-variation-settings: 'wdth' 75;
-    font-weight: 300;
-    color: oklch(50% 0 0deg);
+    font-variation-settings: 'wdth' $font-width;
+    font-weight: $font-weight;
+    color: $color;
 
     &-l {
       grid-row: 1;
@@ -60,10 +95,14 @@
   }
 
   &__value {
+    $font-weight: 500;
+    $font-width: 100;
+    $color: oklch(30% 0 0deg);
+
     grid-column: 2;
-    font-variation-settings: 'wdth' 100;
-    font-weight: 500;
-    color: oklch(30% 0 0deg);
+    font-variation-settings: 'wdth' $font-width;
+    font-weight: $font-weight;
+    color: $color;
     text-align: right;
 
     &-l {

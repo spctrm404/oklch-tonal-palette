@@ -1,10 +1,8 @@
-import { toGamut, displayable } from 'culori';
+import { clampChroma, displayable } from 'culori';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
 
 const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
-  const toP3 = toGamut('p3', 'oklch', null);
-
   const getAChipInfo = (idx, chipNum, lInflection, cMax, hueFrom, hueTo) => {
     if (idx < 0 || chipNum < 1) return null;
 
@@ -40,15 +38,15 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
         chipNum;
 
     const color = `oklch(${lightness} ${chroma} ${hue})`;
-    const p3Color = toP3(color);
-    const inP3 = chroma <= p3Color.c;
+    const clamppedColor = clampChroma(color, `oklch`, `p3`);
+    const inP3 = chroma <= clamppedColor.c;
     const inSrgb = displayable(color);
 
     return {
       mode: `oklch`,
-      l: lightness,
-      c: chroma,
-      h: hue,
+      l: clamppedColor.l,
+      c: clamppedColor.c,
+      h: clamppedColor.h,
       inP3: inP3,
       inSrgb: inSrgb,
     };

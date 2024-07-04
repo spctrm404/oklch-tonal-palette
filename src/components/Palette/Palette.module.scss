@@ -1,12 +1,18 @@
+$chip-br: 0.5rem;
+
 .palette {
+  $gy: 0.5rem;
+  $p: 1rem;
+  $br: $chip-br + $p;
+
   display: grid;
   grid-template-columns: 1fr;
   grid-auto-rows: 1fr;
-  gap: 1rem;
+  row-gap: $gy;
+  place-self: start stretch;
   width: fit-content;
-  padding-block: 1rem;
-  padding-inline: 1rem;
+  padding: $p;
   margin-block: 0;
-  background-color: oklch(95% 0 0deg);
-  border-radius: 1.5rem;
+  background-color: oklch(98% 0 0deg);
+  border-radius: $br;
 }

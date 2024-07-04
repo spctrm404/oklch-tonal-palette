@@ -26,17 +26,17 @@ const Chip = ({ l, c, h, inP3, inSrgb }) => {
         <div className={`${style[`info__label`]} ${style[`info__label-l`]}`}>
           L
         </div>
+        <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
+          {formatNum(l, 0, 3)}
+        </div>
         <div className={`${style[`info__label`]} ${style[`info__label-c`]}`}>
           C
+        </div>{' '}
+        <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
+          {formatNum(c, 0, 3)}
         </div>
         <div className={`${style[`info__label`]} ${style[`info__label-h`]}`}>
           H
-        </div>
-        <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
-          {formatNum(l * 100, 3, 0)}
-        </div>
-        <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
-          {formatNum(c, 0, 3)}
         </div>
         <div className={`${style[`info__value`]} ${style[`info__value-h`]}`}>
           {formatNum(h, 3, 1)}
