@@ -1,0 +1,14 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 4rem;
+  font-family: 'Martian Mono', monospace;
+  font-variation-settings: 'wdth' 100;
+  font-style: normal;
+  font-weight: 400;
+  font-optical-sizing: auto;
+}

@@ -1,0 +1,81 @@
+.chip {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  width: fit-content;
+  overflow: hidden;
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.5rem;
+
+  &-srgb {
+    border-color: blue;
+  }
+
+  &-p3 {
+    border-color: green;
+  }
+
+  &-out {
+    border-color: red;
+  }
+}
+
+.sample {
+  grid-row: 1;
+  grid-column: 1;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.info {
+  display: grid;
+  grid-template-rows: subgrid();
+  grid-template-columns: min-content min-content;
+  grid-row: 1;
+  grid-column: 2;
+  gap: 0.5rem 0.75rem;
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  font-size: 0.75rem;
+
+  &__label {
+    grid-column: 1;
+    font-variation-settings: 'wdth' 75;
+    font-weight: 300;
+    color: oklch(50% 0 0deg);
+
+    &-l {
+      grid-row: 1;
+    }
+
+    &-c {
+      grid-row: 2;
+    }
+
+    &-h {
+      grid-row: 3;
+    }
+  }
+
+  &__value {
+    grid-column: 2;
+    font-variation-settings: 'wdth' 100;
+    font-weight: 500;
+    color: oklch(30% 0 0deg);
+    text-align: right;
+
+    &-l {
+      grid-row: 1;
+    }
+
+    &-c {
+      grid-row: 2;
+    }
+
+    &-h {
+      grid-row: 3;
+    }
+  }
+}
