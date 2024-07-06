@@ -1,92 +1,75 @@
 $br: 0.5rem;
-$colour-tr: oklch(0% 0 0deg / 0%);
-$colour-warning: oklch(80% 0.16 75deg);
-$colour-alert: oklch(60% 0.24 30deg);
-$colour-bg: oklch(100% 0 0deg);
-$colour-txt-high: oklch(30% 0 0deg);
-$colour-txt-mid: oklch(50% 0 0deg);
+$tone-num-b-th: 0.125rem;
+$tone-num-font-size: 0.875rem;
+$tone-num-line-height: 0.875rem;
+$tone-num-py: 0.5rem;
+$colour-bg: oklch(98% 0 0deg);
+$colour-idle: oklch(88% 0 0deg);
+$colour-warning: oklch(73% 0.15 75deg);
+$colour-alert: oklch(58% 0.23 30deg);
 
 .chip {
-  $chip-width: 4rem;
-  $info-min-width: 6rem;
   $badge-size: 0.5rem;
   $offset: -0.25;
 
   position: relative;
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-template-columns: $chip-width 1fr;
+  display: block;
   width: fit-content;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+}
+
+.container {
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr calc(
+      $tone-num-line-height + 2 * $tone-num-py + $tone-num-b-th
+    );
+  grid-template-columns: 1fr;
+  width: fit-content;
+  overflow: hidden;
   background-color: $colour-bg;
   border-radius: $br;
-
-  &::after {
-    position: absolute;
-    top: $offset * $badge-size;
-    right: $offset * $badge-size;
-    display: block;
-    width: $badge-size;
-    aspect-ratio: 1 / 1;
-    content: '';
-    border-radius: 512rem;
-  }
-
-  &-srgb {
-    &::after {
-      display: none;
-      background-color: $colour-tr;
-    }
-  }
-
-  &-p3 {
-    &::after {
-      background-color: $colour-warning;
-    }
-  }
-
-  &-out {
-    &::after {
-      background-color: $colour-alert;
-    }
-  }
 }
 
 .sample {
+  position: relative;
+  z-index: 2;
   grid-row: 1;
   grid-column: 1;
-  background-color: oklch(var(--l) var(--c) calc(var(--h) * 1deg));
-  border-radius: $br 0 0 $br;
+  aspect-ratio: 1 / 1;
+  background-color: oklch(var(--bg-l) var(--bg-c) calc(var(--bg-h) * 1deg));
 }
 
 .info {
-  $gx: 0.75rem;
-  $gy: 0.25rem;
-  $px: 1rem;
-  $pt: 1rem;
-  $pb: 0.75rem;
-  $font-size: 0.75rem;
-  $line-height: 100%;
-
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
   grid-template-columns: max-content 1fr;
   grid-row: 1;
-  grid-column: 2;
-  gap: $gy $gx;
-  padding-block: $pt $pb;
-  padding-inline: $px;
-  font-size: $font-size;
+  grid-column: 1;
+  gap: 0.25rem 0.75rem;
+  aspect-ratio: 1 / 1;
+  padding-block: 1rem 0.75rem;
+  padding-inline: 1rem;
+  font-size: 0.75rem;
   line-height: 100%;
-  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 150ms ease-in;
+
+  @at-root .chip:hover #{&} {
+    opacity: 1;
+  }
 
   &__label {
-    $font-weight: 300;
-    $font-width: 75;
-
     grid-column: 1;
-    font-variation-settings: 'wdth' $font-width;
-    font-weight: $font-weight;
-    color: $colour-txt-mid;
+    font-variation-settings: 'wdth' 75;
+    font-weight: 300;
+    color: oklch(
+      var(--txt-week-l) var(--txt-week-c) calc(var(--txt-week-h) * 1deg)
+    );
 
     &-l {
       grid-row: 1;
@@ -103,12 +86,12 @@ $colour-txt-mid: oklch(50% 0 0deg);
 
   &__value {
     $font-weight: 500;
-    $font-width: 100;
 
     grid-column: 2;
-    font-variation-settings: 'wdth' $font-width;
-    font-weight: $font-weight;
-    color: $colour-txt-high;
+    font-weight: 500;
+    color: oklch(
+      var(--txt-strong-l) var(--txt-strong-c) calc(var(--txt-strong-h) * 1deg)
+    );
     text-align: right;
 
     &-l {
@@ -122,5 +105,33 @@ $colour-txt-mid: oklch(50% 0 0deg);
     &-h {
       grid-row: 3;
     }
+  }
+}
+
+.tone-num {
+  position: absolute;
+  inset: -$tone-num-b-th 0 0 0;
+  z-index: 1;
+  grid-row: 2;
+  grid-column: 1;
+  padding-block: $tone-num-py;
+  font-size: $tone-num-font-size;
+  font-weight: 500;
+  line-height: $tone-num-line-height;
+  color: oklch(0% 0 0deg);
+  text-align: center;
+  border: $tone-num-b-th solid #000;
+  border-radius: 0 0 $br $br;
+
+  @at-root .chip--gamut-srgb #{&} {
+    border-color: $colour-idle;
+  }
+
+  @at-root .chip--gamut-p3 #{&} {
+    border-color: $colour-warning;
+  }
+
+  @at-root .chip--gamut-out #{&} {
+    border-color: $colour-alert;
   }
 }
