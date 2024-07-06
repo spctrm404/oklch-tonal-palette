@@ -1,23 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import style from './Chip.module.scss';
 
 const Chip = ({ l, c, h, inP3, inSrgb }) => {
-  const [render, setRender] = useState(0);
+  const renderCnt = useRef(0);
   const chipRef = useRef();
-  const lRef = useRef(l);
-  const cRef = useRef(c);
-  const hRef = useRef(h);
-  const inP3Ref = useRef(inP3);
-  const inSrgbRef = useRef(inSrgb);
 
-  const formatNum = (num, intLen, floatLen) => {
+  const formatNum = useCallback((num, intLen, floatLen) => {
     const fixed = num.toFixed(floatLen);
     const [intPart, floatPart] = fixed.split('.');
     const paddedInt = intPart.padStart(intLen, '0');
     return `${intLen > 0 ? paddedInt : ``}${
       floatLen > 0 ? `.${floatPart}` : ``
     }`;
-  };
+  }, []);
 
   const getGamut = (inP3, inSrgb) => {
     if (inSrgb) return 'srgb';
@@ -26,25 +21,25 @@ const Chip = ({ l, c, h, inP3, inSrgb }) => {
   };
 
   useEffect(() => {
-    chipRef.current.style.setProperty(`--l`, lRef.current);
-    chipRef.current.style.setProperty(`--c`, cRef.current);
-    chipRef.current.style.setProperty(`--h`, hRef.current);
-  });
+    chipRef.current.style.setProperty(`--l`, l);
+    chipRef.current.style.setProperty(`--c`, c);
+    chipRef.current.style.setProperty(`--h`, h);
+    renderCnt.current = renderCnt.current + 1;
+    console.log('noDependencies', renderCnt.current);
+  }, []);
 
   useEffect(() => {
-    lRef.current = l;
-    cRef.current = c;
-    hRef.current = h;
-    inP3Ref.current = inP3;
-    inSrgbRef.current = inSrgb;
-    setRender(render + 1);
-    console.log(render);
+    chipRef.current.style.setProperty(`--l`, l);
+    chipRef.current.style.setProperty(`--c`, c);
+    chipRef.current.style.setProperty(`--h`, h);
+    renderCnt.current = renderCnt.current + 1;
+    console.log('props', renderCnt.current);
   }, [l, c, h, inP3, inSrgb]);
 
   return (
     <li
       className={`${style.chip} ${
-        style[`chip--gamut-${getGamut(inP3Ref.current, inSrgbRef.current)}`]
+        style[`chip--gamut-${getGamut(inP3, inSrgb)}`]
       }`}
       ref={chipRef}
     >
@@ -54,19 +49,19 @@ const Chip = ({ l, c, h, inP3, inSrgb }) => {
           L
         </div>
         <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
-          {formatNum(lRef.current, 0, 3)}
+          {formatNum(l, 0, 3)}
         </div>
         <div className={`${style[`info__label`]} ${style[`info__label-c`]}`}>
           C
         </div>{' '}
         <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
-          {formatNum(cRef.current, 0, 3)}
+          {formatNum(c, 0, 3)}
         </div>
         <div className={`${style[`info__label`]} ${style[`info__label-h`]}`}>
           H
         </div>
         <div className={`${style[`info__value`]} ${style[`info__value-h`]}`}>
-          {formatNum(hRef.current, 3, 1)}
+          {formatNum(h, 3, 1)}
         </div>
       </div>
     </li>
