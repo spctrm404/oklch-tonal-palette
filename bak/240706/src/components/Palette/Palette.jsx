@@ -1,8 +1,17 @@
 import { clampChroma, displayable } from 'culori';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
+import { useRef } from 'react';
 
-const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
+const Palette = ({
+  idx,
+  chipNum,
+  lInflection,
+  cMax,
+  hueFrom,
+  hueTo,
+  callback,
+}) => {
   const getAChipInfo = (idx, chipNum, lInflection, cMax, hueFrom, hueTo) => {
     if (idx < 0 || chipNum < 1) return null;
 
@@ -70,8 +79,16 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
     return arry;
   };
 
+  const handlePointerDown = (e) => {
+    callback(e.currentTarget.dataset.idx);
+  };
+
   return (
-    <ul className={style.palette}>
+    <ul
+      className={style.palette}
+      data-idx={idx}
+      onPointerDown={handlePointerDown}
+    >
       {getChipsInfo(chipNum, lInflection, cMax, hueFrom, hueTo).map(
         (aChipInfo) => {
           return (

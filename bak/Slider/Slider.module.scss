@@ -8,14 +8,14 @@ $thumb-icon-size: 1rem;
 $thumb-icon-thickness: 0.125rem;
 $thumb-icon-border-radius: 0.5rem;
 $shadow: 0.5 * math.sqrt(2) * 0.0625rem 0.5 * math.sqrt(2) * 0.0625rem 0.125rem
-    0 rgb(0 0 0 / 30%),
+    0 oklch(0% 0 0deg / 30%),
   0.5 * math.sqrt(2) * 0.0625rem 0.5 * math.sqrt(2) * 0.0625rem 0.1875rem
-    0.0625rem rgb(0 0 0 / 15%);
+    0.0625rem oklch(0% 0 0deg / 15%);
 $shadow-hover: 0.5 * math.sqrt(2) * 0.0625rem 0.5 * math.sqrt(2) * 0.0625rem
-    0.125rem 0 rgb(0 0 0 / 30%),
+    0.125rem 0 oklch(0% 0 0deg / 30%),
   2 * 0.5 * math.sqrt(2) * 0.0625rem 2 * 0.5 * math.sqrt(2) * 0.0625rem 0.375rem
-    0.125rem rgb(0 0 0 / 15%);
-$shadow-pressed: 0 0 0 0 rgb(0 0 0 / 15%), 0 0 0 0 rgb(0 0 0 / 30%);
+    0.125rem oklch(0% 0 0deg / 15%);
+$shadow-pressed: 0 0 0 0 oklch(0% 0 0deg / 15%), 0 0 0 0 oklch(0% 0 0deg / 30%);
 
 .slider {
   position: relative;

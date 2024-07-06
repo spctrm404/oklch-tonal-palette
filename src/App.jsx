@@ -1,61 +1,42 @@
-import { useState } from 'react';
-import Palette from './components/Palette/Palette.jsx';
+import Chip from './components/Chip/Chip.jsx';
 import './App.scss';
+import { useRef } from 'react';
 
 function App() {
-  const [palettes, setPalettes] = useState([
-    {
-      chipNum: 20,
-      lInflection: 0.5,
-      cMax: 0.11,
-      hueFrom: 0,
-      hueTo: 200,
-    },
-  ]);
-
-  const createNewPalette = () => {
-    const palettesCoppied = palettes.map((aPalette) => ({
-      ...aPalette,
-    }));
-
-    const randomChroma = Math.random() * 0.4;
-    const randomHueFrom = Math.random() * 360;
-    const randomHueTo = Math.random() * 360;
-    const newPalette = {
-      chipNum: 20,
-      lInflection: 0.5,
-      cMax: randomChroma,
-      hueFrom: randomHueFrom,
-      hueTo: randomHueTo,
-    };
-
-    palettesCoppied.push(newPalette);
-    setPalettes(palettesCoppied);
-  };
-
+  const db = useRef({
+    l: 0.5,
+    c: 0.2,
+    h: 270,
+    inP3: true,
+    inSrgb: true,
+  });
   return (
     <>
-      <div className="layout">
-        <div className="control">
-          <button type="button" onPointerDown={createNewPalette}>
-            add
-          </button>
-        </div>
-        <div className="palettes">
-          {palettes.map((aPalette) => {
-            return (
-              <Palette
-                key={crypto.randomUUID()}
-                chipNum={aPalette.chipNum}
-                lInflection={aPalette.lInflection}
-                cMax={aPalette.cMax}
-                hueFrom={aPalette.hueFrom}
-                hueTo={aPalette.hueTo}
-              ></Palette>
-            );
-          })}
-        </div>
-      </div>
+      <button type="button" onPointerDown={() => {}}>
+        l up
+      </button>
+      <button type="button" onPointerDown={() => {}}>
+        l down
+      </button>
+      <button type="button" onPointerDown={() => {}}>
+        c up
+      </button>
+      <button type="button" onPointerDown={() => {}}>
+        c down
+      </button>
+      <button type="button" onPointerDown={() => {}}>
+        h up
+      </button>
+      <button type="button" onPointerDown={() => {}}>
+        h down
+      </button>
+      <Chip
+        l={db.current.l}
+        c={db.current.c}
+        h={db.current.h}
+        inP3={db.current.inP3}
+        inSrgb={db.current.inSrgb}
+      ></Chip>
     </>
   );
 }

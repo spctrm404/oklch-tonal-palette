@@ -1,0 +1,50 @@
+.section {
+  &__control {
+    background-color: oklch(95% 0 0deg);
+
+    .gamut-container {
+      width: 37.5rem;
+      aspect-ratio: 1 / 1;
+      margin-inline: auto;
+      background-color: cadetblue;
+    }
+  }
+
+  &__palette {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1.5rem;
+    padding-block: 48px;
+    padding-left: 48px;
+    background-color: oklch(80% 0 0deg);
+
+    .add-palette {
+      background-color: oklch(70% 0 0deg);
+
+      &__label {
+        position: sticky;
+        top: calc(50vh - 0.5lh);
+        font-size: 7rem;
+        font-weight: 200;
+        line-height: 1em;
+        color: oklch(20% 0 0deg);
+        text-align: center;
+        user-select: none;
+      }
+    }
+
+    .palettes {
+      display: grid;
+      grid-template-rows: 1fr;
+      grid-column: 2 / -1;
+      grid-auto-columns: min-content;
+      grid-auto-flow: column;
+      gap: 1.5rem;
+      align-items: start;
+      justify-self: stretch;
+      overflow: auto visible;
+
+      // background-color: oklch(80% 0 0deg);
+    }
+  }
+}

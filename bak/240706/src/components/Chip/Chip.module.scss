@@ -54,7 +54,6 @@ $colour-txt-mid: oklch(50% 0 0deg);
 .sample {
   grid-row: 1;
   grid-column: 1;
-  background-color: oklch(var(--l) var(--c) calc(var(--h) * 1deg));
   border-radius: $br 0 0 $br;
 }
 
