@@ -1,18 +1,14 @@
 import { clampChroma, displayable } from 'culori';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
 
-const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
-  const renderCnt = useRef(0);
-  const paletteRef = useRef();
-
+const Palette = (chipNum, lInflection, cMax, hueFrom, hueTo) => {
   const getAChip = (idx, chipNum, lInflection, cMax, hueFrom, hueTo) => {
     if (idx < 0 || chipNum < 1) return null;
 
     if (idx === 0)
       return {
-        key: `chip_${idx}/${chipNum}_${0}_${0}_${hueFrom}`,
         mode: `oklch`,
         l: 0,
         c: 0,
@@ -23,7 +19,6 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
 
     if (idx === chipNum)
       return {
-        key: `chip_${idx}/${chipNum}_${1}_${0}_${hueTo}`,
         mode: `oklch`,
         l: 1,
         c: 0,
@@ -49,7 +44,6 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
     const inSrgb = displayable(color);
 
     return {
-      key: `chip_${idx}/${chipNum}_${clamppedColor.l}_${clamppedColor.c}_${clamppedColor.h}`,
       mode: `oklch`,
       l: clamppedColor.l,
       c: clamppedColor.c,
@@ -60,9 +54,12 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
   };
 
   const getChips = (chipNum, lInflection, cMax, hueFrom, hueTo) => {
+    console.log('working');
+
     const arry = [];
 
     for (let n = 0; n <= chipNum; n++) {
+      console.log('n', n);
       const aChip = getAChip(n, chipNum, lInflection, cMax, hueFrom, hueTo);
       arry.push(aChip);
     }
@@ -70,21 +67,18 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo }) => {
     return arry;
   };
 
-  const initChips = getChips((chipNum, lInflection, cMax, hueFrom, hueTo));
+  console.log(chipNum, lInflection, cMax, hueFrom, hueTo);
+  const chipsInit = getChips(chipNum, lInflection, cMax, hueFrom, hueTo);
+  console.log(chipsInit);
 
-  const [chips, setChips] = useState(initChips);
-
-  useEffect(() => {
-    // renderCnt.current = renderCnt.current + 1;
-    // console.log('props', renderCnt.current);
-  }, []);
+  const [chips, setChips] = useState();
 
   return (
-    <ul className={style.palette} ref={paletteRef}>
-      {chips.map((aChip) => {
+    <ul className={style.palette}>
+      {getChips(chipNum, lInflection, cMax, hueFrom, hueTo).map((aChip) => {
         return (
           <Chip
-            key={aChip.key}
+            key={`chip_${aChip.l}_${aChip.c}_${aChip.h}_by_${chipNum}_${lInflection}_${cMax}_${hueFrom}_${hueTo}`}
             l={aChip.l}
             c={aChip.c}
             h={aChip.h}

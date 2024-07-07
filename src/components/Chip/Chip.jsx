@@ -2,57 +2,46 @@ import { apcach, crToBg, maxChroma } from 'apcach';
 import { useCallback, useEffect, useRef } from 'react';
 import style from './Chip.module.scss';
 
-const Chip = ({ l, c, h, inP3, inSrgb, idx }) => {
+const Chip = ({ l, c, h, inP3, inSrgb }) => {
   const renderCnt = useRef(0);
   const chipRef = useRef();
-  const idxRef = useRef(idx);
 
-  const formatNum = useCallback(
-    (num, intLen, floatLen) => {
-      const fixed = num.toFixed(floatLen);
-      const [intPart, floatPart] = fixed.split('.');
-      const paddedInt = intPart.padStart(intLen, '0');
-      return `${intLen > 0 ? paddedInt : ``}${
-        floatLen > 0 ? `.${floatPart}` : ``
-      }`;
-    },
-    [l, c, h]
-  );
+  const formatNum = useCallback((num, intLen, floatLen) => {
+    const fixed = num.toFixed(floatLen);
+    const [intPart, floatPart] = fixed.split('.');
+    const paddedInt = intPart.padStart(intLen, '0');
+    return `${intLen > 0 ? paddedInt : ``}${
+      floatLen > 0 ? `.${floatPart}` : ``
+    }`;
+  }, []);
 
-  const getGamut = useCallback(
-    (inP3, inSrgb) => {
-      if (inSrgb) return 'srgb';
-      if (inP3) return 'p3';
-      return 'out';
-    },
-    [inP3, inSrgb]
-  );
+  const getGamut = useCallback((inP3, inSrgb) => {
+    if (inSrgb) return 'srgb';
+    if (inP3) return 'p3';
+    return 'out';
+  }, []);
 
-  const getTextColour = useCallback(
-    (l, c, h, contrast, direction = 'auto') => {
-      return apcach(
-        crToBg(`oklch(${l * 100}% ${c} ${h}deg)`, contrast, 'apca', direction),
-        maxChroma(),
-        h,
-        100,
-        'p3'
-      );
-    },
-    [l, c, h]
-  );
+  const getTextColour = useCallback((l, c, h, contrast) => {
+    return apcach(
+      crToBg(
+        `oklch(${l * 100}% ${c} ${h}deg)`,
+        contrast,
+        'apca',
+        l > 0.5 ? 'darker' : 'lighter'
+      ),
+      maxChroma(),
+      h,
+      100,
+      'p3'
+    );
+  }, []);
 
   useEffect(() => {
     chipRef.current.style.setProperty(`--bg-l`, l);
     chipRef.current.style.setProperty(`--bg-c`, c);
     chipRef.current.style.setProperty(`--bg-h`, h);
 
-    const txtColourStrong = getTextColour(
-      l,
-      c,
-      h,
-      90,
-      l >= 0.55 ? 'darker' : 'lighter'
-    );
+    const txtColourStrong = getTextColour(l, c, h, 90);
     chipRef.current.style.setProperty(
       `--txt-strong-l`,
       txtColourStrong.lightness
@@ -60,13 +49,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, idx }) => {
     chipRef.current.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
     chipRef.current.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
 
-    const txtColourWeek = getTextColour(
-      l,
-      c,
-      h,
-      75,
-      l >= 0.55 ? 'darker' : 'lighter'
-    );
+    const txtColourWeek = getTextColour(l, c, h, 75);
     chipRef.current.style.setProperty(`--txt-week-l`, txtColourWeek.lightness);
     chipRef.current.style.setProperty(`--txt-week-c`, txtColourWeek.chroma);
     chipRef.current.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
