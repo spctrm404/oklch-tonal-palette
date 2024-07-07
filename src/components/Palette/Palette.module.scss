@@ -1,0 +1,10 @@
+.palette {
+  display: grid;
+  grid-auto-columns: 1fr;
+  column-gap: 0.25rem;
+  width: fit-content;
+  padding: 1rem;
+  margin-block: 0;
+  background-color: oklch(95% 0 0deg);
+  border-radius: 0.5rem;
+}

@@ -1,26 +1,27 @@
-import Chip from './components/Chip/Chip.jsx';
+import Palette from './components/Palette/Palette.jsx';
 import './App.scss';
 import { useState } from 'react';
 
 function App() {
-  const [colour, setColour] = useState({
-    l: 0.5,
-    c: 0.2,
-    h: 270,
-    inP3: false,
-    inSrgb: false,
+  const [palette, setPalette] = useState({
+    chipNum: 10,
+    lInflection: 0.5,
+    cMax: 0.2,
+    hueFrom: 0,
+    hueTo: 0,
+    idx: 0,
   });
 
-  const debug = (key, delta) => {
-    const newColour = Object.assign({}, colour);
-    newColour[key] = newColour[key] + delta;
-    if (key === 'h' && newColour[key] > 360)
-      newColour[key] = newColour[key] % 360;
-    setColour(newColour);
-  };
+  // const debug = (key, delta) => {
+  //   const newColour = Object.assign({}, colour);
+  //   newColour[key] = newColour[key] + delta;
+  //   if (key === 'h' && newColour[key] > 360)
+  //     newColour[key] = newColour[key] % 360;
+  //   setColour(newColour);
+  // };
   return (
     <>
-      <div className="control">
+      {/* <div className="control">
         <button
           type="button"
           onPointerDown={() => {
@@ -69,14 +70,14 @@ function App() {
         >
           h down
         </button>
-      </div>
-      <Chip
-        l={colour.l}
-        c={colour.c}
-        h={colour.h}
-        inP3={colour.inP3}
-        inSrgb={colour.inSrgb}
-      ></Chip>
+      </div> */}
+      <Palette
+        chipNum={palette.chipNum}
+        lInflection={palette.lInflection}
+        cMax={palette.cMax}
+        hueFrom={palette.hueFrom}
+        hueTo={palette.hueTo}
+      ></Palette>
     </>
   );
 }

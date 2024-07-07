@@ -2,9 +2,10 @@ import { apcach, crToBg, maxChroma } from 'apcach';
 import { useCallback, useEffect, useRef } from 'react';
 import style from './Chip.module.scss';
 
-const Chip = ({ l, c, h, inP3, inSrgb }) => {
+const Chip = ({ l, c, h, inP3, inSrgb, idx }) => {
   const renderCnt = useRef(0);
   const chipRef = useRef();
+  const idxRef = useRef(idx);
 
   const formatNum = useCallback(
     (num, intLen, floatLen) => {
