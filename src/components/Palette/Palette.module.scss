@@ -1,10 +1,40 @@
+$border-thickness: 0.5rem;
+$colour-border: oklch(95% 0 0deg);
+$px: 0.75rem;
+
 .palette {
-  display: grid;
-  grid-auto-columns: 1fr;
-  column-gap: 0.25rem;
   width: fit-content;
-  padding: 1rem;
+  padding-left: 0;
+  background-color: oklch(100% 0 0deg);
+  border: $border-thickness solid $colour-border;
+  border-radius: 1rem;
+}
+
+.info {
+  position: relative;
+  padding-block: 0.75rem;
+  padding-inline: $px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1em;
+
+  &__sticky {
+    position: sticky;
+    left: $px;
+    width: fit-content;
+  }
+}
+
+.chips {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-auto-columns: min-content;
+  grid-auto-flow: column;
+  column-gap: 0.25rem;
+  padding: $border-thickness 0 0 0;
   margin-block: 0;
-  background-color: oklch(95% 0 0deg);
-  border-radius: 0.5rem;
+  background-color: $colour-border;
+}
+
+.chip {
 }

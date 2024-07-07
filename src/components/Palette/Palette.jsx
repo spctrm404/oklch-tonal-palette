@@ -1,94 +1,143 @@
 import { clampChroma, displayable } from 'culori';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
 
-const Palette = (chipNum, lInflection, cMax, hueFrom, hueTo) => {
-  const getAChip = (idx, chipNum, lInflection, cMax, hueFrom, hueTo) => {
-    if (idx < 0 || chipNum < 1) return null;
+const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo, className }) => {
+  const renderCnt = useRef(0);
+  const paletteRef = useRef();
 
-    if (idx === 0)
+  const formatNum = useCallback((num, intLen, floatLen) => {
+    const fixed = num.toFixed(floatLen);
+    const [intPart, floatPart] = fixed.split('.');
+    const paddedInt = intPart.padStart(intLen, '0');
+    return `${intLen > 0 ? paddedInt : ``}${
+      floatLen > 0 ? `.${floatPart}` : ``
+    }`;
+  }, []);
+
+  const getAChip = useCallback(
+    (idx, chipNum, lInflection, cMax, hueFrom, hueTo) => {
+      if (idx < 0 || chipNum < 1) return null;
+
+      if (idx === 0)
+        return {
+          id: crypto.randomUUID(),
+          mode: `oklch`,
+          l: 0,
+          c: 0,
+          h: hueFrom,
+          inP3: true,
+          inSrgb: true,
+        };
+
+      if (idx === chipNum)
+        return {
+          id: crypto.randomUUID(),
+          mode: `oklch`,
+          l: 1,
+          c: 0,
+          h: hueTo,
+          inP3: true,
+          inSrgb: true,
+        };
+
+      const lightness = idx / chipNum;
+
+      const alpha = lightness / lInflection;
+      const chroma = alpha <= 1 ? alpha * cMax : cMax - (alpha - 1) * cMax;
+
+      const hue =
+        hueFrom +
+        (idx *
+          (hueTo > hueFrom ? hueTo - hueFrom : (hueTo + 360 - hueFrom) % 360)) /
+          chipNum;
+
+      const colour = `oklch(${lightness} ${chroma} ${hue})`;
+      const clamppedColour = clampChroma(colour, `oklch`, `p3`);
+      const inP3 = chroma <= clamppedColour.c;
+      const inSrgb = displayable(colour);
+
       return {
+        id: crypto.randomUUID(),
         mode: `oklch`,
-        l: 0,
-        c: 0,
-        h: hueFrom,
-        inP3: true,
-        inSrgb: true,
+        l: clamppedColour.l,
+        c: clamppedColour.c,
+        h: clamppedColour.h,
+        inP3: inP3,
+        inSrgb: inSrgb,
       };
+    },
+    []
+  );
+  const getChips = useCallback(
+    (chipNum, lInflection, cMax, hueFrom, hueTo) => {
+      const arry = [];
 
-    if (idx === chipNum)
-      return {
-        mode: `oklch`,
-        l: 1,
-        c: 0,
-        h: hueTo,
-        inP3: true,
-        inSrgb: true,
-      };
+      for (let n = 0; n <= chipNum; n++) {
+        const aChipInfo = getAChip(
+          n,
+          chipNum,
+          lInflection,
+          cMax,
+          hueFrom,
+          hueTo
+        );
+        arry.push(aChipInfo);
+      }
 
-    const lightness = idx / chipNum;
+      return arry;
+    },
+    [getAChip]
+  );
 
-    const alpha = lightness / lInflection;
-    const chroma = alpha <= 1 ? alpha * cMax : cMax - (alpha - 1) * cMax;
+  const [chips, setChips] = useState(
+    getChips(chipNum, lInflection, cMax, hueFrom, hueTo)
+  );
 
-    const hue =
-      hueFrom +
-      (idx *
-        (hueTo > hueFrom ? hueTo - hueFrom : (hueTo + 360 - hueFrom) % 360)) /
-        chipNum;
-
-    const color = `oklch(${lightness} ${chroma} ${hue})`;
-    const clamppedColor = clampChroma(color, `oklch`, `p3`);
-    const inP3 = chroma <= clamppedColor.c;
-    const inSrgb = displayable(color);
-
-    return {
-      mode: `oklch`,
-      l: clamppedColor.l,
-      c: clamppedColor.c,
-      h: clamppedColor.h,
-      inP3: inP3,
-      inSrgb: inSrgb,
-    };
-  };
-
-  const getChips = (chipNum, lInflection, cMax, hueFrom, hueTo) => {
-    console.log('working');
-
-    const arry = [];
-
-    for (let n = 0; n <= chipNum; n++) {
-      console.log('n', n);
-      const aChip = getAChip(n, chipNum, lInflection, cMax, hueFrom, hueTo);
-      arry.push(aChip);
-    }
-
-    return arry;
-  };
-
-  console.log(chipNum, lInflection, cMax, hueFrom, hueTo);
-  const chipsInit = getChips(chipNum, lInflection, cMax, hueFrom, hueTo);
-  console.log(chipsInit);
-
-  const [chips, setChips] = useState();
+  useEffect(() => {
+    setChips((prevChips) => {
+      const newChips = getChips(chipNum, lInflection, cMax, hueFrom, hueTo);
+      return newChips.map((aNewChip, idx) => {
+        const aPrevChip = prevChips[idx];
+        return aPrevChip ? { ...aNewChip, id: aPrevChip.id } : aNewChip;
+      });
+    });
+    renderCnt.current = renderCnt.current + 1;
+    console.log('palette', renderCnt.current);
+  }, [chipNum, lInflection, cMax, hueFrom, hueTo, getChips]);
 
   return (
-    <ul className={style.palette}>
-      {getChips(chipNum, lInflection, cMax, hueFrom, hueTo).map((aChip) => {
-        return (
-          <Chip
-            key={`chip_${aChip.l}_${aChip.c}_${aChip.h}_by_${chipNum}_${lInflection}_${cMax}_${hueFrom}_${hueTo}`}
-            l={aChip.l}
-            c={aChip.c}
-            h={aChip.h}
-            inP3={aChip.inP3}
-            inSrgb={aChip.inSrgb}
-          ></Chip>
-        );
-      })}
-    </ul>
+    <div className={`${className} ${style.palette}`} ref={paletteRef}>
+      <div className={style.info}>
+        <div className={`${style[`info__sticky`]}`}>
+          {`Num: ${chipNum + 1}; H: ${formatNum(hueFrom, 3, 1)} - ${formatNum(
+            hueTo,
+            3,
+            1
+          )}; C_Max: ${formatNum(cMax, 0, 3)} @L: ${formatNum(
+            lInflection,
+            0,
+            3
+          )};`}
+        </div>
+      </div>
+      <ul className={style.chips}>
+        {chips.map((aChip) => {
+          return (
+            <Chip
+              className={style.chip}
+              key={aChip.id}
+              l={aChip.l}
+              c={aChip.c}
+              h={aChip.h}
+              inP3={aChip.inP3}
+              inSrgb={aChip.inSrgb}
+            ></Chip>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
-
 export default Palette;

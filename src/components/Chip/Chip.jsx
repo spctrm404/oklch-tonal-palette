@@ -2,7 +2,7 @@ import { apcach, crToBg, maxChroma } from 'apcach';
 import { useCallback, useEffect, useRef } from 'react';
 import style from './Chip.module.scss';
 
-const Chip = ({ l, c, h, inP3, inSrgb }) => {
+const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   const renderCnt = useRef(0);
   const chipRef = useRef();
 
@@ -55,40 +55,38 @@ const Chip = ({ l, c, h, inP3, inSrgb }) => {
     chipRef.current.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
 
     // renderCnt.current = renderCnt.current + 1;
-    // console.log('props', renderCnt.current);
-  }, [l, c, h, inP3, inSrgb]);
+    // console.log('chip', renderCnt.current);
+  }, [l, c, h, inP3, inSrgb, getTextColour]);
 
   return (
     <li
-      className={`${style.chip} ${
+      className={`${className} ${style.chip} ${
         style[`chip--gamut-${getGamut(inP3, inSrgb)}`]
       }`}
       ref={chipRef}
     >
-      <div className={style.container}>
-        <div className={style.sample}></div>
-        <div className={style.info}>
-          <div className={`${style[`info__label`]} ${style[`info__label-l`]}`}>
-            L
-          </div>
-          <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
-            {formatNum(l, 0, 3)}
-          </div>
-          <div className={`${style[`info__label`]} ${style[`info__label-c`]}`}>
-            C
-          </div>{' '}
-          <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
-            {formatNum(c, 0, 3)}
-          </div>
-          <div className={`${style[`info__label`]} ${style[`info__label-h`]}`}>
-            H
-          </div>
-          <div className={`${style[`info__value`]} ${style[`info__value-h`]}`}>
-            {formatNum(h, 3, 1)}
-          </div>
+      <div className={style.sample}></div>
+      <div className={style.info}>
+        <div className={`${style[`info__label`]} ${style[`info__label-l`]}`}>
+          L
         </div>
-        <div className={style[`tone-num`]}>{formatNum(l * 100, 3, 0)}</div>
+        <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
+          {formatNum(l, 0, 3)}
+        </div>
+        <div className={`${style[`info__label`]} ${style[`info__label-c`]}`}>
+          C
+        </div>
+        <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
+          {formatNum(c, 0, 3)}
+        </div>
+        <div className={`${style[`info__label`]} ${style[`info__label-h`]}`}>
+          H
+        </div>
+        <div className={`${style[`info__value`]} ${style[`info__value-h`]}`}>
+          {formatNum(h, 3, 1)}
+        </div>
       </div>
+      <div className={style.name}>{formatNum(l * 100, 3, 0)}</div>
     </li>
   );
 };
