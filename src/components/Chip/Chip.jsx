@@ -6,12 +6,12 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   const renderCnt = useRef(0);
   const chipRef = useRef();
 
-  const formatNum = useCallback((num, intLen, floatLen) => {
-    const fixed = num.toFixed(floatLen);
+  const formatNum = useCallback((num, intLen, decimalLen) => {
+    const fixed = num.toFixed(decimalLen);
     const [intPart, floatPart] = fixed.split('.');
     const paddedInt = intPart.padStart(intLen, '0');
     return `${intLen > 0 ? paddedInt : ``}${
-      floatLen > 0 ? `.${floatPart}` : ``
+      decimalLen > 0 ? `.${floatPart}` : ``
     }`;
   }, []);
 
