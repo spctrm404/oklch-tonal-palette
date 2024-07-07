@@ -3,7 +3,7 @@ import './App.scss';
 import { useState } from 'react';
 
 function App() {
-  const [palette, setPalette] = useState({
+  const [currentPalette, setCurrentPalette] = useState({
     chipNum: 10,
     lInflection: 0.5,
     cMax: 0.1,
@@ -11,12 +11,12 @@ function App() {
     hueTo: 120,
   });
 
-  const adjust = (key, delta) => {
-    const newPalette = Object.assign({}, palette);
+  const adjustCurrentPalette = (key, delta) => {
+    const newPalette = Object.assign({}, currentPalette);
     newPalette[key] = newPalette[key] + delta;
     if ((key === 'hueFrom' || key === 'hueTo') && newPalette[key] > 360)
       newPalette[key] = newPalette[key] % 360;
-    setPalette(newPalette);
+    setCurrentPalette(newPalette);
   };
   return (
     <>
@@ -24,7 +24,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('chipNum', 1);
+            adjustCurrentPalette('chipNum', 1);
           }}
         >
           chipNum up
@@ -32,7 +32,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('chipNum', -1);
+            adjustCurrentPalette('chipNum', -1);
           }}
         >
           chipNum down
@@ -40,7 +40,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('lInflection', 0.05);
+            adjustCurrentPalette('lInflection', 0.05);
           }}
         >
           lInflection up
@@ -48,7 +48,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('lInflection', -0.05);
+            adjustCurrentPalette('lInflection', -0.05);
           }}
         >
           lInflection down
@@ -56,7 +56,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('cMax', 0.01);
+            adjustCurrentPalette('cMax', 0.01);
           }}
         >
           cMax up
@@ -64,7 +64,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('cMax', -0.01);
+            adjustCurrentPalette('cMax', -0.01);
           }}
         >
           cMax down
@@ -72,7 +72,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('hueFrom', 1);
+            adjustCurrentPalette('hueFrom', 1);
           }}
         >
           hueFrom up
@@ -80,7 +80,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('hueFrom', -1);
+            adjustCurrentPalette('hueFrom', -1);
           }}
         >
           hueFrom down
@@ -88,7 +88,7 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('hueTo', 1);
+            adjustCurrentPalette('hueTo', 1);
           }}
         >
           hueTo up
@@ -96,18 +96,18 @@ function App() {
         <button
           type="button"
           onPointerDown={() => {
-            adjust('hueTo', -1);
+            adjustCurrentPalette('hueTo', -1);
           }}
         >
           hueTo down
         </button>
       </div>
       <Palette
-        chipNum={palette.chipNum}
-        lInflection={palette.lInflection}
-        cMax={palette.cMax}
-        hueFrom={palette.hueFrom}
-        hueTo={palette.hueTo}
+        chipNum={currentPalette.chipNum}
+        lInflection={currentPalette.lInflection}
+        cMax={currentPalette.cMax}
+        hueFrom={currentPalette.hueFrom}
+        hueTo={currentPalette.hueTo}
       ></Palette>
     </>
   );

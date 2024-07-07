@@ -103,8 +103,9 @@ const Palette = ({ chipNum, lInflection, cMax, hueFrom, hueTo, className }) => {
         return aPrevChip ? { ...aNewChip, id: aPrevChip.id } : aNewChip;
       });
     });
-    renderCnt.current = renderCnt.current + 1;
-    console.log('palette', renderCnt.current);
+
+    // renderCnt.current = renderCnt.current + 1;
+    // console.log('palette', renderCnt.current);
   }, [chipNum, lInflection, cMax, hueFrom, hueTo, getChips]);
 
   return (
