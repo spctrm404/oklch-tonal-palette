@@ -10,7 +10,7 @@ const Palette = ({
   hueFrom,
   hueTo,
   isSelected,
-  onClick,
+  onClickPalette,
 }) => {
   const renderCnt = useRef(0);
 
@@ -51,8 +51,12 @@ const Palette = ({
 
       const lightness = idx / chipNum;
 
-      const alpha = lightness / lInflect;
-      const chroma = alpha <= 1 ? alpha * cMax : cMax - (alpha - 1) * cMax;
+      const chroma =
+        lInflect === 0
+          ? cMax * (1 - lightness)
+          : lightness <= lInflect
+          ? (cMax * lightness) / lInflect
+          : (cMax * lightness) / (1 - lInflect);
 
       const hue =
         hueFrom === hueTo
@@ -114,7 +118,7 @@ const Palette = ({
       className={`${style.palette} ${
         isSelected ? style[`palette-selected`] : ``
       }`}
-      onClick={onClick}
+      onClick={onClickPalette}
     >
       <div className={style.info}>
         <div className={`${style[`info__sticky`]}`}>

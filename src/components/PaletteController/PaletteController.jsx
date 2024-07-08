@@ -1,5 +1,3 @@
-// todo check onchange or other event
-
 import { useCallback } from 'react';
 
 const PaletteController = ({
@@ -8,18 +6,31 @@ const PaletteController = ({
   cMax,
   hueFrom,
   hueTo,
-  setSelectedPalette,
+  onChangeInput,
 }) => {
-  const handleChange = useCallback((e, key) => {
-    setSelectedPalette(key, Number(e.target.value));
-  }, []);
+  const onChangeSliderHandler = useCallback(
+    (e, key) => {
+      onChangeInput(key, Number(e.target.value));
+    },
+    [onChangeInput]
+  );
+
+  const onChangeNumberHandler = useCallback(
+    (e, key) => {
+      const minValue = Number(e.target.min);
+      const maxValue = Number(e.target.max);
+      const value = Number(e.target.value);
+      onChangeInput(key, Math.max(minValue, Math.min(maxValue, value)));
+    },
+    [onChangeInput]
+  );
 
   return (
     <>
       <input
         value={chipNum}
         onChange={(e) => {
-          handleChange(e, 'chipNum');
+          onChangeNumberHandler(e, 'chipNum');
         }}
         min={2}
         max={100}
@@ -29,7 +40,7 @@ const PaletteController = ({
       <input
         value={lInflect}
         onChange={(e) => {
-          handleChange(e, 'lInflect');
+          onChangeSliderHandler(e, 'lInflect');
         }}
         min={0}
         max={1}
@@ -39,7 +50,7 @@ const PaletteController = ({
       <input
         value={lInflect}
         onChange={(e) => {
-          handleChange(e, 'lInflect');
+          onChangeNumberHandler(e, 'lInflect');
         }}
         min={0}
         max={1}
@@ -49,7 +60,7 @@ const PaletteController = ({
       <input
         value={cMax}
         onChange={(e) => {
-          handleChange(e, 'cMax');
+          onChangeSliderHandler(e, 'cMax');
         }}
         min={0}
         max={0.4}
@@ -59,7 +70,7 @@ const PaletteController = ({
       <input
         value={cMax}
         onChange={(e) => {
-          handleChange(e, 'cMax');
+          onChangeNumberHandler(e, 'cMax');
         }}
         min={0}
         max={0.4}
@@ -69,7 +80,7 @@ const PaletteController = ({
       <input
         value={hueFrom}
         onChange={(e) => {
-          handleChange(e, 'hueFrom');
+          onChangeSliderHandler(e, 'hueFrom');
         }}
         min={0}
         max={360}
@@ -79,7 +90,7 @@ const PaletteController = ({
       <input
         value={hueFrom}
         onChange={(e) => {
-          handleChange(e, 'hueFrom');
+          onChangeNumberHandler(e, 'hueFrom');
         }}
         min={0}
         max={360}
@@ -89,7 +100,7 @@ const PaletteController = ({
       <input
         value={hueTo}
         onChange={(e) => {
-          handleChange(e, 'hueTo');
+          onChangeSliderHandler(e, 'hueTo');
         }}
         min={0}
         max={360}
@@ -99,7 +110,7 @@ const PaletteController = ({
       <input
         value={hueTo}
         onChange={(e) => {
-          handleChange(e, 'hueTo');
+          onChangeNumberHandler(e, 'hueTo');
         }}
         min={0}
         max={360}

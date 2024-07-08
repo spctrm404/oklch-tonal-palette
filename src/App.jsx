@@ -22,50 +22,25 @@ function App() {
   }, [setDecimalLen]);
 
   const [palettes, setPalettes] = useState([createARandomPalette()]);
-  const [selectedPaletteId, setSelectedPaletteId] = useState(palettes[0].id);
+  const [selectedPalette, setSelectedPalette] = useState({
+    id: palettes[0].id,
+    idx: 0,
+  });
 
-  const getSelectedPaletteIdx = useCallback(() => {
-    if (!selectedPaletteId) return null;
-
-    for (let idx = 0; idx < palettes.length; idx++)
-      if (palettes[idx].id === selectedPaletteId) return idx;
-
-    return null;
-  }, []);
-
-  const selectedPaletteIdx = useRef(getSelectedPaletteIdx());
-
-  const addPalette = useCallback(() => {
+  const addAPalette = useCallback(() => {
     const newPalette = createARandomPalette();
     setPalettes((prevPalettes) => {
       return [...prevPalettes, newPalette];
     });
   }, [createARandomPalette]);
 
-  const adjSelectedPalette = (key, delta) => {
-    if (!selectedPaletteId) return;
+  const changeInputHandler = (key, value) => {
+    console.log(key, value);
+    if (!selectedPalette) return;
 
     setPalettes((prevPalettes) => {
       return prevPalettes.map((aPalette) => {
-        return aPalette.id === selectedPaletteId
-          ? {
-              ...aPalette,
-              [key]:
-                key !== 'hueFrom' && key !== 'hueTo'
-                  ? aPalette[key] + delta
-                  : (aPalette[key] + delta) % 360,
-            }
-          : aPalette;
-      });
-    });
-  };
-
-  const setSelectedPalette = (key, value) => {
-    if (!selectedPaletteId) return;
-
-    setPalettes((prevPalettes) => {
-      return prevPalettes.map((aPalette) => {
-        return aPalette.id === selectedPaletteId
+        return aPalette.id === selectedPalette.id
           ? {
               ...aPalette,
               [key]: value,
@@ -75,110 +50,29 @@ function App() {
     });
   };
 
-  const handleClick = (id) => {
-    setSelectedPaletteId(id);
-    selectedPaletteIdx.current = getSelectedPaletteIdx();
+  const clickPaletteHandler = (id, idx) => {
+    setSelectedPalette({ id: id, idx: idx });
   };
 
   useEffect(() => {}, []);
 
   return (
     <>
-      <button type="button" onPointerDown={addPalette}>
+      <button type="button" onPointerDown={addAPalette}>
         ADD
       </button>
       <div className="control">
         <PaletteController
-          chipNum={palettes[selectedPaletteIdx.current].chipNum}
-          lInflect={palettes[selectedPaletteIdx.current].lInflect}
-          cMax={palettes[selectedPaletteIdx.current].cMax}
-          hueFrom={palettes[selectedPaletteIdx.current].hueFrom}
-          hueTo={palettes[selectedPaletteIdx.current].hueTo}
-          setSelectedPalette={setSelectedPalette}
+          chipNum={palettes[selectedPalette.idx].chipNum}
+          lInflect={palettes[selectedPalette.idx].lInflect}
+          cMax={palettes[selectedPalette.idx].cMax}
+          hueFrom={palettes[selectedPalette.idx].hueFrom}
+          hueTo={palettes[selectedPalette.idx].hueTo}
+          onChangeInput={changeInputHandler}
         ></PaletteController>
-        {/* <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('chipNum', 1);
-          }}
-        >
-          chipNum up
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('chipNum', -1);
-          }}
-        >
-          chipNum down
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('lInflect', 0.05);
-          }}
-        >
-          lInflect up
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('lInflect', -0.05);
-          }}
-        >
-          lInflect down
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('cMax', 0.01);
-          }}
-        >
-          cMax up
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('cMax', -0.01);
-          }}
-        >
-          cMax down
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('hueFrom', 1);
-          }}
-        >
-          hueFrom up
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('hueFrom', -1);
-          }}
-        >
-          hueFrom down
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('hueTo', 1);
-          }}
-        >
-          hueTo up
-        </button>
-        <button
-          type="button"
-          onPointerDown={() => {
-            adjSelectedPalette('hueTo', -1);
-          }}
-        >
-          hueTo down
-        </button> */}
       </div>
       <div>
-        {palettes.map((aPalette) => (
+        {palettes.map((aPalette, idx) => (
           <Palette
             key={aPalette.id}
             chipNum={aPalette.chipNum}
@@ -186,9 +80,9 @@ function App() {
             cMax={aPalette.cMax}
             hueFrom={aPalette.hueFrom}
             hueTo={aPalette.hueTo}
-            isSelected={aPalette.id === selectedPaletteId}
-            onClick={() => {
-              handleClick(aPalette.id);
+            isSelected={aPalette.id === selectedPalette.id}
+            onClickPalette={() => {
+              clickPaletteHandler(aPalette.id, idx);
             }}
           />
         ))}
