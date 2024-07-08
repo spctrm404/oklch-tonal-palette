@@ -1,26 +1,33 @@
-$border-thickness: 0.5rem;
+$chip-br: 0.5rem;
+$p: 0.5rem;
+$border-thickness: 0.125rem;
 $colour-border: oklch(95% 0 0deg);
-$px: 0.75rem;
+$br: $chip-br + $p;
 
 .palette {
   width: fit-content;
   padding-left: 0;
+  cursor: pointer;
   background-color: oklch(100% 0 0deg);
   border: $border-thickness solid $colour-border;
-  border-radius: 1rem;
+  border-radius: $br;
+
+  &-selected {
+    border-color: oklch(80% 0 0deg);
+  }
 }
 
 .info {
   position: relative;
   padding-block: 0.75rem;
-  padding-inline: $px;
+  padding-inline: $br;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1em;
 
   &__sticky {
     position: sticky;
-    left: $px;
+    left: $br;
     width: fit-content;
   }
 }
@@ -30,8 +37,9 @@ $px: 0.75rem;
   grid-template-rows: 1fr;
   grid-auto-columns: min-content;
   grid-auto-flow: column;
-  column-gap: 0.25rem;
-  padding: $border-thickness 0 0 0;
+  column-gap: 4px;
+  padding: $p - $border-thickness;
   margin-block: 0;
   background-color: $colour-border;
+  border-radius: 0 0 $br - $border-thickness $br - $border-thickness;
 }
