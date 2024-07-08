@@ -1,3 +1,4 @@
+import PaletteController from './components/PaletteController/PaletteController.jsx';
 import Palette from './components/Palette/Palette.jsx';
 import './App.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,6 +23,17 @@ function App() {
 
   const [palettes, setPalettes] = useState([createARandomPalette()]);
   const [selectedPaletteId, setSelectedPaletteId] = useState(palettes[0].id);
+
+  const getSelectedPaletteIdx = useCallback(() => {
+    if (!selectedPaletteId) return null;
+
+    for (let idx = 0; idx < palettes.length; idx++)
+      if (palettes[idx].id === selectedPaletteId) return idx;
+
+    return null;
+  }, []);
+
+  const selectedPaletteIdx = useRef(getSelectedPaletteIdx());
 
   const addPalette = useCallback(() => {
     const newPalette = createARandomPalette();
@@ -48,8 +60,24 @@ function App() {
     });
   };
 
+  const setSelectedPalette = (key, value) => {
+    if (!selectedPaletteId) return;
+
+    setPalettes((prevPalettes) => {
+      return prevPalettes.map((aPalette) => {
+        return aPalette.id === selectedPaletteId
+          ? {
+              ...aPalette,
+              [key]: value,
+            }
+          : aPalette;
+      });
+    });
+  };
+
   const handleClick = (id) => {
     setSelectedPaletteId(id);
+    selectedPaletteIdx.current = getSelectedPaletteIdx();
   };
 
   useEffect(() => {}, []);
@@ -60,7 +88,15 @@ function App() {
         ADD
       </button>
       <div className="control">
-        <button
+        <PaletteController
+          chipNum={palettes[selectedPaletteIdx.current].chipNum}
+          lInflect={palettes[selectedPaletteIdx.current].lInflect}
+          cMax={palettes[selectedPaletteIdx.current].cMax}
+          hueFrom={palettes[selectedPaletteIdx.current].hueFrom}
+          hueTo={palettes[selectedPaletteIdx.current].hueTo}
+          setSelectedPalette={setSelectedPalette}
+        ></PaletteController>
+        {/* <button
           type="button"
           onPointerDown={() => {
             adjSelectedPalette('chipNum', 1);
@@ -139,7 +175,7 @@ function App() {
           }}
         >
           hueTo down
-        </button>
+        </button> */}
       </div>
       <div>
         {palettes.map((aPalette) => (
