@@ -80,21 +80,14 @@ const Palette = ({
   );
   const createChips = useCallback(
     (chipNum, lInflect, cMax, hueFrom, hueTo) => {
-      const arry = [];
+      const chips = [];
 
       for (let n = 0; n <= chipNum; n++) {
-        const aChipInfo = createAChip(
-          n,
-          chipNum,
-          lInflect,
-          cMax,
-          hueFrom,
-          hueTo
-        );
-        arry.push(aChipInfo);
+        const aChip = createAChip(n, chipNum, lInflect, cMax, hueFrom, hueTo);
+        chips.push(aChip);
       }
 
-      return arry;
+      return chips;
     },
     [createAChip]
   );

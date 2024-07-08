@@ -1,42 +1,33 @@
-$border-r: 0.5rem;
-$colour-bg: oklch(98% 0 0deg);
-$colour-idle: oklch(88% 0 0deg);
-$colour-warning: oklch(73% 0.15 75deg);
-$colour-alert: oklch(58% 0.23 30deg);
+$border-rad: 0.5rem;
 
 .chip {
-  $badge-size: 0.5rem;
-  $offset: -0.25;
-
   display: grid;
-  grid-template-rows: 1fr min-content;
+  grid-template-rows: min-content min-content;
   grid-template-columns: 1fr;
-  width: fit-content;
-  overflow: hidden;
   white-space: nowrap;
   cursor: pointer;
   user-select: none;
-  border-radius: $border-r;
+  border-radius: $border-rad;
 }
 
 .sample {
   grid-row: 1;
   grid-column: 1;
-  aspect-ratio: 1 / 1;
+
+  // aspect-ratio: 1 / 1;
   background-color: oklch(var(--bg-l) var(--bg-c) calc(var(--bg-h) * 1deg));
+  border-radius: $border-rad $border-rad 0 0;
 }
 
 .info {
   display: grid;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1lh);
   grid-template-columns: max-content 1fr;
   grid-row: 1;
   grid-column: 1;
-  gap: 0.25rem 0.75rem;
-  aspect-ratio: 1 / 1;
-  padding-block: 1rem 0.75rem;
-  padding-inline: 1rem;
-  font-size: 0.75rem;
+  gap: 0.5rem 0.75rem;
+  padding: 1rem;
+  font-size: 0.625rem;
   line-height: 100%;
   opacity: 0;
   transition: opacity 150ms ease-in;
@@ -67,8 +58,6 @@ $colour-alert: oklch(58% 0.23 30deg);
   }
 
   &__value {
-    $font-weight: 500;
-
     grid-column: 2;
     font-weight: 500;
     color: oklch(
@@ -91,27 +80,29 @@ $colour-alert: oklch(58% 0.23 30deg);
 }
 
 .name {
+  $border-thickness: 0.125rem;
+
   grid-row: 2;
   grid-column: 1;
-  padding-block: 0.5rem;
-  font-size: 0.875rem;
+  padding: 0.5rem - $border-thickness;
+  font-size: 0.75rem;
   font-weight: 500;
   line-height: 100%;
   color: oklch(30% 0 0deg);
   text-align: center;
   background-color: oklch(100% 0 0deg);
-  border: 0.125rem solid #000;
-  border-radius: 0 0 $border-r $border-r;
+  border: $border-thickness solid #000;
+  border-radius: 0 0 $border-rad $border-rad;
 
   @at-root .chip--gamut-srgb #{&} {
-    border-color: $colour-idle;
+    border-color: oklch(90% 0 0deg);
   }
 
   @at-root .chip--gamut-p3 #{&} {
-    border-color: $colour-warning;
+    border-color: oklch(75% 0.15 75deg);
   }
 
   @at-root .chip--gamut-out #{&} {
-    border-color: $colour-alert;
+    border-color: oklch(60% 0.24 30deg);
   }
 }

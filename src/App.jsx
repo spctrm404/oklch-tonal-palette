@@ -3,12 +3,12 @@ import './App.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 function App() {
-  const adjDecimalLen = useCallback((num, decimalLen) => {
+  const setDecimalLen = useCallback((num, decimalLen) => {
     return parseFloat(num.toFixed(decimalLen));
   }, []);
 
   const createARandomPalette = useCallback(() => {
-    const randomHue = adjDecimalLen(Math.random() * 360, 1);
+    const randomHue = setDecimalLen(Math.random() * 360, 1);
     const newPalette = {
       id: crypto.randomUUID(),
       chipNum: 10,
@@ -18,27 +18,10 @@ function App() {
       hueTo: randomHue,
     };
     return newPalette;
-  }, [adjDecimalLen]);
+  }, [setDecimalLen]);
 
-  const initialPalette = createARandomPalette();
-  const [palettes, setPalettes] = useState([initialPalette]);
-  const selectedPaletteId = useRef(initialPalette.id);
-
-  const getSelectedPaletteIdx = useCallback(
-    (selectedPaletteId) => {
-      if (!selectedPaletteId) return null;
-
-      for (let idx = 0; idx < palettes.length; idx++)
-        if (palettes[idx].id === selectedPaletteId) return idx;
-
-      return null;
-    },
-    [palettes]
-  );
-
-  const [selectedPaletteIdx, setSelectedPaletteIdx] = useState(
-    getSelectedPaletteIdx(selectedPaletteId.current)
-  );
+  const [palettes, setPalettes] = useState([createARandomPalette()]);
+  const [selectedPaletteId, setSelectedPaletteId] = useState(palettes[0].id);
 
   const addPalette = useCallback(() => {
     const newPalette = createARandomPalette();
@@ -48,11 +31,11 @@ function App() {
   }, [createARandomPalette]);
 
   const adjSelectedPalette = (key, delta) => {
-    if (!selectedPaletteId.current) return;
+    if (!selectedPaletteId) return;
 
     setPalettes((prevPalettes) => {
       return prevPalettes.map((aPalette) => {
-        return aPalette.id === selectedPaletteId.current
+        return aPalette.id === selectedPaletteId
           ? {
               ...aPalette,
               [key]:
@@ -66,8 +49,7 @@ function App() {
   };
 
   const handleClick = (id) => {
-    selectedPaletteId.current = id;
-    setSelectedPaletteIdx(getSelectedPaletteIdx(selectedPaletteId.current));
+    setSelectedPaletteId(id);
   };
 
   useEffect(() => {}, []);
@@ -160,7 +142,7 @@ function App() {
         </button>
       </div>
       <div>
-        {palettes.map((aPalette, idx) => (
+        {palettes.map((aPalette) => (
           <Palette
             key={aPalette.id}
             chipNum={aPalette.chipNum}
@@ -168,7 +150,7 @@ function App() {
             cMax={aPalette.cMax}
             hueFrom={aPalette.hueFrom}
             hueTo={aPalette.hueTo}
-            isSelected={idx === selectedPaletteIdx}
+            isSelected={aPalette.id === selectedPaletteId}
             onClick={() => {
               handleClick(aPalette.id);
             }}
