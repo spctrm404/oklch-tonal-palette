@@ -20,7 +20,7 @@ const PaletteController = ({
       const minValue = Number(e.target.min);
       const maxValue = Number(e.target.max);
       const value = Number(e.target.value);
-      onChangeInput(key, Math.max(minValue, Math.min(maxValue, value)));
+      onChangeInput(key, Math.min(Math.max(minValue, value), maxValue));
     },
     [onChangeInput]
   );
