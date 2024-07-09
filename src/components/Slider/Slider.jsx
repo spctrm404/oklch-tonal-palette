@@ -1,70 +1,79 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import './CustomSlider.scss';
+import { useRef, useEffect, useCallback } from 'react';
+import './Slider.scss';
 
-const Slider = ({ min, max, step, value, onChange }) => {
-  const [sliderValue, setSliderValue] = useState(value || min);
-  const [isDragging, setIsDragging] = useState(false);
+const Slider = ({ value, min, max, step, vertical = false, onChange }) => {
   const sliderRef = useRef(null);
-
-  const updateSliderValue = useCallback(
-    (clientX) => {
-      const slider = sliderRef.current;
-      const rect = slider.getBoundingClientRect();
-      const sliderWidth = rect.width;
-      const rawValue =
-        ((clientX - rect.left) / sliderWidth) * (max - min) + min;
-      const steppedValue = Math.round(rawValue / step) * step; // Round to nearest step
-      const newSliderValue = Math.min(Math.max(steppedValue, min), max); // Clamp between min and max
-      setSliderValue(newSliderValue);
-      if (onChange) onChange(newSliderValue);
-    },
-    [min, max, step, onChange]
-  );
-
-  useEffect(() => {
-    if (isDragging) {
-      const handleMouseMove = (moveEvent) => {
-        updateSliderValue(moveEvent.clientX);
-      };
-
-      const handleMouseUp = () => {
-        setIsDragging(false);
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-
-      document.body.style.userSelect = 'none';
-      document.body.style.pointerEvents = 'none';
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.body.style.userSelect = '';
-        document.body.style.pointerEvents = '';
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, updateSliderValue]);
+  const handleRef = useRef(null);
 
   const handleMouseDown = useCallback(
     (e) => {
-      setIsDragging(true);
-      updateSliderValue(e.clientX);
+      e.stopPropagation();
+      e.preventDefault();
+
+      const handleMouseMove = (event) => {
+        const slider = sliderRef.current;
+        const rect = slider.getBoundingClientRect();
+        let newValue;
+
+        if (vertical) {
+          const offsetY = event.clientY - rect.top;
+          const sliderHeight = rect.height;
+          const percentage = Math.max(0, Math.min(offsetY / sliderHeight, 1));
+          newValue = min + (max - min) * (1 - percentage);
+        } else {
+          const offsetX = event.clientX - rect.left;
+          const sliderWidth = rect.width;
+          const percentage = Math.max(0, Math.min(offsetX / sliderWidth, 1));
+          newValue = min + (max - min) * percentage;
+        }
+
+        const steppedValue = Math.round(newValue / step) * step;
+        onChange(steppedValue);
+      };
+
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
     },
-    [updateSliderValue]
+    [min, max, step, vertical, onChange]
   );
+
+  useEffect(() => {
+    const handle = handleRef.current;
+    handle.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      handle.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [handleMouseDown]);
+
+  const sliderStyle = vertical ? { height: '200px' } : { width: '200px' };
+  const handleSize = 20; // Thumb의 크기 (가로와 세로가 동일하다고 가정)
+  const handleOffset = handleSize / 2; // Thumb의 크기의 절반
+  const handleStyle = vertical
+    ? {
+        bottom: `calc(${
+          ((value - min) / (max - min)) * 100
+        }% - ${handleOffset}px)`,
+      }
+    : {
+        left: `calc(${
+          ((value - min) / (max - min)) * 100
+        }% - ${handleOffset}px)`,
+      };
 
   return (
     <div
-      className="custom-slider"
+      className={`slider ${vertical ? 'vertical' : 'horizontal'}`}
       ref={sliderRef}
-      onMouseDown={handleMouseDown}
+      style={sliderStyle}
     >
-      <div
-        className="custom-slider-thumb"
-        style={{ left: `${((sliderValue - min) / (max - min)) * 100}%` }}
-      />
+      <div className="slider-track" />
+      <div className="slider-handle" ref={handleRef} style={handleStyle} />
     </div>
   );
 };

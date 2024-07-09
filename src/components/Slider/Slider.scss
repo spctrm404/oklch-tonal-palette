@@ -1,0 +1,44 @@
+.slider {
+  position: relative;
+  user-select: none;
+}
+
+.horizontal {
+  height: 10px;
+}
+
+.vertical {
+  width: 10px;
+}
+
+.slider-track {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #ddd;
+}
+
+.horizontal .slider-track {
+  height: 10px;
+}
+
+.vertical .slider-track {
+  width: 10px;
+}
+
+.slider-handle {
+  position: absolute;
+  width: 20px; /* Thumb의 크기 */
+  height: 20px; /* Thumb의 크기 */
+  cursor: pointer;
+  background: #007bff;
+  border-radius: 50%;
+}
+
+.horizontal .slider-handle {
+  top: -5px; /* Thumb의 중앙이 트랙과 일치하도록 조정 */
+}
+
+.vertical .slider-handle {
+  left: -5px; /* Thumb의 중앙이 트랙과 일치하도록 조정 */
+}
