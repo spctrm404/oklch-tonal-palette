@@ -1,120 +1,81 @@
-import Slider from './components/Slider/Slider.jsx';
-import PaletteController from './components/PaletteController/PaletteController.jsx';
-import Palette from './components/Palette/Palette.jsx';
-import './App.scss';
-import { useCallback, useEffect, useRef, useState } from 'react';
+// 값이 step으로 나눠 떨어지도록 조정.
 
-function App() {
-  // const setDecimalLen = useCallback((num, decimalLen) => {
-  //   return parseFloat(num.toFixed(decimalLen));
-  // }, []);
-  // const createARandomPalette = useCallback(() => {
-  //   const randomHue = setDecimalLen(Math.random() * 360, 1);
-  //   const newPalette = {
-  //     id: crypto.randomUUID(),
-  //     chipNum: 10,
-  //     lInflect: 0.5,
-  //     cMax: 0.1,
-  //     hueFrom: randomHue,
-  //     hueTo: randomHue,
-  //   };
-  //   return newPalette;
-  // }, [setDecimalLen]);
-  // const [palettes, setPalettes] = useState([createARandomPalette()]);
-  // const [selectedPalette, setSelectedPalette] = useState({
-  //   id: palettes[0].id,
-  //   idx: 0,
-  // });
-  // const addAPalette = useCallback(() => {
-  //   const newPalette = createARandomPalette();
-  //   setPalettes((prevPalettes) => {
-  //     return [...prevPalettes, newPalette];
-  //   });
-  // }, [createARandomPalette]);
-  // const changeInputHandler = (key, value) => {
-  //   console.log(key, value);
-  //   if (!selectedPalette) return;
-  //   setPalettes((prevPalettes) => {
-  //     return prevPalettes.map((aPalette) => {
-  //       return aPalette.id === selectedPalette.id
-  //         ? {
-  //             ...aPalette,
-  //             [key]: value,
-  //           }
-  //         : aPalette;
-  //     });
-  //   });
-  // };
-  // const clickPaletteHandler = (id, idx) => {
-  //   setSelectedPalette({ id: id, idx: idx });
-  // };
-  // useEffect(() => {}, []);
-  // return (
-  //   <>
-  //     <button type="button" onPointerDown={addAPalette}>
-  //       ADD
-  //     </button>
-  //     <div className="control">
-  //       <PaletteController
-  //         chipNum={palettes[selectedPalette.idx].chipNum}
-  //         lInflect={palettes[selectedPalette.idx].lInflect}
-  //         cMax={palettes[selectedPalette.idx].cMax}
-  //         hueFrom={palettes[selectedPalette.idx].hueFrom}
-  //         hueTo={palettes[selectedPalette.idx].hueTo}
-  //         onChangeInput={changeInputHandler}
-  //       ></PaletteController>
-  //     </div>
-  //     <div>
-  //       {palettes.map((aPalette, idx) => (
-  //         <Palette
-  //           key={aPalette.id}
-  //           chipNum={aPalette.chipNum}
-  //           lInflect={aPalette.lInflect}
-  //           cMax={aPalette.cMax}
-  //           hueFrom={aPalette.hueFrom}
-  //           hueTo={aPalette.hueTo}
-  //           isSelected={aPalette.id === selectedPalette.id}
-  //           onClickPalette={() => {
-  //             clickPaletteHandler(aPalette.id, idx);
-  //           }}
-  //         />
-  //       ))}
-  //     </div>
-  //   </>
-  // );
+import { useRef, useEffect, useCallback } from 'react';
+import './Slider.scss';
 
-  const [sliderValue, setSliderValue] = useState(50);
+const Slider = ({ value, min, max, step, vertical = false, onChange }) => {
+  const sliderRef = useRef(null);
+  const handleRef = useRef(null);
 
-  const handleSliderChange = (newValue) => {
-    setSliderValue(newValue);
-  };
-  const [sliderValue2, setSliderValue2] = useState(50);
+  const handleMouseDown = useCallback(
+    (e) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-  const handleSliderChange2 = (newValue) => {
-    setSliderValue2(newValue);
-  };
+      const handleMouseMove = (event) => {
+        const slider = sliderRef.current;
+        const rect = slider.getBoundingClientRect();
+        let newValue;
+
+        if (vertical) {
+          const offsetY = event.clientY - rect.top;
+          const sliderHeight = rect.height;
+          const percentage = Math.max(0, Math.min(offsetY / sliderHeight, 1));
+          newValue = min + (max - min) * (1 - percentage);
+        } else {
+          const offsetX = event.clientX - rect.left;
+          const sliderWidth = rect.width;
+          const percentage = Math.max(0, Math.min(offsetX / sliderWidth, 1));
+          newValue = min + (max - min) * percentage;
+        }
+
+        const steppedValue = Math.round(newValue / step) * step;
+        onChange(steppedValue);
+      };
+
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    },
+    [min, max, step, vertical, onChange]
+  );
+
+  useEffect(() => {
+    const handle = handleRef.current;
+    handle.addEventListener('mousedown', handleMouseDown);
+
+    return () => {
+      handle.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, [handleMouseDown]);
+
+  const handleSize = 20; // Thumb의 크기 (가로와 세로가 동일하다고 가정)
+  const handleOffset = handleSize / 2; // Thumb의 크기의 절반
+  const handleStyle = vertical
+    ? {
+        bottom: `calc(${
+          ((value - min) / (max - min)) * 100
+        }% - ${handleOffset}px)`,
+      }
+    : {
+        left: `calc(${
+          ((value - min) / (max - min)) * 100
+        }% - ${handleOffset}px)`,
+      };
 
   return (
-    <div className="App">
-      <h1>Custom Slider</h1>
-      <Slider
-        min={0}
-        max={100}
-        step={0.1}
-        value={sliderValue}
-        onChange={handleSliderChange}
-      />
-      <p>Slider Value: {sliderValue}</p>
-      <Slider
-        min={0}
-        max={100}
-        step={1}
-        value={sliderValue2}
-        onChange={handleSliderChange2}
-      />
-      <p>Slider Value: {sliderValue2}</p>
+    <div
+      className={`slider ${vertical ? 'vertical' : 'horizontal'}`}
+      ref={sliderRef}
+    >
+      <div className="slider-track" />
+      <div className="slider-handle" ref={handleRef} style={handleStyle} />
     </div>
   );
-}
+};
 
-export default App;
+export default Slider;

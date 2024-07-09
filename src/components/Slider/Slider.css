@@ -1,6 +1,9 @@
+@charset "UTF-8";
 .slider {
   position: relative;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .horizontal {

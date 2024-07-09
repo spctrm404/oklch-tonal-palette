@@ -51,7 +51,6 @@ const Slider = ({ value, min, max, step, vertical = false, onChange }) => {
     };
   }, [handleMouseDown]);
 
-  const sliderStyle = vertical ? { height: '200px' } : { width: '200px' };
   const handleSize = 20; // Thumb의 크기 (가로와 세로가 동일하다고 가정)
   const handleOffset = handleSize / 2; // Thumb의 크기의 절반
   const handleStyle = vertical
@@ -70,7 +69,6 @@ const Slider = ({ value, min, max, step, vertical = false, onChange }) => {
     <div
       className={`slider ${vertical ? 'vertical' : 'horizontal'}`}
       ref={sliderRef}
-      style={sliderStyle}
     >
       <div className="slider-track" />
       <div className="slider-handle" ref={handleRef} style={handleStyle} />
