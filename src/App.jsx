@@ -87,35 +87,65 @@ function App() {
   const handleSliderChange = (newValue) => {
     setSliderValue(newValue);
   };
-  const [sliderValue2, setSliderValue2] = useState(50);
-  const handleSliderChange2 = (newValue) => {
-    setSliderValue2(newValue);
-  };
 
   return (
     <div className="App">
       <h1>Custom Slider</h1>
       <Slider
+        value={sliderValue}
+        min={0}
+        max={100}
+        step={0.1}
+        onChange={handleSliderChange}
+      />
+      <p>Slider Value: {sliderValue}</p>
+      <Slider
+        value={sliderValue}
         min={0}
         max={100}
         step={0.1}
         flip={true}
-        value={sliderValue}
         onChange={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
-      <div style={{ height: '500px' }}>
-        <Slider
-          min={0}
-          max={100}
-          step={1}
-          vertical={true}
-          flip={true}
-          value={sliderValue2}
-          onChange={handleSliderChange2}
-        />
-      </div>
-      <p>Slider Value: {sliderValue2}</p>
+      <Slider
+        value={sliderValue}
+        min={0}
+        max={100}
+        step={0.1}
+        flip={true}
+        onChange={handleSliderChange}
+      />
+      <p>Slider Value: {sliderValue}</p>
+      <Slider
+        value={sliderValue}
+        min={0}
+        max={100}
+        step={0.1}
+        vertical={true}
+        onChange={handleSliderChange}
+      />
+      <p>Slider Value: {sliderValue}</p>
+      <Slider
+        value={sliderValue}
+        min={0}
+        max={100}
+        step={0.1}
+        vertical={true}
+        flip={true}
+        onChange={handleSliderChange}
+      />
+      <p>Slider Value: {sliderValue}</p>
+      <Slider
+        value={sliderValue}
+        min={0}
+        max={100}
+        step={0.1}
+        vertical={true}
+        flip={true}
+        onChange={handleSliderChange}
+      />
+      <p>Slider Value: {sliderValue}</p>
     </div>
   );
 }

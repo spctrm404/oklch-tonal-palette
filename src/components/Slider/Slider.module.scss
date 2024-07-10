@@ -1,22 +1,21 @@
 $min-size: 12.5rem;
-$track-thickness: 0.625rem;
+$track-thickness: 0.5rem;
 $thumb-size: 3rem;
+$icon-size: 1.5rem;
 
 .slider {
   position: relative;
   user-select: none;
-  background-color: grey;
+  background-color: oklch(50% 0 0deg);
 
   &-horizontal {
-    width: 100%;
-    min-width: $min-size;
+    width: $min-size;
     height: $track-thickness;
   }
 
   &-vertical {
     width: $track-thickness;
-    height: 100%;
-    min-height: $min-size;
+    height: $min-size;
   }
 }
 
@@ -37,22 +36,17 @@ $thumb-size: 3rem;
   width: $thumb-size;
   height: $thumb-size;
   cursor: pointer;
-  border-radius: 50%;
 
   @at-root .slider-horizontal #{&} {
     top: 50%;
-    left: calc(var(--x) * 1px);
-    transform: translateY(-50%);
+    transform: translate(calc(var(--x) * 1px), -50%);
   }
 
   @at-root .slider-vertical #{&} {
-    top: calc(var(--y) * 1px);
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, calc(var(--y) * 1px));
   }
 }
-
-$icon-size: 1.5rem;
 
 .icon {
   position: absolute;
@@ -60,7 +54,7 @@ $icon-size: 1.5rem;
   left: 50%;
   width: $icon-size;
   height: $icon-size;
-  background-color: black;
+  background-color: oklch(30% 0 0deg);
   transform: translate(-50%, -50%);
 
   @at-root .slider-horizontal #{&} {
