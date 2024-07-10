@@ -4,7 +4,7 @@ import style from './Chip.module.scss';
 
 const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   const renderCnt = useRef(0);
-  const chipRef = useRef();
+  const chipRef = useRef(null);
 
   const formatNum = useCallback((num, intLen, decimalLen) => {
     const fixed = num.toFixed(decimalLen);

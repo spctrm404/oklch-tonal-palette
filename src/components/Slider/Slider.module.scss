@@ -1,0 +1,89 @@
+$min-size: 12.5rem;
+$track-thickness: 0.625rem;
+$thumb-size: 3rem;
+
+.slider {
+  position: relative;
+  user-select: none;
+  background-color: grey;
+
+  &-horizontal {
+    width: 100%;
+    min-width: $min-size;
+    height: $track-thickness;
+  }
+
+  &-vertical {
+    width: $track-thickness;
+    height: 100%;
+    min-height: $min-size;
+  }
+}
+
+.track {
+  position: absolute;
+
+  @at-root .slider-horizontal #{&} {
+    inset: 0 -0.5 * $thumb-size;
+  }
+
+  @at-root .slider-vertical #{&} {
+    inset: -0.5 * $thumb-size 0;
+  }
+}
+
+.thumb {
+  position: absolute;
+  width: $thumb-size;
+  height: $thumb-size;
+  cursor: pointer;
+  border-radius: 50%;
+
+  @at-root .slider-horizontal #{&} {
+    top: 50%;
+    left: calc(var(--x) * 1px);
+    transform: translateY(-50%);
+  }
+
+  @at-root .slider-vertical #{&} {
+    top: calc(var(--y) * 1px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+$icon-size: 1.5rem;
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: $icon-size;
+  height: $icon-size;
+  background-color: black;
+  transform: translate(-50%, -50%);
+
+  @at-root .slider-horizontal #{&} {
+    clip-path: polygon(0% 0%, 100% 0%, 50% calc(50% + 0.5 * $track-thickness));
+  }
+
+  @at-root .slider-horizontal.slider-flip #{&} {
+    clip-path: polygon(
+      0% 100%,
+      100% 100%,
+      50% calc(50% - 0.5 * $track-thickness)
+    );
+  }
+
+  @at-root .slider-vertical #{&} {
+    clip-path: polygon(0% 0%, 0% 100%, calc(50% + 0.5 * $track-thickness) 50%);
+  }
+
+  @at-root .slider-vertical.slider-flip #{&} {
+    clip-path: polygon(
+      100% 0%,
+      100% 100%,
+      calc(50% - 0.5 * $track-thickness) 50%
+    );
+  }
+}

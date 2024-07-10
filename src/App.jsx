@@ -99,6 +99,7 @@ function App() {
         min={0}
         max={100}
         step={0.1}
+        flip={true}
         value={sliderValue}
         onChange={handleSliderChange}
       />
@@ -109,6 +110,7 @@ function App() {
           max={100}
           step={1}
           vertical={true}
+          flip={true}
           value={sliderValue2}
           onChange={handleSliderChange2}
         />

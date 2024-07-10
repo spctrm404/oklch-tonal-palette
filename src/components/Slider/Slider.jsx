@@ -1,77 +1,115 @@
-import { useRef, useEffect, useCallback } from 'react';
-import './Slider.scss';
+import { useCallback, useEffect, useRef } from 'react';
+import style from './Slider.module.scss';
 
-const Slider = ({ value, min, max, step, vertical = false, onChange }) => {
+const Slider = ({
+  value,
+  min,
+  max,
+  step,
+  vertical = false,
+  flip = false,
+  onChange,
+}) => {
+  const trackRef = useRef(null);
   const sliderRef = useRef(null);
-  const handleRef = useRef(null);
+  const thumbRef = useRef(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
 
-  const handleMouseDown = useCallback(
+  const onMouseDownTrack = useCallback(() => {}, []);
+  const mouseDownThumbHandler = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
 
-      const handleMouseMove = (event) => {
-        const slider = sliderRef.current;
-        const rect = slider.getBoundingClientRect();
-        let newValue;
+      const thumbRect = thumbRef.current.getBoundingClientRect();
+      offsetRef.current = {
+        x: e.clientX - thumbRect.left,
+        y: e.clientY - thumbRect.top,
+      };
 
+      const mouseMoveHandler = (e) => {
+        const offset = offsetRef.current;
+        const thumbRect = thumbRef.current.getBoundingClientRect();
+        const trackRect = trackRef.current.getBoundingClientRect();
+        let newValue;
+        let newThumbPos;
         if (vertical) {
-          const offsetY = event.clientY - rect.top;
-          const sliderHeight = rect.height;
-          const percentage = Math.max(0, Math.min(offsetY / sliderHeight, 1));
-          newValue = min + (max - min) * (1 - percentage);
+          newThumbPos = e.clientY - trackRect.top - offset.y;
+          newThumbPos = Math.min(
+            trackRect.height - thumbRect.height,
+            Math.max(0, newThumbPos)
+          );
+          const percentage =
+            newThumbPos / (trackRect.height - thumbRect.height);
+          newValue = min + (max - min) * percentage;
         } else {
-          const offsetX = event.clientX - rect.left;
-          const sliderWidth = rect.width;
-          const percentage = Math.max(0, Math.min(offsetX / sliderWidth, 1));
+          newThumbPos = e.clientX - trackRect.left - offset.x;
+          newThumbPos = Math.min(
+            trackRect.width - thumbRect.width,
+            Math.max(0, newThumbPos)
+          );
+          const percentage = newThumbPos / (trackRect.width - thumbRect.width);
           newValue = min + (max - min) * percentage;
         }
 
-        const steppedValue = Math.round(newValue / step) * step;
+        const decimalPlaces = (step.toString().split('.')[1] || '').length;
+        let steppedValue = Math.round(newValue / step) * step;
+        steppedValue = steppedValue.toFixed(decimalPlaces);
+        steppedValue = parseFloat(steppedValue);
+
         onChange(steppedValue);
       };
 
-      const handleMouseUp = () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
+      const mouseUpHandler = () => {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
       };
 
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
     },
     [min, max, step, vertical, onChange]
   );
 
   useEffect(() => {
-    const handle = handleRef.current;
-    handle.addEventListener('mousedown', handleMouseDown);
+    const percentage = (value - min) / (max - min);
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    const trackRect = trackRef.current.getBoundingClientRect();
+
+    const pos =
+      percentage *
+      (vertical
+        ? trackRect.height - thumbRect.height
+        : trackRect.width - thumbRect.width);
+
+    sliderRef.current.style.setProperty(vertical ? `--y` : `--x`, pos);
+  }, [value, min, max, step, vertical]);
+
+  useEffect(() => {
+    const thumb = thumbRef.current;
+    thumb.addEventListener('mousedown', mouseDownThumbHandler);
 
     return () => {
-      handle.removeEventListener('mousedown', handleMouseDown);
+      thumb.removeEventListener('mousedown', mouseDownThumbHandler);
     };
-  }, [handleMouseDown]);
-
-  const handleSize = 20; // Thumb의 크기 (가로와 세로가 동일하다고 가정)
-  const handleOffset = handleSize / 2; // Thumb의 크기의 절반
-  const handleStyle = vertical
-    ? {
-        bottom: `calc(${
-          ((value - min) / (max - min)) * 100
-        }% - ${handleOffset}px)`,
-      }
-    : {
-        left: `calc(${
-          ((value - min) / (max - min)) * 100
-        }% - ${handleOffset}px)`,
-      };
+  }, [mouseDownThumbHandler]);
 
   return (
     <div
-      className={`slider ${vertical ? 'vertical' : 'horizontal'}`}
+      className={`${style.slider} ${
+        style[`slider-${vertical ? `vertical` : `horizontal`}`]
+      } ${flip ? style[`slider-flip`] : ``}`}
       ref={sliderRef}
     >
-      <div className="slider-track" />
-      <div className="slider-handle" ref={handleRef} style={handleStyle} />
+      <div
+        className={style.track}
+        ref={trackRef}
+        onMouseDown={onMouseDownTrack}
+      >
+        <div className={style.thumb} ref={thumbRef}>
+          <div className={style.icon} />
+        </div>
+      </div>
     </div>
   );
 };
