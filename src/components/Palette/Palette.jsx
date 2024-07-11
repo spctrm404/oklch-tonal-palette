@@ -1,5 +1,6 @@
 import { clampChroma, displayable } from 'culori';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { getLengthFormattedNumberString } from '../../utils/getLengthFormattedNumberString.js';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
 
@@ -13,21 +14,15 @@ const Palette = ({
   onClickPalette,
 }) => {
   const renderCnt = useRef(0);
+  const paletteRef = useRef(null);
 
-  const formatNum = useCallback((num, intLen, decimalLen) => {
-    const fixed = num.toFixed(decimalLen);
-    const [intPart, decimalPart] = fixed.split('.');
-    const paddedInt = intPart.padStart(intLen, '0');
-    return `${intLen > 0 ? paddedInt : ``}${
-      decimalLen > 0 ? `.${decimalPart}` : ``
-    }`;
-  }, []);
+  const formatNum = useCallback(getLengthFormattedNumberString, []);
 
   const createAChip = useCallback(
-    (idx, chipNum, lInflect, cMax, hueFrom, hueTo) => {
+    (idx) => {
       if (idx < 0 || chipNum < 1) return null;
 
-      if (idx === 0)
+      if (idx === 1)
         return {
           id: crypto.randomUUID(),
           mode: `oklch`,
@@ -52,11 +47,13 @@ const Palette = ({
       const lightness = idx / chipNum;
 
       const chroma =
-        lInflect === 0
+        lInflect === 1
+          ? cMax * lightness
+          : lInflect === 0
           ? cMax * (1 - lightness)
-          : lightness <= lInflect
-          ? (cMax * lightness) / lInflect
-          : (cMax * lightness) / (1 - lInflect);
+          : lightness < lInflect
+          ? (cMax / lInflect) * lightness
+          : (cMax / (1 - lInflect)) * (1 - lightness);
 
       const hue =
         hueFrom === hueTo
@@ -80,7 +77,7 @@ const Palette = ({
         inSrgb: inSrgb,
       };
     },
-    []
+    [chipNum, lInflect, cMax, hueFrom, hueTo]
   );
   const createChips = useCallback(
     (chipNum, lInflect, cMax, hueFrom, hueTo) => {
@@ -113,12 +110,21 @@ const Palette = ({
     console.log('palette', renderCnt.current);
   }, [chipNum, lInflect, cMax, hueFrom, hueTo, createChips]);
 
+  useEffect(() => {
+    const palette = paletteRef.current;
+    palette.addEventListener('click', onClickPalette);
+
+    return () => {
+      palette.removeEventListener('click', onClickPalette);
+    };
+  }, [onClickPalette]);
+
   return (
     <div
       className={`${style.palette} ${
         isSelected ? style[`palette-selected`] : ``
       }`}
-      onClick={onClickPalette}
+      ref={paletteRef}
     >
       <div className={style.info}>
         <div className={`${style[`info__sticky`]}`}>

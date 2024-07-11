@@ -1,19 +1,13 @@
 import { apcach, crToBg, maxChroma } from 'apcach';
 import { useCallback, useEffect, useRef } from 'react';
+import { getLengthFormattedNumberString } from '../../utils/getLengthFormattedNumberString';
 import style from './Chip.module.scss';
 
 const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   const renderCnt = useRef(0);
   const chipRef = useRef(null);
 
-  const formatNum = useCallback((num, intLen, decimalLen) => {
-    const fixed = num.toFixed(decimalLen);
-    const [intPart, decimalPart] = fixed.split('.');
-    const paddedInt = intPart.padStart(intLen, '0');
-    return `${intLen > 0 ? paddedInt : ``}${
-      decimalLen > 0 ? `.${decimalPart}` : ``
-    }`;
-  }, []);
+  const formatNum = useCallback(getLengthFormattedNumberString, []);
 
   const getGamut = useCallback((inP3, inSrgb) => {
     if (inSrgb) return 'srgb';
@@ -37,22 +31,21 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   }, []);
 
   useEffect(() => {
-    chipRef.current.style.setProperty(`--bg-l`, l);
-    chipRef.current.style.setProperty(`--bg-c`, c);
-    chipRef.current.style.setProperty(`--bg-h`, h);
+    const chip = chipRef.current;
+
+    chip.style.setProperty(`--bg-l`, l);
+    chip.style.setProperty(`--bg-c`, c);
+    chip.style.setProperty(`--bg-h`, h);
 
     const txtColourStrong = getTxtColour(l, c, h, 100);
-    chipRef.current.style.setProperty(
-      `--txt-strong-l`,
-      txtColourStrong.lightness
-    );
-    chipRef.current.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
-    chipRef.current.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
+    chip.style.setProperty(`--txt-strong-l`, txtColourStrong.lightness);
+    chip.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
+    chip.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
 
     const txtColourWeek = getTxtColour(l, c, h, 100);
-    chipRef.current.style.setProperty(`--txt-week-l`, txtColourWeek.lightness);
-    chipRef.current.style.setProperty(`--txt-week-c`, txtColourWeek.chroma);
-    chipRef.current.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
+    chip.style.setProperty(`--txt-week-l`, txtColourWeek.lightness);
+    chip.style.setProperty(`--txt-week-c`, txtColourWeek.chroma);
+    chip.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
 
     renderCnt.current = renderCnt.current + 1;
     console.log('chip', renderCnt.current);
@@ -67,22 +60,16 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     >
       <div className={style.sample}></div>
       <div className={style.info}>
-        <div className={`${style[`info__label`]} ${style[`info__label-l`]}`}>
-          L
-        </div>
-        <div className={`${style[`info__value`]} ${style[`info__value-l`]}`}>
+        <div className={`${style.label} ${style[`label-l`]}`}>L</div>
+        <div className={`${style.value} ${style[`value-l`]}`}>
           {formatNum(l, 0, 3)}
         </div>
-        <div className={`${style[`info__label`]} ${style[`info__label-c`]}`}>
-          C
-        </div>
-        <div className={`${style[`info__value`]} ${style[`info__value-c`]}`}>
+        <div className={`${style.label} ${style[`label-c`]}`}>C</div>
+        <div className={`${style.value} ${style[`value-c`]}`}>
           {formatNum(c, 0, 3)}
         </div>
-        <div className={`${style[`info__label`]} ${style[`info__label-h`]}`}>
-          H
-        </div>
-        <div className={`${style[`info__value`]} ${style[`info__value-h`]}`}>
+        <div className={`${style.label} ${style[`label-h`]}`}>H</div>
+        <div className={`${style.value} ${style[`value-h`]}`}>
           {formatNum(h, 3, 1)}
         </div>
       </div>
