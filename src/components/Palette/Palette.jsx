@@ -50,7 +50,7 @@ const Palette = ({
       ref={paletteRef}
     >
       <div className={style.info}>
-        <div className={`${style[`info__sticky`]}`}>
+        <div className={style.sticky}>
           {`Num: ${chipNum + 1}; H: ${setDigitLength(
             hueFrom,
             3,

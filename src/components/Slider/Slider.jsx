@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
+import classNames from 'classnames/bind';
 import style from './Slider.module.scss';
+
+const cx = classNames.bind(style);
 
 const Slider = ({
   value,
@@ -7,7 +10,7 @@ const Slider = ({
   max,
   step,
   vertical = false,
-  flip = false,
+  thumbDirection = 0,
   onChange,
   children,
   className,
@@ -154,14 +157,25 @@ const Slider = ({
 
   return (
     <div
-      className={`${style.slider} ${
-        style[`slider-${vertical ? `vertical` : `horizontal`}`]
-      } ${flip ? style[`slider-flip`] : ``} ${className}`}
+      className={cx(
+        `slider`,
+        { 'slider--dir-vertical': vertical },
+        { 'slider--dir-horizontal': !vertical },
+        { 'slider--thumb-dir-left': vertical && thumbDirection === -1 },
+        { 'slider--thumb-dir-right': vertical && thumbDirection === 1 },
+        { 'slider--thumb-dir-top': !vertical && thumbDirection === -1 },
+        { 'slider--thumb-dir-bottom': !vertical && thumbDirection === 1 },
+        { 'slider--thumb-dir-center': thumbDirection === 0 }
+      )}
       ref={sliderRef}
     >
-      <div className={`${style.track} track`} ref={trackRef}>
-        <div className={`${style.thumb} thumb`} ref={thumbRef}>
-          {children ? children : <div className={`${style.icon} icon`} />}
+      <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
+        <div className={`${cx(`slider__thumb`)} slider-thumb`} ref={thumbRef}>
+          {children ? (
+            children
+          ) : (
+            <div className={`${cx(`slider__icon`)} slider-icon`} />
+          )}
         </div>
       </div>
     </div>
