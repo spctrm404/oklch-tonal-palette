@@ -32,7 +32,7 @@ $border-rad: $chip-border-rad + $p;
 .chips {
   display: grid;
   grid-template-rows: 1fr;
-  grid-auto-columns: min-content;
+  grid-auto-columns: 1fr;
   grid-auto-flow: column;
   column-gap: 0.5rem;
   padding: $p - $border-thickness;

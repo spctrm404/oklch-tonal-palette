@@ -91,18 +91,14 @@ $border-rad: 0.5rem;
   color: oklch(30% 0 0deg);
   text-align: center;
   background-color: oklch(100% 0 0deg);
-  border: $border-thickness solid #000;
+  border: $border-thickness solid oklch(90% 0 0deg);
   border-radius: 0 0 $border-rad $border-rad;
 
-  @at-root .chip--gamut-srgb #{&} {
-    border-color: oklch(90% 0 0deg);
-  }
-
-  @at-root .chip--gamut-p3 #{&} {
+  @at-root .chip-p3 #{&} {
     border-color: oklch(75% 0.15 75deg);
   }
 
-  @at-root .chip--gamut-out #{&} {
+  @at-root .chip-out #{&} {
     border-color: oklch(60% 0.24 30deg);
   }
 }
