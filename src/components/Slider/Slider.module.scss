@@ -1,103 +1,141 @@
-$min-size: 12.5rem;
-$track-thickness: 0.5rem;
-$thumb-size: 3rem;
-$icon-size: 1.5rem;
+$min-width: 12.5rem;
+$track-thickness: 1rem;
+$thumb-width: 1.25rem;
+$thumb-height: 3rem;
+$icon-width: 0.25rem;
+$icon-height: 2.75rem;
 
 .slider {
   position: relative;
   margin-block: 3rem;
   user-select: none;
-  background-color: oklch(80% 0 0deg);
 
   &--dir-horizontal {
-    width: $min-size;
+    width: min($min-width, 100%);
+    min-width: $min-width;
     height: $track-thickness;
   }
 
   &--dir-vertical {
     width: $track-thickness;
-    height: $min-size;
+    height: min($min-width, 100%);
+    min-height: $min-width;
   }
 
   &__track {
     position: absolute;
 
     @at-root .slider--dir-horizontal #{&} {
-      inset: 0 -0.5 * $thumb-size;
+      inset: 0 -0.5 * $thumb-width;
     }
 
     @at-root .slider--dir-vertical #{&} {
-      inset: -0.5 * $thumb-size 0;
+      inset: -0.5 * $thumb-width 0;
+    }
+  }
+
+  &__indicator {
+    position: absolute;
+
+    &--type {
+      &-ellapsed {
+        background-color: oklch(40% 0 0deg);
+
+        @at-root .slider--dir-horizontal #{&} {
+          inset: 0 calc(100% - var(--x) * 1px) 0 0.5 * $thumb-width;
+          border-radius: 0.5 * $track-thickness 0.125rem 0.125rem 0.5 *
+            $track-thickness;
+        }
+
+        @at-root .slider--dir-vertical #{&} {
+          inset: 0.5 * $thumb-width 0 calc(100% - var(--y) * 1px) 0;
+          border-radius: 0.5 * $track-thickness 0.5 * $track-thickness 0.125rem
+            0.125rem;
+        }
+      }
+
+      &-remain {
+        background-color: oklch(90% 0 0deg);
+
+        @at-root .slider--dir-horizontal #{&} {
+          inset: 0 0.5 * $thumb-width 0 calc(var(--x) * 1px + $thumb-width);
+          border-radius: 0.125rem 0.5 * $track-thickness 0.5 * $track-thickness
+            0.125rem;
+        }
+
+        @at-root .slider--dir-vertical #{&} {
+          inset: calc(var(--y) * 1px + $thumb-width) 0 0.5 * $thumb-width 0;
+          border-radius: 0.125rem 0.125rem 0.5 * $track-thickness 0.5 *
+            $track-thickness;
+        }
+      }
     }
   }
 
   &__thumb {
     position: absolute;
-    width: $thumb-size;
-    height: $thumb-size;
     cursor: pointer;
 
     @at-root .slider--dir-horizontal #{&} {
-      top: calc(50% - 0.5 * $thumb-size);
-      transform: translateX(calc(var(--x) * 1px));
+      width: $thumb-width;
+      height: $thumb-height;
     }
-
+    @at-root .slider--dir-horizontal.slider--thumb-dir-center #{&} {
+      top: 50%;
+      transform: translate(calc(var(--x) * 1px), -50%);
+    }
     @at-root .slider--thumb-dir-top #{&} {
-      top: -$thumb-size + 0.5 * ($thumb-size - $icon-size);
-      transform: translateX(calc(var(--x) * 1px));
+      bottom: 0;
+      transform: translate(calc(var(--x) * 1px), 0);
     }
-
     @at-root .slider--thumb-dir-bottom #{&} {
-      top: calc(100% - 0.5 * ($thumb-size - $icon-size));
-      transform: translateX(calc(var(--x) * 1px));
+      top: 0;
+      transform: translate(calc(var(--x) * 1px), 0);
     }
 
     @at-root .slider--dir-vertical #{&} {
-      left: calc(50% - 0.5 * $thumb-size);
-      transform: translateY(calc(var(--y) * 1px));
+      width: $thumb-height;
+      height: $thumb-width;
     }
-
+    @at-root .slider--dir-vertical.slider--thumb-dir-center #{&} {
+      left: 50%;
+      transform: translate(-50%, calc(var(--y) * 1px));
+    }
     @at-root .slider--thumb-dir-left #{&} {
-      left: -$thumb-size + 0.5 * ($thumb-size - $icon-size);
-      transform: translateY(calc(var(--y) * 1px));
+      right: 0;
+      transform: translate(0, calc(var(--y) * 1px));
     }
-
     @at-root .slider--thumb-dir-right #{&} {
-      left: calc(100% - 0.5 * ($thumb-size - $icon-size));
-      transform: translateY(calc(var(--y) * 1px));
+      left: 0;
+      transform: translate(0, calc(var(--y) * 1px));
     }
   }
 
   &__icon {
-    $offset-l: 50%;
-    $offset-w: 0%;
-
     position: absolute;
     top: 50%;
     left: 50%;
-    width: $icon-size;
-    height: $icon-size;
-    background-color: oklch(30% 0 0deg);
+    background-color: oklch(40% 0 0deg);
+    border-radius: 0.5 * $icon-width;
+    transition: width 150ms ease-in;
     transform: translate(-50%, -50%);
 
-    @at-root .slider--thumb-dir-center #{&} {
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    @at-root .slider--dir-horizontal #{&} {
+      width: $icon-width;
+      height: $icon-height;
     }
 
-    @at-root .slider--thumb-dir-top #{&} {
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    @at-root .slider--dir-vertical #{&} {
+      width: $icon-height;
+      height: $icon-width;
     }
 
-    @at-root .slider--thumb-dir-bottom #{&} {
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    @at-root .slider--dir-horizontal.slider--state-pressed #{&} {
+      width: 0.5 * $icon-width;
     }
 
-    @at-root .slider--thumb-dir-left #{&} {
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    }
-
-    @at-root .slider--thumb-dir-right #{&} {
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    @at-root .slider--dir-vertical.slider--state-pressed #{&} {
+      height: 0.5 * $icon-width;
     }
   }
 }

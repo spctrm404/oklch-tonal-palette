@@ -6,3 +6,10 @@ export const setDigitLength = (num, intLen, decimalLen) => {
     decimalLen > 0 ? `.${decimalPart}` : ``
   }`;
 };
+
+export const setMultipleOfStep = (value, step) => {
+  const decimalPlaces = (step.toString().split('.')[1] || '').length;
+  const multiplied = Math.round(value / step) * step;
+  const steppedValue = parseFloat(multiplied.toFixed(decimalPlaces));
+  return steppedValue;
+};

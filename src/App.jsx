@@ -96,7 +96,7 @@ function App() {
         min={0}
         max={100}
         step={0.1}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
       <Slider
@@ -105,7 +105,7 @@ function App() {
         max={100}
         step={0.1}
         thumbDirection={-1}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
       <Slider
@@ -114,7 +114,7 @@ function App() {
         max={100}
         step={0.1}
         thumbDirection={1}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
       <Slider
@@ -123,7 +123,7 @@ function App() {
         max={100}
         step={0.1}
         vertical={true}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
       <Slider
@@ -133,7 +133,7 @@ function App() {
         step={0.1}
         vertical={true}
         thumbDirection={-1}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
       <Slider
@@ -143,7 +143,7 @@ function App() {
         step={0.1}
         vertical={true}
         thumbDirection={1}
-        onChange={handleSliderChange}
+        setValue={handleSliderChange}
       />
       <p>Slider Value: {sliderValue}</p>
     </div>
