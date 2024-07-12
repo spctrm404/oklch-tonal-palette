@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { setDigitLength } from '../../utils/numFormat';
-import { getTextColor } from '../../utils/colour';
+import { setDigitLength } from '../../utils/numberUtils';
+import { getTextColor } from '../../utils/colourUtils';
 import style from './Chip.module.scss';
 import classNames from 'classnames/bind';
 

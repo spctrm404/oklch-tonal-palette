@@ -30,9 +30,10 @@ function App() {
       return [...prevPalettes, newPalette];
     });
   }, [createARandomPalette]);
-  const changeInputHandler = (key, value) => {
-    console.log(key, value);
+
+  const handleChangePaletteController = (key, value) => {
     if (!selectedPalette) return;
+
     setPalettes((prevPalettes) => {
       return prevPalettes.map((aPalette) => {
         return aPalette.id === selectedPalette.id
@@ -44,6 +45,7 @@ function App() {
       });
     });
   };
+
   const clickPaletteHandler = (id, idx) => {
     setSelectedPalette({ id: id, idx: idx });
   };
@@ -60,7 +62,7 @@ function App() {
           cMax={palettes[selectedPalette.idx].cMax}
           hueFrom={palettes[selectedPalette.idx].hueFrom}
           hueTo={palettes[selectedPalette.idx].hueTo}
-          onChangeInput={changeInputHandler}
+          onChange={handleChangePaletteController}
         ></PaletteController>
       </div>
       <div>

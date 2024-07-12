@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { setDigitLength } from '../../utils/numFormat';
-import { createChips } from '../../utils/colour';
+import { setDigitLength } from '../../utils/numberUtils';
+import { createChips } from '../../utils/colourUtils';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
 import classNames from 'classnames/bind';

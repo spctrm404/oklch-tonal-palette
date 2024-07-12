@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { setMultipleOfStep } from '../../utils/numFormat';
+import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import style from './XYSlider.module.scss';
 import classNames from 'classnames/bind';
 
@@ -33,13 +33,15 @@ const XYSlider = ({
       newThumbPos.x = e.clientX - trackRect.left - offset.x;
       newThumbPos.y = e.clientY - trackRect.top - offset.y;
 
-      newThumbPos.x = Math.min(
-        trackRect.width - thumbRect.width,
-        Math.max(0, newThumbPos.x)
+      newThumbPos.x = clamp(
+        newThumbPos.x,
+        0,
+        trackRect.width - thumbRect.width
       );
-      newThumbPos.y = Math.min(
-        trackRect.height - thumbRect.height,
-        Math.max(0, newThumbPos.y)
+      newThumbPos.y = clamp(
+        newThumbPos.y,
+        0,
+        trackRect.height - thumbRect.height
       );
 
       const percentage = {};
@@ -58,27 +60,23 @@ const XYSlider = ({
     [min, max, step]
   );
 
-  const mouseDownTrackHandler = useCallback(
-    (e) => {
+  const handleMouseDown = useCallback(
+    (e, offset) => {
       e.stopPropagation();
       e.preventDefault();
 
       document.body.style.cursor = 'pointer';
 
-      const thumbRect = thumbRef.current.getBoundingClientRect();
-      offsetRef.current = {
-        x: 0.5 * thumbRect.width,
-        y: 0.5 * thumbRect.height,
-      };
+      offsetRef.current = offset;
 
       const steppedValue = getNewValue(e);
-      onChange?.(steppedValue, min, max);
+      onChange?.({ value: steppedValue, min: min, max: max });
 
       setPressed(true);
 
       const mouseMoveHandler = (e) => {
         const steppedValue = getNewValue(e);
-        onChange?.(steppedValue, min, max);
+        onChange?.({ value: steppedValue, min: min, max: max });
       };
 
       const mouseUpHandler = () => {
@@ -96,42 +94,30 @@ const XYSlider = ({
     [min, max, onChange, getNewValue]
   );
 
-  const mouseDownThumbHandler = useCallback(
+  const handleMouseDownTrack = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-
-      document.body.style.cursor = 'pointer';
-
       const thumbRect = thumbRef.current.getBoundingClientRect();
-      offsetRef.current = {
+      const offset = {
+        x: 0.5 * thumbRect.width,
+        y: 0.5 * thumbRect.height,
+      };
+
+      handleMouseDown(e, offset);
+    },
+    [handleMouseDown]
+  );
+
+  const handleMouseDownThumb = useCallback(
+    (e) => {
+      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const offset = {
         x: e.clientX - thumbRect.left,
         y: e.clientY - thumbRect.top,
       };
 
-      const steppedValue = getNewValue(e);
-      onChange?.(steppedValue, min, max);
-
-      setPressed(true);
-
-      const mouseMoveHandler = (e) => {
-        const steppedValue = getNewValue(e);
-        onChange?.(steppedValue, min, max);
-      };
-
-      const mouseUpHandler = () => {
-        document.body.style.cursor = 'auto';
-
-        setPressed(false);
-
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-      };
-
-      document.addEventListener('mousemove', mouseMoveHandler);
-      document.addEventListener('mouseup', mouseUpHandler);
+      handleMouseDown(e, offset);
     },
-    [min, max, onChange, getNewValue]
+    [handleMouseDown]
   );
 
   useEffect(() => {
@@ -153,18 +139,18 @@ const XYSlider = ({
 
   useEffect(() => {
     const thumb = thumbRef.current;
-    thumb.addEventListener('mousedown', mouseDownThumbHandler);
+    thumb.addEventListener('mousedown', handleMouseDownThumb);
 
     const track = trackRef.current;
     if (trackClickable)
-      track.addEventListener('mousedown', mouseDownTrackHandler);
+      track.addEventListener('mousedown', handleMouseDownTrack);
 
     return () => {
-      thumb.removeEventListener('mousedown', mouseDownThumbHandler);
+      thumb.removeEventListener('mousedown', handleMouseDownThumb);
       if (trackClickable)
-        track.removeEventListener('mousedown', mouseDownTrackHandler);
+        track.removeEventListener('mousedown', handleMouseDownTrack);
     };
-  }, [trackClickable, mouseDownThumbHandler, mouseDownTrackHandler]);
+  }, [trackClickable, handleMouseDownThumb, handleMouseDownTrack]);
 
   return (
     <div
