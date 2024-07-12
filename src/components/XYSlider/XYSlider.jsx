@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { setMultipleOfStep } from '../../utils/numFormat';
-import classNames from 'classnames/bind';
 import style from './XYSlider.module.scss';
+import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
 
@@ -11,7 +11,7 @@ const XYSlider = ({
   max = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
   trackClickable = true,
-  setValue = null,
+  onChange = null,
   className = null,
   children = null,
 }) => {
@@ -72,13 +72,13 @@ const XYSlider = ({
       };
 
       const steppedValue = getNewValue(e);
-      setValue?.(steppedValue);
+      onChange?.(steppedValue, min, max);
 
       setPressed(true);
 
       const mouseMoveHandler = (e) => {
         const steppedValue = getNewValue(e);
-        setValue?.(steppedValue);
+        onChange?.(steppedValue, min, max);
       };
 
       const mouseUpHandler = () => {
@@ -93,7 +93,7 @@ const XYSlider = ({
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     },
-    [setValue, getNewValue]
+    [min, max, onChange, getNewValue]
   );
 
   const mouseDownThumbHandler = useCallback(
@@ -110,13 +110,13 @@ const XYSlider = ({
       };
 
       const steppedValue = getNewValue(e);
-      setValue?.(steppedValue);
+      onChange?.(steppedValue, min, max);
 
       setPressed(true);
 
       const mouseMoveHandler = (e) => {
         const steppedValue = getNewValue(e);
-        setValue?.(steppedValue);
+        onChange?.(steppedValue, min, max);
       };
 
       const mouseUpHandler = () => {
@@ -131,7 +131,7 @@ const XYSlider = ({
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     },
-    [setValue, getNewValue]
+    [min, max, onChange, getNewValue]
   );
 
   useEffect(() => {

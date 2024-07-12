@@ -14,7 +14,7 @@ export const getTextColor = (l, c, h, contrast, direction = 'auto') => {
 export const createAChip = (idx, chipNum, lInflect, cMax, hueFrom, hueTo) => {
   if (idx < 0 || chipNum < 1) return null;
 
-  if (idx === 1)
+  if (idx === 0)
     return {
       id: crypto.randomUUID(),
       mode: `oklch`,

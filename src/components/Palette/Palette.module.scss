@@ -1,42 +1,52 @@
-$chip-border-rad: 0.5rem;
-$p: 0.75rem;
+$p: 1rem;
 $border-thickness: 0.125rem;
-$border-rad: $chip-border-rad + $p;
+$border-rad: 0.75rem;
 
 .palette {
   width: fit-content;
   cursor: pointer;
-  border: $border-thickness solid oklch(90% 0 0deg);
+  user-select: none;
+  border: $border-thickness solid oklch(80% 0 0deg);
   border-radius: $border-rad;
   transition: border-color 150ms ease-in;
 
-  &-selected {
-    border-color: oklch(70% 0 0deg);
+  &--state-selected {
+    border-color: oklch(50% 0 0deg);
   }
-}
 
-.info {
-  padding-block: 0.75rem;
-  padding-inline: $border-rad - $border-thickness;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 100%;
-}
+  &__info {
+    padding-block: $p - $border-thickness;
+    padding-inline: $p - $border-thickness;
+    font-size: 0.75rem;
+    line-height: 100%;
 
-.sticky {
-  position: sticky;
-  left: $border-rad - $border-thickness;
-  width: fit-content;
-}
+    &__sticky {
+      position: sticky;
+      left: $p - $border-thickness;
+      width: fit-content;
+    }
 
-.chips {
-  display: grid;
-  grid-template-rows: 1fr;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
-  column-gap: 0.5rem;
-  padding: $p - $border-thickness;
-  margin-block: 0;
-  background-color: oklch(98% 0 0deg);
-  border-radius: $border-rad - $border-thickness;
+    &__label {
+      font-variation-settings: 'wdth' 75;
+      font-weight: 300;
+      color: oklch(30% 0 0deg);
+    }
+
+    &__value {
+      font-weight: 500;
+      color: oklch(10% 0 0deg);
+    }
+  }
+
+  &__chips {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    column-gap: 0.5rem;
+    padding: $p - $border-thickness;
+    margin-block: 0;
+    background-color: oklch(98% 0 0deg);
+    border-radius: $border-rad - $border-thickness;
+  }
 }

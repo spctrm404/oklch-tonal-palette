@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { setMultipleOfStep } from '../../utils/numFormat';
-import classNames from 'classnames/bind';
 import style from './Slider.module.scss';
+import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
 
@@ -13,7 +13,7 @@ const Slider = ({
   vertical = false,
   thumbDirection = 0,
   trackClickable = true,
-  setValue = null,
+  onChange = null,
   className = null,
   children = null,
 }) => {
@@ -71,13 +71,13 @@ const Slider = ({
       };
 
       const steppedValue = getNewValue(e);
-      setValue?.(steppedValue);
+      onChange?.(steppedValue, min, max);
 
       setPressed(true);
 
       const mouseMoveHandler = (e) => {
         const steppedValue = getNewValue(e);
-        setValue?.(steppedValue);
+        onChange?.(steppedValue, min, max);
       };
 
       const mouseUpHandler = () => {
@@ -92,7 +92,7 @@ const Slider = ({
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     },
-    [setValue, getNewValue]
+    [min, max, onChange, getNewValue]
   );
 
   const mouseDownThumbHandler = useCallback(
@@ -109,13 +109,13 @@ const Slider = ({
       };
 
       const steppedValue = getNewValue(e);
-      setValue?.(steppedValue);
+      onChange?.(steppedValue, min, max);
 
       setPressed(true);
 
       const mouseMoveHandler = (e) => {
         const steppedValue = getNewValue(e);
-        setValue?.(steppedValue);
+        onChange?.(steppedValue, min, max);
       };
 
       const mouseUpHandler = () => {
@@ -130,7 +130,7 @@ const Slider = ({
       document.addEventListener('mousemove', mouseMoveHandler);
       document.addEventListener('mouseup', mouseUpHandler);
     },
-    [setValue, getNewValue]
+    [min, max, onChange, getNewValue]
   );
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const Slider = ({
   return (
     <div
       className={`${cx(
-        `slider`,
+        'slider',
         { 'slider--dir-vertical': vertical },
         { 'slider--dir-horizontal': !vertical },
         { 'slider--thumb-dir-left': vertical && thumbDirection === -1 },
@@ -172,27 +172,27 @@ const Slider = ({
         { 'slider--thumb-dir-bottom': !vertical && thumbDirection === 1 },
         { 'slider--thumb-dir-center': thumbDirection === 0 },
         { 'slider--state-pressed': pressed }
-      )} ${className || ``}`}
+      )} ${className || ''}`}
       ref={sliderRef}
     >
-      <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
+      <div className={`${cx('slider__track')} slider-track`} ref={trackRef}>
         <div
           className={`${cx(
-            `slider__indicator`,
-            `slider__indicator--type-ellapsed`
+            'slider__indicator',
+            'slider__indicator--type-ellapsed'
           )} slider-indicator-ellapsed`}
         />
         <div
           className={`${cx(
-            `slider__indicator`,
-            `slider__indicator--type-remain`
+            'slider__indicator',
+            'slider__indicator--type-remain'
           )} slider-indicator-remain`}
         />
-        <div className={`${cx(`slider__thumb`)} slider-thumb`} ref={thumbRef}>
+        <div className={`${cx('slider__thumb')} slider-thumb`} ref={thumbRef}>
           {children ? (
             children
           ) : (
-            <div className={`${cx(`slider__icon`)} slider-icon`} />
+            <div className={`${cx('slider__icon')} slider-icon`} />
           )}
         </div>
       </div>

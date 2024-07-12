@@ -3,6 +3,9 @@ import { setDigitLength } from '../../utils/numFormat';
 import { createChips } from '../../utils/colour';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
+import classNames from 'classnames/bind';
+
+const cx = classNames.bind(style);
 
 const Palette = ({
   chipNum,
@@ -10,7 +13,7 @@ const Palette = ({
   cMax,
   hueFrom,
   hueTo,
-  isSelected,
+  selected,
   onClickPalette,
 }) => {
   const renderCnt = useRef(0);
@@ -23,6 +26,7 @@ const Palette = ({
   useEffect(() => {
     setChips((prevChips) => {
       const newChips = createChips(chipNum, lInflect, cMax, hueFrom, hueTo);
+      console.log(newChips);
       return newChips.map((aNewChip, idx) => {
         const aPrevChip = prevChips[idx];
         return aPrevChip ? { ...aNewChip, id: aPrevChip.id } : aNewChip;
@@ -44,25 +48,31 @@ const Palette = ({
 
   return (
     <div
-      className={`${style.palette} ${
-        isSelected ? style[`palette-selected`] : ``
-      }`}
+      className={`${cx('palette', { 'palette--state-selected': selected })}`}
       ref={paletteRef}
     >
-      <div className={style.info}>
-        <div className={style.sticky}>
-          {`Num: ${chipNum + 1}; H: ${setDigitLength(
-            hueFrom,
-            3,
-            1
-          )} - ${setDigitLength(hueTo, 3, 1)}; C_Max: ${setDigitLength(
-            cMax,
-            0,
-            3
-          )} @L: ${setDigitLength(lInflect, 0, 3)};`}
+      <div className={`${cx('palette__info')}`}>
+        <div className={`${cx('palette__info__sticky')}`}>
+          <span className={`${cx('palette__info__label')}`}>#</span>
+          <span className={`${cx('palette__info__value')}`}>
+            {`${chipNum + 1}`}
+          </span>
+          {` `}
+          <span className={`${cx('palette__info__label')}`}>{`H:`}</span>
+          <span className={`${cx('palette__info__value')}`}>
+            {`${setDigitLength(hueFrom, 3, 1)}-${setDigitLength(hueTo, 3, 1)}`}
+          </span>{' '}
+          <span className={`${cx('palette__info__label')}`}>{`Cm:`}</span>
+          <span className={`${cx('palette__info__value')}`}>
+            {`${setDigitLength(cMax, 0, 3)}`}
+          </span>{' '}
+          <span className={`${cx('palette__info__label')}`}>{`Li:`}</span>
+          <span className={`${cx('palette__info__value')}`}>
+            {`${setDigitLength(lInflect, 0, 3)}`}
+          </span>
         </div>
       </div>
-      <ul className={style.chips}>
+      <ul className={`${cx('palette__chips')}`}>
         {chips.map((aChip) => {
           return (
             <Chip

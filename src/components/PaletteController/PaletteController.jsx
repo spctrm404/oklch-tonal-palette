@@ -1,4 +1,7 @@
-import { useCallback } from 'react';
+import Button from '../Button/Button.jsx';
+import Slider from '../Slider/Slider.jsx';
+import XYSlider from '../XYSlider/XYSlider.jsx';
+import { useCallback, useState } from 'react';
 
 const PaletteController = ({
   chipNum,
@@ -8,9 +11,11 @@ const PaletteController = ({
   hueTo,
   onChangeInput,
 }) => {
+  const [isRange, setRange] = useState(false);
+
   const onChangeSliderHandler = useCallback(
-    (e, key) => {
-      onChangeInput(key, Number(e.target.value));
+    (value, min, max, key) => {
+      onChangeInput(key, Number(value));
     },
     [onChangeInput]
   );
@@ -21,6 +26,14 @@ const PaletteController = ({
       const maxValue = Number(e.target.max);
       const value = Number(e.target.value);
       onChangeInput(key, Math.min(Math.max(minValue, value), maxValue));
+    },
+    [onChangeInput]
+  );
+
+  const onChangeXYSliderHandler = useCallback(
+    (value, min, max) => {
+      onChangeInput('lInflect', Math.min(Math.max(min.x, value.x), max.x));
+      onChangeInput('cMax', Math.min(Math.max(min.y, value.y), max.y));
     },
     [onChangeInput]
   );
@@ -37,15 +50,13 @@ const PaletteController = ({
         step={1}
         type="number"
       />
-      <input
-        value={lInflect}
-        onChange={(e) => {
-          onChangeSliderHandler(e, 'lInflect');
-        }}
-        min={0}
-        max={1}
-        step={0.001}
-        type="range"
+      <XYSlider
+        value={{ x: lInflect, y: cMax }}
+        min={{ x: 0, y: 0 }}
+        max={{ x: 1, y: 0.4 }}
+        step={{ x: 0.001, y: 0.001 }}
+        trackClickable={false}
+        onChange={onChangeXYSliderHandler}
       />
       <input
         value={lInflect}
@@ -60,16 +71,6 @@ const PaletteController = ({
       <input
         value={cMax}
         onChange={(e) => {
-          onChangeSliderHandler(e, 'cMax');
-        }}
-        min={0}
-        max={0.4}
-        step={0.001}
-        type="range"
-      />
-      <input
-        value={cMax}
-        onChange={(e) => {
           onChangeNumberHandler(e, 'cMax');
         }}
         min={0}
@@ -77,15 +78,24 @@ const PaletteController = ({
         step={0.001}
         type="number"
       />
-      <input
+      <Button label="Range"></Button>
+      <Slider
         value={hueFrom}
-        onChange={(e) => {
-          onChangeSliderHandler(e, 'hueFrom');
+        onChange={(value, min, max) => {
+          onChangeSliderHandler(value, min, max, 'hueFrom');
         }}
         min={0}
         max={360}
         step={0.1}
-        type="range"
+      />
+      <Slider
+        value={hueTo}
+        onChange={(value, min, max) => {
+          onChangeSliderHandler(value, min, max, 'hueTo');
+        }}
+        min={0}
+        max={360}
+        step={0.1}
       />
       <input
         value={hueFrom}
@@ -96,16 +106,6 @@ const PaletteController = ({
         max={360}
         step={0.1}
         type="number"
-      />
-      <input
-        value={hueTo}
-        onChange={(e) => {
-          onChangeSliderHandler(e, 'hueTo');
-        }}
-        min={0}
-        max={360}
-        step={0.1}
-        type="range"
       />
       <input
         value={hueTo}
