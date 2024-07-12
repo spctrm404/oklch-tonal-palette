@@ -48,9 +48,9 @@ $icon-height: 2.75rem;
         }
 
         @at-root .slider--dir-vertical #{&} {
-          inset: 0.5 * $thumb-width 0 calc(100% - var(--y) * 1px) 0;
-          border-radius: 0.5 * $track-thickness 0.5 * $track-thickness 0.125rem
-            0.125rem;
+          inset: calc(var(--y) * 1px + $thumb-width) 0 0.5 * $thumb-width 0;
+          border-radius: 0.125rem 0.125rem 0.5 * $track-thickness 0.5 *
+            $track-thickness;
         }
       }
 
@@ -64,9 +64,9 @@ $icon-height: 2.75rem;
         }
 
         @at-root .slider--dir-vertical #{&} {
-          inset: calc(var(--y) * 1px + $thumb-width) 0 0.5 * $thumb-width 0;
-          border-radius: 0.125rem 0.125rem 0.5 * $track-thickness 0.5 *
-            $track-thickness;
+          inset: 0.5 * $thumb-width 0 calc(100% - var(--y) * 1px) 0;
+          border-radius: 0.5 * $track-thickness 0.5 * $track-thickness 0.125rem
+            0.125rem;
         }
       }
     }
@@ -117,7 +117,7 @@ $icon-height: 2.75rem;
     left: 50%;
     background-color: oklch(40% 0 0deg);
     border-radius: 0.5 * $icon-width;
-    transition: width 150ms ease-in;
+    transition: width 100ms ease-in;
     transform: translate(-50%, -50%);
 
     @at-root .slider--dir-horizontal #{&} {

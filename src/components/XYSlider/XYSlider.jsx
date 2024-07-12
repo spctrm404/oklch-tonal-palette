@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { setMultipleOfStep } from '../../utils/numFormat';
 import classNames from 'classnames/bind';
-import style from './Slider.module.scss';
+import style from './XYSlider.module.scss';
 
 const cx = classNames.bind(style);
 
-const Slider = ({
-  value = 0,
-  min = 0,
-  max = 100,
-  step = 1,
-  vertical = false,
-  thumbDirection = 0,
+const XYSlider = ({
+  value = { x: 0, y: 0 },
+  min = { x: 0, y: 0 },
+  max = { x: 100, y: 100 },
+  step = { x: 1, y: 1 },
   trackClickable = true,
   setValue = null,
   className = null,
@@ -29,32 +27,35 @@ const Slider = ({
       const thumbRect = thumbRef.current.getBoundingClientRect();
       const trackRect = trackRef.current.getBoundingClientRect();
 
-      let newThumbPos;
-      let newValue;
-      if (vertical) {
-        newThumbPos = e.clientY - trackRect.top - offset.y;
-        newThumbPos = Math.min(
-          trackRect.height - thumbRect.height,
-          Math.max(0, newThumbPos)
-        );
-        const percentage =
-          1 - newThumbPos / (trackRect.height - thumbRect.height);
-        newValue = min + (max - min) * percentage;
-      } else {
-        newThumbPos = e.clientX - trackRect.left - offset.x;
-        newThumbPos = Math.min(
-          trackRect.width - thumbRect.width,
-          Math.max(0, newThumbPos)
-        );
-        const percentage = newThumbPos / (trackRect.width - thumbRect.width);
-        newValue = min + (max - min) * percentage;
-      }
+      let newThumbPos = {};
+      let newValue = {};
 
-      const steppedValue = setMultipleOfStep(newValue, step);
+      newThumbPos.x = e.clientX - trackRect.left - offset.x;
+      newThumbPos.y = e.clientY - trackRect.top - offset.y;
+
+      newThumbPos.x = Math.min(
+        trackRect.width - thumbRect.width,
+        Math.max(0, newThumbPos.x)
+      );
+      newThumbPos.y = Math.min(
+        trackRect.height - thumbRect.height,
+        Math.max(0, newThumbPos.y)
+      );
+
+      const percentage = {};
+      percentage.x = newThumbPos.x / (trackRect.width - thumbRect.width);
+      percentage.y = 1 - newThumbPos.y / (trackRect.height - thumbRect.height);
+
+      newValue.x = min.x + (max.x - min.x) * percentage.x;
+      newValue.y = min.y + (max.y - min.y) * percentage.y;
+
+      const steppedValue = {};
+      steppedValue.x = setMultipleOfStep(newValue.x, step.x);
+      steppedValue.y = setMultipleOfStep(newValue.y, step.y);
 
       return steppedValue;
     },
-    [min, max, step, vertical]
+    [min, max, step]
   );
 
   const mouseDownTrackHandler = useCallback(
@@ -134,16 +135,21 @@ const Slider = ({
   );
 
   useEffect(() => {
-    const percentage = (value - min) / (max - min);
+    const percentage = {
+      x: (value.x - min.x) / (max.x - min.x),
+      y: (value.y - min.y) / (max.y - min.y),
+    };
     const thumbRect = thumbRef.current.getBoundingClientRect();
     const trackRect = trackRef.current.getBoundingClientRect();
 
-    const pos = vertical
-      ? (1 - percentage) * (trackRect.height - thumbRect.height)
-      : percentage * (trackRect.width - thumbRect.width);
+    const pos = {
+      x: percentage.x * (trackRect.width - thumbRect.width),
+      y: (1 - percentage.y) * (trackRect.height - thumbRect.height),
+    };
 
-    sliderRef.current.style.setProperty(vertical ? `--y` : `--x`, pos);
-  }, [value, min, max, step, vertical]);
+    sliderRef.current.style.setProperty(`--x`, pos.x);
+    sliderRef.current.style.setProperty(`--y`, pos.y);
+  }, [value, min, max, step]);
 
   useEffect(() => {
     const thumb = thumbRef.current;
@@ -162,32 +168,13 @@ const Slider = ({
 
   return (
     <div
-      className={`${cx(
-        `slider`,
-        { 'slider--dir-vertical': vertical },
-        { 'slider--dir-horizontal': !vertical },
-        { 'slider--thumb-dir-left': vertical && thumbDirection === -1 },
-        { 'slider--thumb-dir-right': vertical && thumbDirection === 1 },
-        { 'slider--thumb-dir-top': !vertical && thumbDirection === -1 },
-        { 'slider--thumb-dir-bottom': !vertical && thumbDirection === 1 },
-        { 'slider--thumb-dir-center': thumbDirection === 0 },
-        { 'slider--state-pressed': pressed }
-      )} ${className || ``}`}
+      className={`${cx(`slider`, { 'slider--state-pressed': pressed })} ${
+        className || ``
+      }`}
       ref={sliderRef}
     >
       <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
-        <div
-          className={`${cx(
-            `slider__indicator`,
-            `slider__indicator--type-ellapsed`
-          )} slider-indicator-ellapsed`}
-        />
-        <div
-          className={`${cx(
-            `slider__indicator`,
-            `slider__indicator--type-remain`
-          )} slider-indicator-remain`}
-        />
+        <div className={`${cx(`slider__indicator`)} slider-indicator`} />
         <div className={`${cx(`slider__thumb`)} slider-thumb`} ref={thumbRef}>
           {children ? (
             children
@@ -200,4 +187,4 @@ const Slider = ({
   );
 };
 
-export default Slider;
+export default XYSlider;

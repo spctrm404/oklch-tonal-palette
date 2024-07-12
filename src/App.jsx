@@ -1,4 +1,5 @@
 import Slider from './components/Slider/Slider.jsx';
+import XYSlider from './components/XYSlider/XYSlider.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
 import Palette from './components/Palette/Palette.jsx';
 import './App.scss';
@@ -87,10 +88,24 @@ function App() {
   const handleSliderChange = (newValue) => {
     setSliderValue(newValue);
   };
+  const [xySliderValue, setXYSliderValue] = useState({ x: 0, y: 0 });
+  const handleXYSliderChange = (newValue) => {
+    setXYSliderValue(newValue);
+  };
 
   return (
     <div className="App">
       <h1>Custom Slider</h1>
+      <XYSlider
+        value={xySliderValue}
+        min={{ x: 0, y: 0 }}
+        max={{ x: 1, y: 0.4 }}
+        step={{ x: 0.001, y: 0.001 }}
+        setValue={handleXYSliderChange}
+      />
+      <p>
+        Slider Value: {xySliderValue.x}, {xySliderValue.y}
+      </p>
       <Slider
         value={sliderValue}
         min={0}

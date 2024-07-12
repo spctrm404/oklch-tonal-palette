@@ -1,0 +1,51 @@
+$min-size: 12.5rem;
+$thumb-size: 3rem;
+$icon-size: 1rem;
+
+.slider {
+  position: relative;
+  width: min($min-size, 100%);
+  min-width: $min-size;
+  height: min($min-size, 100%);
+  min-height: $min-size;
+  margin-block: 3rem;
+  user-select: none;
+
+  &__track {
+    position: absolute;
+    inset: -0.5 * $thumb-size;
+  }
+
+  &__indicator {
+    position: absolute;
+    inset: 0.5 * $thumb-size;
+    background-color: oklch(90% 0 0deg);
+    border-radius: 0.125rem;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $thumb-size;
+    height: $thumb-size;
+    cursor: pointer;
+    transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
+  }
+
+  &__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $icon-size;
+    height: $icon-size;
+    border: 0.25rem solid oklch(40% 0 0deg);
+    border-radius: 0.5 * $icon-size;
+    transition: border-width 100ms ease-in;
+    transform: translate(-50%, -50%);
+
+    @at-root .slider--state-pressed #{&} {
+      border-width: 0.125rem;
+    }
+  }
+}
