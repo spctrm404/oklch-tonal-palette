@@ -154,18 +154,21 @@ const XYSlider = ({
 
   return (
     <div
-      className={`${cx(`slider`, { 'slider--state-pressed': pressed })} ${
+      className={`${cx(`xyslider`, { 'xyslider--state-pressed': pressed })} ${
         className || ''
       }`}
       ref={sliderRef}
     >
-      <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
-        <div className={`${cx(`slider__indicator`)} slider-indicator`} />
-        <div className={`${cx(`slider__thumb`)} slider-thumb`} ref={thumbRef}>
+      <div className={`${cx(`xyslider__track`)} xyslider-track`} ref={trackRef}>
+        <div className={`${cx(`xyslider__indicator`)} xyslider-indicator`} />
+        <div
+          className={`${cx(`xyslider__thumb`)} xyslider-thumb`}
+          ref={thumbRef}
+        >
           {children ? (
             children
           ) : (
-            <div className={`${cx(`slider__icon`)} slider-icon`} />
+            <div className={`${cx(`xyslider__icon`)} xyslider-icon`} />
           )}
         </div>
       </div>

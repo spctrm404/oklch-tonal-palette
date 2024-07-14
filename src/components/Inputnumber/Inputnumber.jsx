@@ -4,12 +4,12 @@ import {
   matchDigitToStep,
   setMultipleOfStep,
 } from '../../utils/numberUtils';
-import style from './Numbox.module.scss';
+import style from './Inputnumber.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
 
-const Numbox = ({
+const Inputnumber = ({
   value = 0,
   min = 0,
   max = 100,
@@ -19,7 +19,7 @@ const Numbox = ({
   className = null,
 }) => {
   const [localValue, setLocalValue] = useState(matchDigitToStep(value, step));
-  const numboxRef = useRef(null);
+  const inputnumberRef = useRef(null);
   const decBtnRef = useRef(null);
   const incBtnRef = useRef(null);
 
@@ -49,8 +49,8 @@ const Numbox = ({
   }, [value, min, max, step, onChange]);
 
   useEffect(() => {
-    const numbox = numboxRef.current;
-    numbox.style.setProperty(`--ch`, ch);
+    const inputnumber = inputnumberRef.current;
+    inputnumber.style.setProperty(`--ch`, ch);
   }, [ch]);
 
   useEffect(() => {
@@ -71,15 +71,12 @@ const Numbox = ({
   }, [handleDecButtonClick, handleIncButtonClick]);
 
   return (
-    <div className={`${cx('numbox')} ${className || ''}`} ref={numboxRef}>
-      <div
-        className={`${cx('numbox__button', 'numbox__button--role-decrease')}`}
-        ref={decBtnRef}
-      >
-        &#8722;
-      </div>
+    <div
+      className={`${cx('inputnumber')} ${className || ''}`}
+      ref={inputnumberRef}
+    >
       <input
-        className={`${cx('numbox__field')}`}
+        className={`${cx('inputnumber__field')} inputnumber-field`}
         type="number"
         value={localValue}
         min={min}
@@ -89,7 +86,19 @@ const Numbox = ({
         onBlur={handleBlurInput}
       />
       <div
-        className={`${cx('numbox__button', 'numbox__button--role-increase')}`}
+        className={`${cx(
+          'inputnumber__button',
+          'inputnumber__button--role-decrease'
+        )} inputnumber-decrease-button`}
+        ref={decBtnRef}
+      >
+        &#8722;
+      </div>
+      <div
+        className={`${cx(
+          'inputnumber__button',
+          'inputnumber__button--role-increase'
+        )} inputnumber-increase-button`}
         ref={incBtnRef}
       >
         &#43;
@@ -98,4 +107,4 @@ const Numbox = ({
   );
 };
 
-export default Numbox;
+export default Inputnumber;

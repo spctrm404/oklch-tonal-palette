@@ -1,4 +1,5 @@
-import Numbox from '../Numbox/Numbox.jsx';
+import Toggle from '../Toggle/Toggle.jsx';
+import Inputnumber from '../Inputnumber/Inputnumber.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
 import { useCallback, useState } from 'react';
@@ -12,6 +13,14 @@ const PaletteController = ({
   onChange,
 }) => {
   const [isRange, setRange] = useState(false);
+
+  const updateIsRange = useCallback(
+    (newState) => {
+      setRange(newState);
+      if (!newState) onChange('hueTo', Number(hueFrom));
+    },
+    [hueFrom, onChange]
+  );
 
   const handleChangeNumbox = useCallback(
     ({ value }, key) => {
@@ -37,7 +46,8 @@ const PaletteController = ({
 
   return (
     <>
-      <Numbox
+      <Toggle state={isRange} onChange={updateIsRange} />
+      <Inputnumber
         value={chipNum}
         min={2}
         max={100}
@@ -57,7 +67,7 @@ const PaletteController = ({
           handleChangeXYSlider(sliderProps, 'lInflect', 'cMax');
         }}
       />
-      <Numbox
+      <Inputnumber
         value={lInflect}
         min={0}
         max={1}
@@ -67,7 +77,7 @@ const PaletteController = ({
           handleChangeNumbox(numboxProps, 'lInflect');
         }}
       />
-      <Numbox
+      <Inputnumber
         value={cMax}
         min={0}
         max={0.4}
@@ -81,19 +91,21 @@ const PaletteController = ({
         value={hueFrom}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueFrom');
+          if (!isRange) handleChangeSlider(sliderProps, 'hueTo');
         }}
         min={0}
         max={360}
         step={0.1}
       />
-      <Numbox
-        value={hueTo}
+      <Inputnumber
+        value={hueFrom}
         min={0}
         max={360}
         step={0.1}
         ch={6}
         onChange={(numboxProps) => {
-          handleChangeNumbox(numboxProps, 'hueTo');
+          handleChangeNumbox(numboxProps, 'hueFrom');
+          if (!isRange) handleChangeSlider(numboxProps, 'hueTo');
         }}
       />
       <Slider
@@ -105,14 +117,14 @@ const PaletteController = ({
         max={360}
         step={0.1}
       />
-      <Numbox
-        value={hueFrom}
+      <Inputnumber
+        value={hueTo}
         min={0}
         max={360}
         step={0.1}
         ch={6}
         onChange={(numboxProps) => {
-          handleChangeNumbox(numboxProps, 'hueFrom');
+          handleChangeNumbox(numboxProps, 'hueTo');
         }}
       />
     </>

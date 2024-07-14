@@ -1,7 +1,7 @@
 $h: 3rem;
 $border-thickness: 0.125rem;
 
-.numbox {
+.inputnumber {
   display: grid;
   grid-template-rows: $h - 2 * $border-thickness;
   grid-template-columns: $h - 2 * $border-thickness 1fr $h - 2 * $border-thickness;
@@ -9,6 +9,7 @@ $border-thickness: 0.125rem;
   width: fit-content;
   font-size: 1rem;
   color: oklch(10% 0 0deg);
+  background-color: oklch(80% 0 0deg);
   border: $border-thickness solid oklch(80% 0 0deg);
   border-radius: 0.5 * $h;
   transition: border-color 100ms ease-in;
@@ -50,7 +51,7 @@ $border-thickness: 0.125rem;
     grid-column: 2;
     width: calc(var(--ch) * 1ch);
     padding-block: 0.5rem;
-    padding-inline: 0.5rem;
+    padding-inline: 0.75rem;
     font: inherit;
     line-height: 1.5rem;
     text-align: right;
