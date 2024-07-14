@@ -155,7 +155,7 @@ const XYSlider = ({
   return (
     <div
       className={`${cx(`slider`, { 'slider--state-pressed': pressed })} ${
-        className || ``
+        className || ''
       }`}
       ref={sliderRef}
     >
