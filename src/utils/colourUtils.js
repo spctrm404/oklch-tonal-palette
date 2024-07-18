@@ -1,9 +1,21 @@
 import { apcach, crToBg, maxChroma } from 'apcach';
 import { clampChroma, displayable } from 'culori';
+import { clamp } from './numberUtils';
+import { CHROMA_STEP, CHROMA_MAX, P3_CHROMA_MAX_OFFSET } from './constants';
 
-export const getTextColor = (l, c, h, contrast, direction = 'auto') => {
+export const getHueOfLightness = (l, hFrom, hTo) => {
+  const h =
+    hFrom === hTo
+      ? hFrom
+      : hFrom < hTo
+      ? (hFrom + l * (hTo - hFrom)) % 360
+      : (hFrom + l * (hTo + 360 - hFrom)) % 360;
+  return h;
+};
+
+export const getApcaTxtColour = (l, c, h, contrast, dir = 'auto') => {
   return apcach(
-    crToBg(`oklch(${l * 100}% ${c} ${h}deg)`, contrast, 'apca', direction),
+    crToBg(`oklch(${l * 100}% ${c} ${h}deg)`, contrast, 'apca', dir),
     maxChroma(),
     h,
     100,
@@ -11,8 +23,8 @@ export const getTextColor = (l, c, h, contrast, direction = 'auto') => {
   );
 };
 
-export const createAChip = (idx, chipNum, lInflect, cMax, hueFrom, hueTo) => {
-  if (idx < 0 || chipNum < 1) return null;
+export const createAChip = (idx, totalChips, lInflect, cMax, hFrom, hTo) => {
+  if (idx < 0 || totalChips < 1) return null;
 
   if (idx === 0)
     return {
@@ -20,63 +32,71 @@ export const createAChip = (idx, chipNum, lInflect, cMax, hueFrom, hueTo) => {
       mode: `oklch`,
       l: 0,
       c: 0,
-      h: hueFrom,
+      h: hFrom,
       inP3: true,
       inSrgb: true,
     };
 
-  if (idx === chipNum)
+  if (idx === totalChips)
     return {
       id: crypto.randomUUID(),
       mode: `oklch`,
       l: 1,
       c: 0,
-      h: hueTo,
+      h: hTo,
       inP3: true,
       inSrgb: true,
     };
 
-  const lightness = idx / chipNum;
+  const l = idx / totalChips;
 
-  const chroma =
+  const c =
     lInflect === 1
-      ? cMax * lightness
+      ? cMax * l
       : lInflect === 0
-      ? cMax * (1 - lightness)
-      : lightness < lInflect
-      ? (cMax / lInflect) * lightness
-      : (cMax / (1 - lInflect)) * (1 - lightness);
+      ? cMax * (1 - l)
+      : l < lInflect
+      ? (cMax / lInflect) * l
+      : (cMax / (1 - lInflect)) * (1 - l);
 
-  const hue =
-    hueFrom === hueTo
-      ? hueFrom
-      : hueFrom < hueTo
-      ? (hueFrom + (idx * (hueTo - hueFrom)) / chipNum) % 360
-      : (hueFrom + (idx * (hueTo + 360 - hueFrom)) / chipNum) % 360;
+  const h = getHueOfLightness(l, hFrom, hTo);
 
-  const colour = `oklch(${lightness} ${chroma} ${hue})`;
-  const clamppedColour = clampChroma(colour, `oklch`, `p3`);
-  const inP3 = chroma <= clamppedColour.c;
-  const inSrgb = displayable(colour);
+  const rawColour = `oklch(${l} ${c} ${h})`;
+  const p3ClamppedColour = clampChroma(rawColour, `oklch`, `p3`);
+  const inP3 = c <= p3ClamppedColour.c;
+  const inSrgb = displayable(rawColour);
 
   return {
     id: crypto.randomUUID(),
     mode: `oklch`,
-    l: clamppedColour.l,
-    c: clamppedColour.c,
-    h: clamppedColour.h,
+    l: p3ClamppedColour.l,
+    c: p3ClamppedColour.c,
+    h: p3ClamppedColour.h,
     inP3: inP3,
     inSrgb: inSrgb,
   };
 };
 
-export const createChips = (chipNum, lInflect, cMax, hueFrom, hueTo) => {
+export const createChips = (totalChips, lInflect, cMax, hFrom, hTo) => {
   const chips = [];
 
-  for (let n = 0; n <= chipNum; n++) {
-    const aChip = createAChip(n, chipNum, lInflect, cMax, hueFrom, hueTo);
+  for (let n = 0; n <= totalChips; n++) {
+    const aChip = createAChip(n, totalChips, lInflect, cMax, hFrom, hTo);
     chips.push(aChip);
   }
 
   return chips;
+};
+
+export const getMaxChromaOfLightness = (l, hFrom, hTo) => {
+  const h = getHueOfLightness(l, hFrom, hTo);
+
+  for (let c = CHROMA_MAX; c >= 0; c -= CHROMA_STEP) {
+    const rawColour = `oklch(${l} ${c} ${h})`;
+    const p3ClamppedColour = clampChroma(rawColour, `oklch`, `p3`);
+    const inP3 = c <= p3ClamppedColour.c;
+
+    if (inP3) return clamp(c - P3_CHROMA_MAX_OFFSET, 0, CHROMA_MAX);
+  }
+  return 0;
 };

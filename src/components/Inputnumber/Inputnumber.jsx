@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  clamp,
-  matchDigitToStep,
-  setMultipleOfStep,
-} from '../../utils/numberUtils';
+import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
+import { formatNumLengthToStep } from '../../utils/stringUtils';
 import style from './Inputnumber.module.scss';
 import classNames from 'classnames/bind';
 
@@ -14,11 +11,13 @@ const Inputnumber = ({
   min = 0,
   max = 100,
   step = 1,
-  ch = 6,
+  displayLength = 6,
   onChange = null,
   className = null,
 }) => {
-  const [localValue, setLocalValue] = useState(matchDigitToStep(value, step));
+  const [localValue, setLocalValue] = useState(
+    formatNumLengthToStep(value, step)
+  );
   const inputnumberRef = useRef(null);
   const decBtnRef = useRef(null);
   const incBtnRef = useRef(null);
@@ -50,11 +49,11 @@ const Inputnumber = ({
 
   useEffect(() => {
     const inputnumber = inputnumberRef.current;
-    inputnumber.style.setProperty(`--ch`, ch);
-  }, [ch]);
+    inputnumber.style.setProperty(`--ch`, displayLength);
+  }, [displayLength]);
 
   useEffect(() => {
-    setLocalValue(matchDigitToStep(value, step));
+    setLocalValue(formatNumLengthToStep(value, step));
   }, [value, step]);
 
   useEffect(() => {

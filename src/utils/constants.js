@@ -1,0 +1,11 @@
+export const LIGHTNESS_STEP = 0.001;
+export const CHROMA_STEP = 0.001;
+export const HUE_STEP = 0.1;
+export const LIGHTNESS_INT_LEN = 1;
+export const CHROMA_INT_LEN = 1;
+export const HUE_INT_LEN = 3;
+export const LIGHTNESS_DECIMAL_LEN = 3;
+export const CHROMA_DECIMAL_LEN = 3;
+export const HUE_DECIMAL_LEN = 1;
+export const CHROMA_MAX = 0.4;
+export const P3_CHROMA_MAX_OFFSET = 0.05;

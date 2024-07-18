@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { setDigitLength } from '../../utils/numberUtils';
-import { getTextColor } from '../../utils/colourUtils';
+import {
+  HUE_INT_LEN,
+  LIGHTNESS_DECIMAL_LEN,
+  CHROMA_DECIMAL_LEN,
+  HUE_DECIMAL_LEN,
+} from '../../utils/constants';
+import { formatNumLength } from '../../utils/stringUtils';
+import { getApcaTxtColour } from '../../utils/colourUtils';
 import style from './Chip.module.scss';
 import classNames from 'classnames/bind';
 
@@ -17,7 +23,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     chip.style.setProperty(`--bg-c`, c);
     chip.style.setProperty(`--bg-h`, h);
 
-    const txtColourStrong = getTextColor(
+    const txtColourStrong = getApcaTxtColour(
       l,
       c,
       h,
@@ -28,7 +34,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     chip.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
     chip.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
 
-    const txtColourWeek = getTextColor(
+    const txtColourWeek = getApcaTxtColour(
       l,
       c,
       h,
@@ -60,19 +66,19 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
       <div className={`${cx('chip__info')}`}>
         <div className={`${cx('chip__label', 'chip__label--for-l')}`}>L</div>
         <div className={`${cx('chip__value', 'chip__value--for-l')}`}>
-          {setDigitLength(l, 0, 3)}
+          {formatNumLength(l, 0, LIGHTNESS_DECIMAL_LEN)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-c')}`}>C</div>
         <div className={`${cx('chip__value', 'chip__value--for-c')}`}>
-          {setDigitLength(c, 0, 3)}
+          {formatNumLength(c, 0, CHROMA_DECIMAL_LEN)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-h')}`}>H</div>
         <div className={`${cx('chip__value', 'chip__value--for-h')}`}>
-          {setDigitLength(h, 3, 1)}
+          {formatNumLength(h, HUE_INT_LEN, HUE_DECIMAL_LEN)}
         </div>
       </div>
       <div className={`${cx('chip__name')}`}>
-        {setDigitLength(l * 100, 3, 0)}
+        {formatNumLength(l * 100, 3, 0)}
       </div>
     </li>
   );

@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { setDigitLength } from '../../utils/numberUtils';
+import {
+  HUE_INT_LEN,
+  LIGHTNESS_DECIMAL_LEN,
+  CHROMA_DECIMAL_LEN,
+  HUE_DECIMAL_LEN,
+} from '../../utils/constants';
+import { formatNumLength } from '../../utils/stringUtils';
 import { createChips } from '../../utils/colourUtils';
 import Chip from '../Chip/Chip.jsx';
 import style from './Palette.module.scss';
@@ -8,11 +14,11 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(style);
 
 const Palette = ({
-  chipNum,
+  totalChips,
   lInflect,
   cMax,
-  hueFrom,
-  hueTo,
+  hFrom,
+  hTo,
   selected,
   onClickPalette,
 }) => {
@@ -20,12 +26,12 @@ const Palette = ({
   const paletteRef = useRef(null);
 
   const [chips, setChips] = useState(
-    createChips(chipNum, lInflect, cMax, hueFrom, hueTo)
+    createChips(totalChips, lInflect, cMax, hFrom, hTo)
   );
 
   useEffect(() => {
     setChips((prevChips) => {
-      const newChips = createChips(chipNum, lInflect, cMax, hueFrom, hueTo);
+      const newChips = createChips(totalChips, lInflect, cMax, hFrom, hTo);
       console.log(newChips);
       return newChips.map((aNewChip, idx) => {
         const aPrevChip = prevChips[idx];
@@ -35,7 +41,7 @@ const Palette = ({
 
     renderCnt.current = renderCnt.current + 1;
     console.log('palette', renderCnt.current);
-  }, [chipNum, lInflect, cMax, hueFrom, hueTo]);
+  }, [totalChips, lInflect, cMax, hFrom, hTo]);
 
   useEffect(() => {
     const palette = paletteRef.current;
@@ -55,20 +61,24 @@ const Palette = ({
         <div className={`${cx('palette__info__sticky')}`}>
           <span className={`${cx('palette__info__label')}`}>#</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${chipNum + 1}`}
+            {`${totalChips + 1}`}
           </span>
           {` `}
           <span className={`${cx('palette__info__label')}`}>{`H:`}</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${setDigitLength(hueFrom, 3, 1)}-${setDigitLength(hueTo, 3, 1)}`}
+            {`${formatNumLength(
+              hFrom,
+              HUE_INT_LEN,
+              HUE_DECIMAL_LEN
+            )}-${formatNumLength(hTo, HUE_INT_LEN, HUE_DECIMAL_LEN)}`}
           </span>{' '}
           <span className={`${cx('palette__info__label')}`}>{`Cm:`}</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${setDigitLength(cMax, 0, 3)}`}
+            {`${formatNumLength(cMax, 0, CHROMA_DECIMAL_LEN)}`}
           </span>{' '}
           <span className={`${cx('palette__info__label')}`}>{`Li:`}</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${setDigitLength(lInflect, 0, 3)}`}
+            {`${formatNumLength(lInflect, 0, LIGHTNESS_DECIMAL_LEN)}`}
           </span>
         </div>
       </div>
