@@ -1,8 +1,10 @@
+import Toggle from './components/Toggle/Toggle.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
 import Palette from './components/Palette/Palette.jsx';
+import { ThemeContext } from './context/ThemeContext.jsx';
 import { HUE_STEP } from './utils/constants';
 import { setMultipleOfStep } from './utils/numberUtils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import './App.scss';
 
 function App() {
@@ -52,8 +54,12 @@ function App() {
   };
   useEffect(() => {}, []);
 
+  const { theme, updateTheme } = useContext(ThemeContext);
+
   return (
     <>
+      <p>{theme}</p>
+      <Toggle state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>
         ADD
       </button>

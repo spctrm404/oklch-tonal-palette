@@ -13,6 +13,18 @@ export const getHueOfLightness = (l, hFrom, hTo) => {
   return h;
 };
 
+export const getChromaOfLightness = (l, lInflect, cMax) => {
+  const c =
+    lInflect === 1
+      ? cMax * l
+      : lInflect === 0
+      ? cMax * (1 - l)
+      : l < lInflect
+      ? (cMax / lInflect) * l
+      : (cMax / (1 - lInflect)) * (1 - l);
+  return c;
+};
+
 export const getApcaTxtColour = (l, c, h, contrast, dir = 'auto') => {
   return apcach(
     crToBg(`oklch(${l * 100}% ${c} ${h}deg)`, contrast, 'apca', dir),
@@ -49,16 +61,7 @@ export const createAChip = (idx, totalChips, lInflect, cMax, hFrom, hTo) => {
     };
 
   const l = idx / totalChips;
-
-  const c =
-    lInflect === 1
-      ? cMax * l
-      : lInflect === 0
-      ? cMax * (1 - l)
-      : l < lInflect
-      ? (cMax / lInflect) * l
-      : (cMax / (1 - lInflect)) * (1 - l);
-
+  const c = getChromaOfLightness(l, lInflect, cMax);
   const h = getHueOfLightness(l, hFrom, hTo);
 
   const rawColour = `oklch(${l} ${c} ${h})`;

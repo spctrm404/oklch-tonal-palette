@@ -11,7 +11,15 @@ body {
   font-style: normal;
   font-weight: 400;
   font-optical-sizing: auto;
-}
+  transition: color 200ms ease-in, background-color 200ms ease-in;
 
-#root {
+  &[data-theme='light'] {
+    color: var(--on-bg-light);
+    background-color: var(--bg-light);
+  }
+
+  &[data-theme='dark'] {
+    color: var(--on-bg-dark);
+    background-color: var(--bg-dark);
+  }
 }
