@@ -1,16 +1,12 @@
-$h: 2rem;
-$border-thickness: 0.125rem;
-$thumb-size-false: 1rem;
-$thumb-size-hover: 1.75rem;
-$thumb-size-true: 1.5rem;
+@import '_Toggle.variant';
 
 .toggle {
   position: relative;
-  width: 3.25rem;
-  height: $h;
+  width: $width;
+  height: $height;
   background-color: oklch(90% 0 0deg);
   border: $border-thickness solid oklch(50% 0 0deg);
-  border-radius: 0.5 * $h;
+  border-radius: 0.5 * $height;
   transition: all 150ms ease-in;
 
   &--state {
@@ -33,10 +29,7 @@ $thumb-size-true: 1.5rem;
     transform: translate(-50%, -50%);
 
     &:hover {
-      width: $thumb-size-hover;
-      height: $thumb-size-hover;
       background-color: oklch(30% 0 0deg);
-      border-radius: 0.5 * $thumb-size-hover;
     }
 
     @at-root .toggle--state-true #{&} {
@@ -45,12 +38,6 @@ $thumb-size-true: 1.5rem;
       background-color: oklch(100% 0 0deg);
       border-radius: 0.5 * $thumb-size-true;
       transform: translate(calc(-50% + 1.25rem), -50%);
-
-      &:hover {
-        width: $thumb-size-hover;
-        height: $thumb-size-hover;
-        border-radius: 0.5 * $thumb-size-hover;
-      }
     }
   }
 }

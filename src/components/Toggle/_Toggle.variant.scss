@@ -1,0 +1,35 @@
+$width: 3.25rem;
+$height: 2rem;
+$border-thickness: 0.125rem;
+$thumb-size-false: 1rem;
+$thumb-size-pressed: 1.75rem;
+$thumb-size-true: 1.5rem;
+
+.toggle {
+  $parent-selector: &;
+
+  &--value-false {
+    #{$parent-selector}__track {
+      background-color: var(--surface-container-highest-light);
+      border-color: var(--outline-light);
+    }
+
+    #{$parent-selector}__handle {
+    }
+
+    #{$parent-selector}__handle-shape {
+      background-color: var(--outline-light);
+    }
+  }
+
+  &--value-true {
+    #{$parent-selector}__track {
+    }
+
+    #{$parent-selector}__handle {
+    }
+
+    #{$parent-selector}__handle-shape {
+    }
+  }
+}
