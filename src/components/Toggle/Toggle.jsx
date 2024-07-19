@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
 import style from './_Toggle.module.scss';
 import classNames from 'classnames/bind';
 
@@ -9,19 +10,28 @@ const Toggle = ({
   onChange = null,
   className = null,
 }) => {
+  const { theme } = useContext(ThemeContext);
+
   const toggleRef = useRef(null);
   const handleRef = useRef(null);
 
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
   const [isPressed, setPressed] = useState(false);
+  const isFocusedByPointer = useRef(false);
 
-  const handleClick = useCallback(
+  const handleClickToggle = useCallback(() => {
+    onChange?.(!value);
+  }, [value, onChange]);
+  const handleClickHandle = useCallback(
     (e) => {
+      if (isFocused) {
+        handleRef.current.blur();
+      }
       e.stopPropagation();
       onChange?.(!value);
     },
-    [value, onChange]
+    [value, onChange, handleRef, isFocused]
   );
   const handleMouseEnterHandle = useCallback(() => {
     setHovered(true);
@@ -30,19 +40,26 @@ const Toggle = ({
     setHovered(false);
   }, []);
   const handleFocusHandle = useCallback(() => {
+    if (isFocusedByPointer.current) return;
     setFocused(true);
-  }, []);
+  }, [isFocusedByPointer]);
   const handleBlurHandle = useCallback(() => {
     setFocused(false);
   }, []);
-  const handlePointerDownHandle = useCallback(() => {
+  const handlePointerDownHandle = useCallback((e) => {
+    e.preventDefault();
+
+    isFocusedByPointer.current = true;
     setPressed(true);
 
     const handlePointerMove = (e) => {
       e.preventDefault();
     };
 
-    const handlePointerUp = () => {
+    const handlePointerUp = (e) => {
+      e.preventDefault();
+
+      isFocusedByPointer.current = false;
       setPressed(false);
 
       document.removeEventListener('pointermove', handlePointerMove);
@@ -57,8 +74,8 @@ const Toggle = ({
     const toggle = toggleRef.current;
     const handle = handleRef.current;
 
-    toggle.addEventListener('click', handleClick);
-    handle.addEventListener('click', handleClick);
+    toggle.addEventListener('click', handleClickToggle);
+    handle.addEventListener('click', handleClickHandle);
 
     handle.addEventListener('mouseenter', handleMouseEnterHandle);
     handle.addEventListener('mouseleave', handleMouseLeaveHandle);
@@ -67,8 +84,8 @@ const Toggle = ({
     handle.addEventListener('pointerdown', handlePointerDownHandle);
 
     return () => {
-      toggle.removeEventListener('click', handleClick);
-      handle.removeEventListener('click', handleClick);
+      toggle.removeEventListener('click', handleClickToggle);
+      handle.removeEventListener('click', handleClickHandle);
 
       handle.removeEventListener('mouseenter', handleMouseEnterHandle);
       handle.removeEventListener('mouseleave', handleMouseLeaveHandle);
@@ -76,7 +93,15 @@ const Toggle = ({
       handle.removeEventListener('blur', handleBlurHandle);
       handle.removeEventListener('pointerdown', handlePointerDownHandle);
     };
-  });
+  }, [
+    handleClickToggle,
+    handleClickHandle,
+    handleMouseEnterHandle,
+    handleMouseLeaveHandle,
+    handleFocusHandle,
+    handleBlurHandle,
+    handlePointerDownHandle,
+  ]);
 
   return (
     <div
@@ -90,6 +115,7 @@ const Toggle = ({
         { 'toggle--state-pressed': isPressed }
       )} ${className || ''}`}
       ref={toggleRef}
+      data-theme={theme}
     >
       <div className={`${cx('toggle__track')} "toggle-track"`} />
       <div

@@ -4,14 +4,15 @@
   position: relative;
   width: $width;
   height: $height;
-  transition: all 500ms ease-in;
 
   &__track {
     position: absolute;
     inset: 0;
     border-style: solid;
     border-width: $border-width;
-    transition: all 500ms ease-in;
+    border-radius: $rad;
+    transition: background-color $duration $easing,
+      border-color $duration $easing;
   }
 
   &__handle {
@@ -20,7 +21,7 @@
     left: 0.5 * $height;
     width: $handle-size;
     height: $handle-size;
-    transition: all 500ms ease-in;
+    transition: transform $duration $easing;
   }
 
   &__handle-state {
@@ -29,14 +30,18 @@
     left: 50%;
     width: $handle-state-size;
     height: $handle-state-size;
-    transition: all 500ms ease-in;
+    border-radius: $handle-state-rad;
+    transition: background-color $duration $easing, opacity $duration $easing,
+      transform $duration $easing;
   }
 
   &__handle-shape {
     position: absolute;
     top: 50%;
     left: 50%;
-    transition: all 500ms ease-in;
+    border-radius: $handle-shape-rad;
+    transition: width $duration $easing, height $duration $easing,
+      background-color $duration $easing;
     transform: translate(-50%, -50%);
   }
 }

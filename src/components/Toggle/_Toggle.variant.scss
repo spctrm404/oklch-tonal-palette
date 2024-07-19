@@ -6,6 +6,11 @@ $handle-state-size: 2.5rem;
 $handle-shape-size-false: 1rem;
 $handle-shape-size-pressed: 1.75rem;
 $handle-shape-size-true: 1.5rem;
+$handle-shape-rad: 0.25rem;
+$handle-state-rad: $handle-shape-rad;
+$rad: $handle-shape-rad + $border-width;
+$duration: 100ms;
+$easing: ease-in;
 
 .toggle {
   $parent-selector: &;
@@ -98,6 +103,62 @@ $handle-shape-size-true: 1.5rem;
     &#{$parent-selector}--state-pressed {
       #{$parent-selector}__handle-shape {
         background-color: var(--primary-container-light);
+      }
+    }
+  }
+
+  &[data-theme='dark']#{&}--value-false {
+    #{$parent-selector}__track {
+      background-color: var(--surface-container-highest-dark);
+      border-color: var(--outline-dark);
+    }
+
+    #{$parent-selector}__handle-state {
+      background-color: var(--on-surface-dark);
+    }
+
+    #{$parent-selector}__handle-shape {
+      background-color: var(--outline-dark);
+    }
+
+    &#{$parent-selector}--state-hovered,
+    &#{$parent-selector}--state-focused {
+      #{$parent-selector}__handle-shape {
+        background-color: var(--on-surface-dark);
+      }
+    }
+
+    &#{$parent-selector}--state-pressed {
+      #{$parent-selector}__handle-shape {
+        background-color: var(--on-surface-dark);
+      }
+    }
+  }
+
+  &[data-theme='dark']#{&}--value-true {
+    #{$parent-selector}__track {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    #{$parent-selector}__handle-state {
+      background-color: var(--primary-container-dark);
+    }
+
+    #{$parent-selector}__handle-shape {
+      background-color: var(--on-primary-dark);
+    }
+
+    &#{$parent-selector}--state-hovered,
+    &#{$parent-selector}--state-focused {
+      #{$parent-selector}__handle-shape {
+        background-color: var(--primary-container-dark);
+      }
+    }
+
+    &#{$parent-selector}--state-pressed {
+      #{$parent-selector}__handle-shape {
+        background-color: var(--primary-container-dark);
       }
     }
   }
