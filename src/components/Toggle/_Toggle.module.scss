@@ -4,40 +4,39 @@
   position: relative;
   width: $width;
   height: $height;
-  background-color: oklch(90% 0 0deg);
-  border: $border-thickness solid oklch(50% 0 0deg);
-  border-radius: 0.5 * $height;
-  transition: all 150ms ease-in;
+  transition: all 500ms ease-in;
 
-  &--state {
-    &-true {
-      background-color: oklch(40% 0 0deg);
-      border-color: oklch(40% 0 0deg);
-    }
+  &__track {
+    position: absolute;
+    inset: 0;
+    border-style: solid;
+    border-width: $border-width;
+    transition: all 500ms ease-in;
   }
 
-  &__thumb {
+  &__handle {
     position: absolute;
     top: 50%;
-    right: unset;
-    left: 0.875rem;
-    width: $thumb-size-false;
-    height: $thumb-size-false;
-    background-color: oklch(50% 0 0deg);
-    border-radius: 0.5 * $thumb-size-false;
-    transition: all 100ms ease-in;
+    left: 0.5 * $height;
+    width: $handle-size;
+    height: $handle-size;
+    transition: all 500ms ease-in;
+  }
+
+  &__handle-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $handle-state-size;
+    height: $handle-state-size;
+    transition: all 500ms ease-in;
+  }
+
+  &__handle-shape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: all 500ms ease-in;
     transform: translate(-50%, -50%);
-
-    &:hover {
-      background-color: oklch(30% 0 0deg);
-    }
-
-    @at-root .toggle--state-true #{&} {
-      width: $thumb-size-true;
-      height: $thumb-size-true;
-      background-color: oklch(100% 0 0deg);
-      border-radius: 0.5 * $thumb-size-true;
-      transform: translate(calc(-50% + 1.25rem), -50%);
-    }
   }
 }

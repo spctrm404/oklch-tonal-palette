@@ -11,6 +11,7 @@ const Toggle = ({
 }) => {
   const toggleRef = useRef(null);
   const handleRef = useRef(null);
+
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
   const [isPressed, setPressed] = useState(false);
@@ -18,7 +19,6 @@ const Toggle = ({
   const handleClick = useCallback(
     (e) => {
       e.stopPropagation();
-      setPressed(false);
       onChange?.(!value);
     },
     [value, onChange]
@@ -37,6 +37,20 @@ const Toggle = ({
   }, []);
   const handlePointerDownHandle = useCallback(() => {
     setPressed(true);
+
+    const handlePointerMove = (e) => {
+      e.preventDefault();
+    };
+
+    const handlePointerUp = () => {
+      setPressed(false);
+
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
   }, []);
 
   useEffect(() => {
