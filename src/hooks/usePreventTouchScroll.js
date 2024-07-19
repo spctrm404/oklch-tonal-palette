@@ -18,12 +18,8 @@ const usePreventTouchScroll = () => {
           passive: false,
         });
       } else {
-        document.addEventListener('touchstart', handleTouchStart, {
-          passive: false,
-        });
-        document.addEventListener('touchmove', handleTouchMove, {
-          passive: false,
-        });
+        document.removeEventListener('touchstart', handleTouchStart);
+        document.removeEventListener('touchmove', handleTouchMove);
       }
     },
     [handleTouchStart, handleTouchMove]
