@@ -47,6 +47,7 @@ const Toggle = ({
     setFocused(false);
   }, []);
   const handlePointerDownHandle = useCallback((e) => {
+    e.stopPropagation();
     e.preventDefault();
 
     isFocusedByPointer.current = true;

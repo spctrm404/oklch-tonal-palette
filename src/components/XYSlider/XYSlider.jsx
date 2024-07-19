@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+// rename track
+
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
-import style from './XYSlider.module.scss';
+import usePreventTouchScroll from '../../hooks/usePreventTouchScroll';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
+import style from './_XYSlider.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
@@ -13,124 +17,163 @@ const XYSlider = ({
   trackClickable = true,
   onChange = null,
   className = null,
-  children = null,
+  children: handleShape = null,
 }) => {
-  const [pressed, setPressed] = useState(false);
+  const { theme } = useContext(ThemeContext);
+
   const sliderRef = useRef(null);
   const trackRef = useRef(null);
-  const thumbRef = useRef(null);
+  const handleRef = useRef(null);
+
   const offsetRef = useRef(null);
+
+  const preventTouchScroll = usePreventTouchScroll();
+
+  const [isHovered, setHovered] = useState(false);
+  const [isFocused, setFocused] = useState(false);
+  const [isPressed, setPressed] = useState(false);
+  const isFocusedByPointer = useRef(false);
+
+  const handleMouseEnterHandle = useCallback((e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setHovered(true);
+  }, []);
+  const handleMouseLeaveHandle = useCallback((e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setHovered(false);
+  }, []);
+  const handleFocusHandle = useCallback(
+    (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (isFocusedByPointer.current) return;
+      setFocused(true);
+    },
+    [isFocusedByPointer]
+  );
+  const handleBlurHandle = useCallback((e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setFocused(false);
+  }, []);
 
   const getNewValue = useCallback(
     (e) => {
       const offset = offsetRef.current;
-      const thumbRect = thumbRef.current.getBoundingClientRect();
       const trackRect = trackRef.current.getBoundingClientRect();
+      const handleRect = handleRef.current.getBoundingClientRect();
 
-      let newThumbPos = {};
-      let newValue = {};
+      const newHandlePos = {};
+      const normalizedPos = {};
+      const newValue = {};
 
-      newThumbPos.x = e.clientX - trackRect.left - offset.x;
-      newThumbPos.y = e.clientY - trackRect.top - offset.y;
+      newHandlePos.x = e.clientX - trackRect.left - offset.x;
+      newHandlePos.y = e.clientY - trackRect.top - offset.y;
 
-      newThumbPos.x = clamp(
-        newThumbPos.x,
+      newHandlePos.x = clamp(
+        newHandlePos.x,
         0,
-        trackRect.width - thumbRect.width
+        trackRect.width - handleRect.width
       );
-      newThumbPos.y = clamp(
-        newThumbPos.y,
+      newHandlePos.y = clamp(
+        newHandlePos.y,
         0,
-        trackRect.height - thumbRect.height
+        trackRect.height - handleRect.height
       );
 
-      const percentage = {};
-      percentage.x = newThumbPos.x / (trackRect.width - thumbRect.width);
-      percentage.y = 1 - newThumbPos.y / (trackRect.height - thumbRect.height);
+      normalizedPos.x = newHandlePos.x / (trackRect.width - handleRect.width);
+      normalizedPos.y =
+        1 - newHandlePos.y / (trackRect.height - handleRect.height);
 
-      newValue.x = min.x + (max.x - min.x) * percentage.x;
-      newValue.y = min.y + (max.y - min.y) * percentage.y;
+      newValue.x = min.x + (max.x - min.x) * normalizedPos.x;
+      newValue.y = min.y + (max.y - min.y) * normalizedPos.y;
 
-      const steppedValue = {};
-      steppedValue.x = setMultipleOfStep(newValue.x, step.x);
-      steppedValue.y = setMultipleOfStep(newValue.y, step.y);
+      newValue.x = setMultipleOfStep(newValue.x, step.x);
+      newValue.y = setMultipleOfStep(newValue.y, step.y);
 
-      return steppedValue;
+      return newValue;
     },
     [min, max, step]
   );
-
-  const handleMouseDown = useCallback(
+  const handlePointerDown = useCallback(
     (e, offset) => {
+      const handlePointerMove = (e) => {
+        e.preventDefault();
+
+        const newValue = getNewValue(e);
+        onChange?.({ value: newValue, min: min, max: max });
+      };
+
+      const handlePointerUp = (e) => {
+        e.preventDefault();
+
+        document.body.style.cursor = 'auto';
+
+        isFocusedByPointer.current = false;
+        setPressed(false);
+
+        preventTouchScroll(false);
+
+        document.removeEventListener('pointermove', handlePointerMove);
+        document.removeEventListener('pointerup', handlePointerUp);
+      };
+
       e.stopPropagation();
       e.preventDefault();
+      preventTouchScroll(true);
 
       document.body.style.cursor = 'pointer';
 
       offsetRef.current = offset;
+      const newValue = getNewValue(e);
+      onChange?.({ value: newValue, min: min, max: max });
 
-      const steppedValue = getNewValue(e);
-      onChange?.({ value: steppedValue, min: min, max: max });
-
+      isFocusedByPointer.current = true;
       setPressed(true);
 
-      const mouseMoveHandler = (e) => {
-        const steppedValue = getNewValue(e);
-        onChange?.({ value: steppedValue, min: min, max: max });
-      };
-
-      const mouseUpHandler = () => {
-        document.body.style.cursor = 'auto';
-
-        setPressed(false);
-
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-      };
-
-      document.addEventListener('mousemove', mouseMoveHandler);
-      document.addEventListener('mouseup', mouseUpHandler);
+      document.addEventListener('pointermove', handlePointerMove);
+      document.addEventListener('pointerup', handlePointerUp);
     },
-    [min, max, onChange, getNewValue]
+    [min, max, onChange, preventTouchScroll, getNewValue]
   );
-
-  const handleMouseDownTrack = useCallback(
+  const handlePointerDownTrack = useCallback(
     (e) => {
-      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const handleRect = handleRef.current.getBoundingClientRect();
       const offset = {
-        x: 0.5 * thumbRect.width,
-        y: 0.5 * thumbRect.height,
+        x: 0.5 * handleRect.width,
+        y: 0.5 * handleRect.height,
       };
 
-      handleMouseDown(e, offset);
+      handlePointerDown(e, offset);
     },
-    [handleMouseDown]
+    [handlePointerDown]
   );
-
-  const handleMouseDownThumb = useCallback(
+  const handlePointerDownHandle = useCallback(
     (e) => {
-      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const handleRect = handleRef.current.getBoundingClientRect();
       const offset = {
-        x: e.clientX - thumbRect.left,
-        y: e.clientY - thumbRect.top,
+        x: e.clientX - handleRect.left,
+        y: e.clientY - handleRect.top,
       };
 
-      handleMouseDown(e, offset);
+      handlePointerDown(e, offset);
     },
-    [handleMouseDown]
+    [handlePointerDown]
   );
 
   useEffect(() => {
-    const percentage = {
+    const normalizedPos = {
       x: (value.x - min.x) / (max.x - min.x),
       y: (value.y - min.y) / (max.y - min.y),
     };
-    const thumbRect = thumbRef.current.getBoundingClientRect();
     const trackRect = trackRef.current.getBoundingClientRect();
+    const handleRect = handleRef.current.getBoundingClientRect();
 
     const pos = {
-      x: percentage.x * (trackRect.width - thumbRect.width),
-      y: (1 - percentage.y) * (trackRect.height - thumbRect.height),
+      x: normalizedPos.x * (trackRect.width - handleRect.width),
+      y: (1 - normalizedPos.y) * (trackRect.height - handleRect.height),
     };
 
     sliderRef.current.style.setProperty(`--x`, pos.x);
@@ -138,38 +181,67 @@ const XYSlider = ({
   }, [value, min, max, step]);
 
   useEffect(() => {
-    const thumb = thumbRef.current;
-    thumb.addEventListener('mousedown', handleMouseDownThumb);
-
     const track = trackRef.current;
+    const handle = handleRef.current;
+
     if (trackClickable)
-      track.addEventListener('mousedown', handleMouseDownTrack);
+      track.addEventListener('pointerdown', handlePointerDownTrack);
+
+    handle.addEventListener('mouseenter', handleMouseEnterHandle);
+    handle.addEventListener('mouseleave', handleMouseLeaveHandle);
+    handle.addEventListener('focus', handleFocusHandle);
+    handle.addEventListener('blur', handleBlurHandle);
+    handle.addEventListener('pointerdown', handlePointerDownHandle);
 
     return () => {
-      thumb.removeEventListener('mousedown', handleMouseDownThumb);
       if (trackClickable)
-        track.removeEventListener('mousedown', handleMouseDownTrack);
+        track.removeEventListener('pointerdown', handlePointerDownTrack);
+
+      handle.removeEventListener('mouseenter', handleMouseEnterHandle);
+      handle.removeEventListener('mouseleave', handleMouseLeaveHandle);
+      handle.removeEventListener('focus', handleFocusHandle);
+      handle.removeEventListener('blur', handleBlurHandle);
+      handle.removeEventListener('pointerdown', handlePointerDownHandle);
     };
-  }, [trackClickable, handleMouseDownThumb, handleMouseDownTrack]);
+  }, [
+    trackClickable,
+    handleMouseEnterHandle,
+    handleMouseLeaveHandle,
+    handleFocusHandle,
+    handleBlurHandle,
+    handlePointerDownHandle,
+    handlePointerDownTrack,
+  ]);
 
   return (
     <div
-      className={`${cx(`xyslider`, { 'xyslider--state-pressed': pressed })} ${
-        className || ''
-      }`}
+      className={`${cx(
+        `xyslider`,
+        { 'xyslider--state-idle': !isHovered && !isFocused && !isPressed },
+        { 'xyslider--state-hovered': isHovered },
+        { 'xyslider--state-focused': isFocused },
+        { 'xyslider--state-pressed': isPressed }
+      )} ${className || ''}`}
       ref={sliderRef}
+      data-theme={theme}
     >
       <div className={`${cx(`xyslider__track`)} xyslider-track`} ref={trackRef}>
-        <div className={`${cx(`xyslider__indicator`)} xyslider-indicator`} />
+        <div className={`${cx(`xyslider__background`)} xyslider-background`} />
         <div
-          className={`${cx(`xyslider__thumb`)} xyslider-thumb`}
-          ref={thumbRef}
+          className={`${cx('xyslider__handle')} "xyslider-handle"`}
+          ref={handleRef}
+          tabIndex={0}
         >
-          {children ? (
-            children
-          ) : (
-            <div className={`${cx(`xyslider__icon`)} xyslider-icon`} />
-          )}
+          <div
+            className={`${cx(
+              'xyslider__handle-state'
+            )} "xyslider-handle-state"`}
+          />
+          <div
+            className={`${cx(
+              'xyslider__handle-shape'
+            )} "xyslider-handle-shape"`}
+          />
         </div>
       </div>
     </div>
