@@ -1,24 +1,26 @@
-$min-size: 12.5rem;
-$handle-size: 3rem;
-$handle-shape-size-false: 1rem;
+@import 'XYSlider.variant';
 
-.xyslider {
+.slider {
   position: relative;
-  width: min($min-size, 100%);
-  min-width: $min-size;
-  height: min($min-size, 100%);
-  min-height: $min-size;
+  width: min($min-size + 2 * $handle-size, 100%);
+  min-width: $min-size + 2 * $handle-size;
+  height: min($min-size + 2 * $handle-size, 100%);
+  min-height: $min-size + 2 * $handle-size;
+
+  &-shape {
+    position: absolute;
+    inset: 0;
+    border-radius: $rad;
+  }
 
   &__track {
     position: absolute;
-    inset: -0.5 * $handle-size;
+    inset: 0;
   }
 
-  &__background {
+  &__track-shape {
     position: absolute;
     inset: 0.5 * $handle-size;
-    background-color: var(--surface-container-highest-light);
-    border-radius: 0.125rem;
   }
 
   &__handle {
@@ -30,19 +32,23 @@ $handle-shape-size-false: 1rem;
     transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
   }
 
+  &__handle-state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc($handle-state-size * sqrt(2) * 0.5);
+    height: calc($handle-state-size * sqrt(2) * 0.5);
+    border-radius: $handle-state-rad;
+    transition: opacity $duration $easing, transform $duration $easing;
+  }
+
   &__handle-shape {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: $handle-shape-size-false;
-    height: $handle-shape-size-false;
-    border: 0.25rem solid oklch(40% 0 0deg);
-    border-radius: 0.5 * $handle-shape-size-false;
-    transition: border-width 100ms ease-in;
-    transform: translate(-50%, -50%);
-
-    @at-root .xyslider--state-pressed #{&} {
-      border-width: 0.125rem;
-    }
+    border-radius: $handle-shape-rad;
+    transition: background-color $duration $easing, width $duration $easing,
+      height $duration $easing;
+    transform: translate(-50%, -50%) rotate(45deg);
   }
 }

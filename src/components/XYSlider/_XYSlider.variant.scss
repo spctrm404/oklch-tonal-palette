@@ -1,0 +1,78 @@
+$min-size: 25rem;
+$handle-size: 3rem;
+$handle-state-size: 2.5rem;
+$handle-shape-size-idle: 1rem;
+$handle-shape-size-pressed: 1.75rem;
+$handle-shape-rad: 0;
+$handle-state-rad: 0.25rem;
+$rad: 0.5rem;
+$duration: 100ms;
+$easing: ease-in;
+
+.slider {
+  $parent-selector: &;
+
+  #{$parent-selector}-shape {
+    background-color: var(--surface-container-low-light);
+  }
+
+  #{$parent-selector}__track-shape {
+    background-color: var(--surface-container-highest-light);
+  }
+
+  #{$parent-selector}__handle-state {
+    background-color: var(--on-surface-light);
+    opacity: 0.08;
+    transform: translate(-50%, -50%) rotate(45deg) scale(0%, 0%);
+  }
+
+  #{$parent-selector}__handle-shape {
+    width: calc($handle-shape-size-idle * sqrt(2) * 0.5);
+    height: calc($handle-shape-size-idle * sqrt(2) * 0.5);
+    background-color: var(--outline-light);
+  }
+
+  &#{$parent-selector}--state-hovered,
+  &#{$parent-selector}--state-focused {
+    #{$parent-selector}__handle-state {
+      opacity: 0.12;
+      transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
+    }
+  }
+
+  &#{$parent-selector}--state-pressed {
+    #{$parent-selector}__handle-state {
+      opacity: 0.16;
+      transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
+    }
+    #{$parent-selector}__handle-shape {
+      width: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
+      height: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
+      background-color: var(--on-surface-light);
+    }
+  }
+
+  &[data-theme='dark'] {
+    #{$parent-selector}-shape {
+      background-color: var(--surface-container-low-dark);
+    }
+
+    #{$parent-selector}__track-shape {
+      background-color: var(--surface-container-highest-dark);
+    }
+
+    #{$parent-selector}__handle-state {
+      background-color: var(--on-surface-dark);
+    }
+
+    #{$parent-selector}__handle-shape {
+      background-color: var(--outline-dark);
+    }
+
+    &#{$parent-selector}--state-pressed {
+      #{$parent-selector}__handle-shape {
+        background-color: var(--on-surface-dark);
+      }
+    }
+  }
+}
