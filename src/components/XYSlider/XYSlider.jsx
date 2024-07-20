@@ -62,11 +62,11 @@ const XYSlider = ({
     },
     [min, max, step]
   );
-  const onPointerMove = (e) => {
+  const onPointerDrag = (e) => {
     const newValue = getNewValue(e);
     onChange?.({ value: newValue, min: min, max: max });
   };
-  const onPointerUp = (e) => {
+  const onPointerUp = () => {
     document.body.style.cursor = 'auto';
   };
   const onPointerDown = useCallback(
@@ -104,23 +104,15 @@ const XYSlider = ({
 
   usePointerInteraction({
     targetRef: trackRef,
-    onPointerEnter: null,
-    onPointerDown: trackClickable && onPointerDownTrack,
-    onPointerMove: trackClickable && onPointerMove,
-    onPointerUp: trackClickable && onPointerUp,
-    onPointerLeave: null,
-    onFocus: null,
-    onBlur: null,
+    onPointerDown: trackClickable ? onPointerDownTrack : null,
+    onPointerDrag: trackClickable ? onPointerDrag : null,
+    onPointerUp: trackClickable ? onPointerUp : null,
   });
   const handlePI = usePointerInteraction({
     targetRef: handleRef,
-    onPointerEnter: null,
     onPointerDown: onPointerDownHandle,
-    onPointerMove: onPointerMove,
+    onPointerDrag: onPointerDrag,
     onPointerUp: onPointerUp,
-    onPointerLeave: null,
-    onFocus: null,
-    onBlur: null,
   });
 
   useEffect(() => {

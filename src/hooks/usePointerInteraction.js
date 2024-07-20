@@ -7,12 +7,16 @@ const usePointerInteraction = ({
   onPointerMove = null,
   onPointerUp = null,
   onPointerLeave = null,
+  onPointerClick = null,
+  onPointerDrag = null,
   onFocus = null,
   onBlur = null,
 }) => {
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
   const [isPressed, setPressed] = useState(false);
+  const pressing = useRef(false);
+  const dragging = useRef(false);
   const isFocusedByPointer = useRef(false);
 
   const preventDefault = useCallback((e) => {
@@ -32,22 +36,41 @@ const usePointerInteraction = ({
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (pressing.current) {
+        dragging.current = true;
+        onPointerDrag?.(e);
+      }
       onPointerMove?.(e);
     },
-    [onPointerMove]
+    [onPointerMove, onPointerDrag, pressing, dragging]
   );
   const handlePointerUp = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (pressing.current && !dragging.current) {
+        if (isFocused) targetRef.current.blur();
+        onPointerClick?.(e);
+      }
       onPointerUp?.(e);
+      pressing.current = true;
+      dragging.current = true;
       isFocusedByPointer.current = false;
       setPressed(false);
       document.removeEventListener('touchstart', preventDefault);
       document.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('pointerup', handlePointerUp);
     },
-    [onPointerUp, handlePointerMove, preventDefault]
+    [
+      targetRef,
+      onPointerClick,
+      onPointerUp,
+      isFocused,
+      handlePointerMove,
+      preventDefault,
+      pressing,
+      dragging,
+    ]
   );
   const handlePointerDownTarget = useCallback(
     (e) => {
@@ -55,6 +78,8 @@ const usePointerInteraction = ({
       e.stopPropagation();
       e.preventDefault();
       onPointerDown?.(e);
+      pressing.current = true;
+      dragging.current = false;
       isFocusedByPointer.current = true;
       setPressed(true);
       document.addEventListener('pointermove', handlePointerMove);
@@ -63,6 +88,8 @@ const usePointerInteraction = ({
     [
       onPointerDown,
       setPressed,
+      pressing,
+      dragging,
       isFocusedByPointer,
       handlePointerMove,
       handlePointerUp,

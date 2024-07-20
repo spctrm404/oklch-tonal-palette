@@ -74,7 +74,7 @@ const PaletteController = ({
         min={{ x: 0, y: 0 }}
         max={{ x: 1, y: CHROMA_MAX }}
         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-        trackClickable={false}
+        trackClickable={true}
         onChange={(sliderProps) => {
           handleChangeXYSlider(sliderProps, 'lInflect', 'cMax');
         }}
