@@ -1,19 +1,19 @@
 import { useCallback, useContext, useRef } from 'react';
-import usePointerInteraction from '../../hooks/usePointerInteraction';
+import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import style from './_Toggle.module.scss';
+import style from './_Switch.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
 
-const Toggle = ({
+const Switch = ({
   state: value = false,
   onChange = null,
   className = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const toggleRef = useRef(null);
+  const switchRef = useRef(null);
   const handleRef = useRef(null);
 
   const handleClick = useCallback(
@@ -25,8 +25,8 @@ const Toggle = ({
     [value, onChange]
   );
 
-  usePointerInteraction({
-    targetRef: toggleRef,
+  const switchPI = usePointerInteraction({
+    targetRef: switchRef,
     onPointerClick: handleClick,
   });
   const handlePI = usePointerInteraction({
@@ -37,35 +37,35 @@ const Toggle = ({
   return (
     <div
       className={`${cx(
-        'toggle',
-        { 'toggle--value-false': !value },
-        { 'toggle--value-true': value },
+        'switch',
+        { 'switch--value-false': !value },
+        { 'switch--value-true': value },
         {
-          'toggle--state-idle':
+          'switch--state-idle':
             !handlePI.isHovered && !handlePI.isFocused && !handlePI.isPressed,
         },
-        { 'toggle--state-hovered': handlePI.isHovered },
-        { 'toggle--state-focused': handlePI.isFocused },
-        { 'toggle--state-pressed': handlePI.isPressed }
+        { 'switch--state-hovered': handlePI.isHovered },
+        { 'switch--state-focused': handlePI.isFocused },
+        { 'switch--state-pressed': handlePI.isPressed || switchPI.isPressed }
       )} ${className || ''}`}
-      ref={toggleRef}
+      ref={switchRef}
       data-theme={theme}
     >
-      <div className={`${cx('toggle__track')} "toggle-track"`} />
+      <div className={`${cx('switch__shape')} "toggle-bg"`} />
       <div
-        className={`${cx('toggle__handle')} "toggle-handle"`}
+        className={`${cx('switch__handle')} "toggle-handle"`}
         ref={handleRef}
         tabIndex={0}
       >
         <div
-          className={`${cx('toggle__handle-state')} "toggle-handle-state"`}
+          className={`${cx('switch__handle__state')} "toggle-handle-state"`}
         />
         <div
-          className={`${cx('toggle__handle-shape')} "toggle-handle-shape"`}
+          className={`${cx('switch__handle__shape')} "toggle-handle-shape"`}
         />
       </div>
     </div>
   );
 };
 
-export default Toggle;
+export default Switch;

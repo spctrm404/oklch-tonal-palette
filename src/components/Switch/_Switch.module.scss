@@ -1,0 +1,49 @@
+@import 'Switch.variant';
+
+.switch {
+  position: relative;
+  width: $width;
+  height: $height;
+
+  &__shape {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    border-style: solid;
+    border-width: $border-width;
+    border-radius: $rad;
+    transition: background-color $duration $easing,
+      border-color $duration $easing;
+  }
+
+  &__handle {
+    position: absolute;
+    top: 50%;
+    left: 0.5 * $height;
+    width: $handle-size;
+    height: $handle-size;
+    cursor: pointer;
+    transition: transform $duration $easing;
+
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: $handle-state-size;
+      height: $handle-state-size;
+      border-radius: $handle-state-rad;
+      transition: background-color $duration $easing, opacity $duration $easing,
+        transform $duration $easing;
+    }
+
+    &__shape {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: $handle-shape-rad;
+      transition: width $duration $easing, height $duration $easing,
+        background-color $duration $easing;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

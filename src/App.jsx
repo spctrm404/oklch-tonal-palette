@@ -1,4 +1,4 @@
-import Toggle from './components/Toggle/Toggle.jsx';
+import Switch from './components/Switch/Switch.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
 import Palette from './components/Palette/Palette.jsx';
 import { ThemeContext } from './context/ThemeContext.jsx';
@@ -59,7 +59,7 @@ function App() {
   return (
     <>
       <p>{theme}</p>
-      <Toggle state={theme === 'light'} onChange={updateTheme} />
+      <Switch state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>
         ADD
       </button>

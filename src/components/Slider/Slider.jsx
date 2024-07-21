@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
-import style from './Slider.module.scss';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
+import style from './_Slider.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(style);
@@ -15,131 +17,110 @@ const Slider = ({
   trackClickable = false,
   onChange = null,
   className = null,
-  children = null,
 }) => {
-  const [pressed, setPressed] = useState(false);
+  const { theme } = useContext(ThemeContext);
+
   const sliderRef = useRef(null);
   const trackRef = useRef(null);
-  const thumbRef = useRef(null);
+  const handleRef = useRef(null);
+
   const offsetRef = useRef(null);
 
   const getNewValue = useCallback(
     (e) => {
       const offset = offsetRef.current;
-      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const handleRect = handleRef.current.getBoundingClientRect();
       const trackRect = trackRef.current.getBoundingClientRect();
 
       let newValue;
       if (vertical) {
-        let newThumbPos = e.clientY - trackRect.top - offset.y;
-        newThumbPos = clamp(
-          newThumbPos,
+        let newHandlePos = e.clientY - trackRect.top - offset.y;
+        newHandlePos = clamp(
+          newHandlePos,
           0,
-          trackRect.height - thumbRect.height
+          trackRect.height - handleRect.height
         );
-        const percentage =
-          1 - newThumbPos / (trackRect.height - thumbRect.height);
-        newValue = min + (max - min) * percentage;
+        const normalizedPos =
+          1 - newHandlePos / (trackRect.height - handleRect.height);
+        newValue = min + (max - min) * normalizedPos;
       } else {
-        let newThumbPos = e.clientX - trackRect.left - offset.x;
-        newThumbPos = clamp(newThumbPos, 0, trackRect.width - thumbRect.width);
-        const percentage = newThumbPos / (trackRect.width - thumbRect.width);
-        newValue = min + (max - min) * percentage;
+        let newHandlePos = e.clientX - trackRect.left - offset.x;
+        newHandlePos = clamp(
+          newHandlePos,
+          0,
+          trackRect.width - handleRect.width
+        );
+        const normalizedPos =
+          newHandlePos / (trackRect.width - handleRect.width);
+        newValue = min + (max - min) * normalizedPos;
       }
 
-      const steppedValue = setMultipleOfStep(newValue, step);
+      newValue = setMultipleOfStep(newValue, step);
 
-      return steppedValue;
+      return newValue;
     },
     [min, max, step, vertical]
   );
-
-  const handleMouseDown = useCallback(
+  const onPointerDrag = (e) => {
+    const newValue = getNewValue(e);
+    onChange?.({ value: newValue, min: min, max: max });
+  };
+  const onPointerUp = () => {
+    document.body.style.cursor = 'auto';
+  };
+  const onPointerDown = useCallback(
     (e, offset) => {
-      e.stopPropagation();
-      e.preventDefault();
-
       document.body.style.cursor = 'pointer';
-
       offsetRef.current = offset;
-
-      const steppedValue = getNewValue(e);
-      onChange?.({ value: steppedValue, min: min, max: max });
-
-      setPressed(true);
-
-      const mouseMoveHandler = (e) => {
-        const steppedValue = getNewValue(e);
-        onChange?.({ value: steppedValue, min: min, max: max });
-      };
-
-      const mouseUpHandler = () => {
-        document.body.style.cursor = 'auto';
-
-        setPressed(false);
-
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-      };
-
-      document.addEventListener('mousemove', mouseMoveHandler);
-      document.addEventListener('mouseup', mouseUpHandler);
+      const newValue = getNewValue(e);
+      onChange?.({ value: newValue, min: min, max: max });
     },
     [min, max, onChange, getNewValue]
   );
-
-  const handleMouseDownTrack = useCallback(
+  const onPointerDownTrack = useCallback(
     (e) => {
-      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const thumbRect = handleRef.current.getBoundingClientRect();
       const offset = {
         x: 0.5 * thumbRect.width,
         y: 0.5 * thumbRect.height,
       };
-
-      handleMouseDown(e, offset);
+      onPointerDown(e, offset);
     },
-    [handleMouseDown]
+    [onPointerDown]
   );
 
-  const handleMouseDownThumb = useCallback(
+  const onPointerDownHandle = useCallback(
     (e) => {
-      const thumbRect = thumbRef.current.getBoundingClientRect();
+      const thumbRect = handleRef.current.getBoundingClientRect();
       const offset = {
         x: e.clientX - thumbRect.left,
         y: e.clientY - thumbRect.top,
       };
-
-      handleMouseDown(e, offset);
+      onPointerDown(e, offset);
     },
-    [handleMouseDown]
+    [onPointerDown]
   );
 
+  const trackPI = usePointerInteraction({
+    targetRef: trackRef,
+    onPointerDown: trackClickable ? onPointerDownTrack : null,
+    onPointerDrag: trackClickable ? onPointerDrag : null,
+    onPointerUp: trackClickable ? onPointerUp : null,
+  });
+  const handlePI = usePointerInteraction({
+    targetRef: handleRef,
+    onPointerDown: onPointerDownHandle,
+    onPointerDrag: onPointerDrag,
+    onPointerUp: onPointerUp,
+  });
+
   useEffect(() => {
-    const percentage = (value - min) / (max - min);
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-    const trackRect = trackRef.current.getBoundingClientRect();
-
-    const pos = vertical
-      ? (1 - percentage) * (trackRect.height - thumbRect.height)
-      : percentage * (trackRect.width - thumbRect.width);
-
-    sliderRef.current.style.setProperty(vertical ? `--y` : `--x`, pos);
+    const normalizedPos = (value - min) / (max - min);
+    sliderRef.current.style.setProperty(
+      vertical ? `--y` : `--x`,
+      vertical ? 1 - normalizedPos : normalizedPos
+    );
   }, [value, min, max, step, vertical]);
-
-  useEffect(() => {
-    const thumb = thumbRef.current;
-    thumb.addEventListener('mousedown', handleMouseDownThumb);
-
-    const track = trackRef.current;
-    if (trackClickable)
-      track.addEventListener('mousedown', handleMouseDownTrack);
-
-    return () => {
-      thumb.removeEventListener('mousedown', handleMouseDownThumb);
-      if (trackClickable)
-        track.removeEventListener('mousedown', handleMouseDownTrack);
-    };
-  }, [trackClickable, handleMouseDownThumb, handleMouseDownTrack]);
 
   return (
     <div
@@ -152,29 +133,43 @@ const Slider = ({
         { 'slider--thumb-dir-top': !vertical && thumbDirection === -1 },
         { 'slider--thumb-dir-bottom': !vertical && thumbDirection === 1 },
         { 'slider--thumb-dir-center': thumbDirection === 0 },
-        { 'slider--state-pressed': pressed }
+        {
+          'slider--state-idle':
+            !handlePI.isHovered && !handlePI.isFocused && !handlePI.isPressed,
+        },
+        { 'slider--state-hovered': handlePI.isHovered },
+        { 'slider--state-focused': handlePI.isFocused },
+        { 'slider--state-pressed': handlePI.isPressed || trackPI.isPressed },
+        { 'slider--opt-track-clickable': trackClickable }
       )} ${className || ''}`}
       ref={sliderRef}
+      data-theme={theme}
     >
       <div className={`${cx('slider__track')} slider-track`} ref={trackRef}>
+        <div className={`${cx('slider__track__shape')} slider-track-shape`}>
+          <div
+            className={`${cx(
+              'slider__track__shape__indicator',
+              'slider__track__shape__indicator--type-active'
+            )} slider-track-shape-indicator`}
+          />
+          <div
+            className={`${cx(
+              'slider__track__shape__indicator',
+              'slider__track__shape__indicator--type-inactive'
+            )} slider-track-shape-indicator`}
+          />
+        </div>
         <div
-          className={`${cx(
-            'slider__indicator',
-            'slider__indicator--type-ellapsed'
-          )} slider-indicator-ellapsed`}
-        />
-        <div
-          className={`${cx(
-            'slider__indicator',
-            'slider__indicator--type-remain'
-          )} slider-indicator-remain`}
-        />
-        <div className={`${cx('slider__thumb')} slider-thumb`} ref={thumbRef}>
-          {children ? (
-            children
-          ) : (
-            <div className={`${cx('slider__icon')} slider-icon`} />
-          )}
+          className={`${cx('slider__handle')} slider-handle`}
+          ref={handleRef}
+        >
+          <div
+            className={`${cx('slider__handle__state')} slider-handle-state`}
+          />
+          <div
+            className={`${cx('slider__handle__shape')} slider-handle-shape`}
+          />
         </div>
       </div>
     </div>

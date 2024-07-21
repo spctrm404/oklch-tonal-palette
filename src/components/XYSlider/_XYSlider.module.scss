@@ -1,13 +1,15 @@
 @import 'XYSlider.variant';
 
 .slider {
-  position: relative;
-  width: min($min-size + 2 * $handle-size, 100%);
-  min-width: $min-size + 2 * $handle-size;
-  height: min($min-size + 2 * $handle-size, 100%);
-  min-height: $min-size + 2 * $handle-size;
+  $parent-selector: &;
 
-  &-shape {
+  position: relative;
+  width: min($min-size + $handle-shape-size-idle, 100%);
+  min-width: $min-size + $handle-shape-size-idle;
+  height: min($min-size + $handle-shape-size-idle, 100%);
+  min-height: $min-size + $handle-shape-size-idle;
+
+  &__shape {
     position: absolute;
     inset: 0;
     border-radius: $rad;
@@ -15,40 +17,43 @@
 
   &__track {
     position: absolute;
-    inset: 0;
-  }
+    inset: -0.5 * ($handle-size - $handle-shape-size-idle);
 
-  &__track-shape {
-    position: absolute;
-    inset: 0.5 * $handle-size;
+    &__shape {
+      position: absolute;
+      inset: 0.5 * $handle-size;
+      @at-root #{$parent-selector}--opt-track-clickable #{&} {
+        cursor: pointer;
+      }
+    }
   }
 
   &__handle {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: calc((100% - $handle-size) * var(--y));
+    left: calc((100% - $handle-size) * var(--x));
     width: $handle-size;
     height: $handle-size;
-    transform: translate(calc(var(--x) * 1px), calc(var(--y) * 1px));
-  }
+    cursor: pointer;
 
-  &__handle-state {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc($handle-state-size * sqrt(2) * 0.5);
-    height: calc($handle-state-size * sqrt(2) * 0.5);
-    border-radius: $handle-state-rad;
-    transition: opacity $duration $easing, transform $duration $easing;
-  }
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: calc($handle-state-size * sqrt(2) * 0.5);
+      height: calc($handle-state-size * sqrt(2) * 0.5);
+      border-radius: $handle-state-rad;
+      transition: opacity $duration $easing, transform $duration $easing;
+    }
 
-  &__handle-shape {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border-radius: $handle-shape-rad;
-    transition: background-color $duration $easing, width $duration $easing,
-      height $duration $easing;
-    transform: translate(-50%, -50%) rotate(45deg);
+    &__shape {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: $handle-shape-rad;
+      transition: background-color $duration $easing, width $duration $easing,
+        height $duration $easing;
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
   }
 }

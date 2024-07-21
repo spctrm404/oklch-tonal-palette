@@ -1,4 +1,4 @@
-import Toggle from '../Toggle/Toggle.jsx';
+import Switch from '../Switch/Switch.jsx';
 import Inputnumber from '../Inputnumber/Inputnumber.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
@@ -58,7 +58,7 @@ const PaletteController = ({
 
   return (
     <>
-      <Toggle state={isRange} onChange={updateIsRange} />
+      <Switch state={isRange} onChange={updateIsRange} />
       <Inputnumber
         value={totalChips}
         min={2}
@@ -74,7 +74,7 @@ const PaletteController = ({
         min={{ x: 0, y: 0 }}
         max={{ x: 1, y: CHROMA_MAX }}
         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-        trackClickable={true}
+        trackClickable={false}
         onChange={(sliderProps) => {
           handleChangeXYSlider(sliderProps, 'lInflect', 'cMax');
         }}
@@ -107,6 +107,8 @@ const PaletteController = ({
         }}
         min={0}
         max={360}
+        vertical={true}
+        trackClickable={true}
         step={HUE_STEP}
       />
       <Inputnumber

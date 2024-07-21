@@ -96,13 +96,12 @@ const XYSlider = ({
         x: e.clientX - handleRect.left,
         y: e.clientY - handleRect.top,
       };
-
       onPointerDown(e, offset);
     },
     [onPointerDown]
   );
 
-  usePointerInteraction({
+  const trackPI = usePointerInteraction({
     targetRef: trackRef,
     onPointerDown: trackClickable ? onPointerDownTrack : null,
     onPointerDrag: trackClickable ? onPointerDrag : null,
@@ -120,16 +119,8 @@ const XYSlider = ({
       x: (value.x - min.x) / (max.x - min.x),
       y: (value.y - min.y) / (max.y - min.y),
     };
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const handleRect = handleRef.current.getBoundingClientRect();
-
-    const pos = {
-      x: normalizedPos.x * (trackRect.width - handleRect.width),
-      y: (1 - normalizedPos.y) * (trackRect.height - handleRect.height),
-    };
-
-    sliderRef.current.style.setProperty(`--x`, pos.x);
-    sliderRef.current.style.setProperty(`--y`, pos.y);
+    sliderRef.current.style.setProperty(`--x`, normalizedPos.x);
+    sliderRef.current.style.setProperty(`--y`, 1 - normalizedPos.y);
   }, [value, min, max, step]);
 
   return (
@@ -142,24 +133,25 @@ const XYSlider = ({
         },
         { 'slider--state-hovered': handlePI.isHovered },
         { 'slider--state-focused': handlePI.isFocused },
-        { 'slider--state-pressed': handlePI.isPressed }
+        { 'slider--state-pressed': handlePI.isPressed || trackPI.isPressed },
+        { 'slider--opt-track-clickable': trackClickable }
       )} ${className || ''}`}
       ref={sliderRef}
       data-theme={theme}
     >
-      <div className={`${cx(`slider-shape`)} slider-shape`} />
+      <div className={`${cx(`slider__shape`)} slider-shape`} />
       <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
-        <div className={`${cx(`slider__track-shape`)} slider-track-shape`} />
+        <div className={`${cx(`slider__track__shape`)} slider-track-shape`} />
         <div
           className={`${cx('slider__handle')} "slider-handle"`}
           ref={handleRef}
           tabIndex={0}
         >
           <div
-            className={`${cx('slider__handle-state')} "slider-handle-state"`}
+            className={`${cx('slider__handle__state')} "slider-handle-state"`}
           />
           <div
-            className={`${cx('slider__handle-shape')} "slider-handle-shape"`}
+            className={`${cx('slider__handle__shape')} "slider-handle-shape"`}
           />
         </div>
       </div>

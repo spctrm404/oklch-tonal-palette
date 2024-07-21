@@ -1,0 +1,141 @@
+@import 'Slider.variant';
+
+.slider {
+  $parent-selector: &;
+
+  position: relative;
+
+  &--dir-horizontal {
+    width: min($min-width + $handle-shape-width-idle, 100%);
+    min-width: $min-width + $handle-shape-width-idle;
+    height: $height;
+  }
+
+  &--dir-vertical {
+    width: $height;
+    height: min($min-width + $handle-shape-width-idle, 100%);
+    min-height: $min-width + $handle-shape-width-idle;
+  }
+
+  &__track {
+    position: absolute;
+
+    @at-root #{$parent-selector}--dir-horizontal #{&} {
+      top: 50%;
+      right: -0.5 * ($handle-size - $handle-shape-width-idle);
+      left: -0.5 * ($handle-size - $handle-shape-width-idle);
+      height: $track-height;
+      transform: translateY(-50%);
+    }
+    @at-root #{$parent-selector}--dir-vertical #{&} {
+      top: -0.5 * ($handle-size - $handle-shape-width-idle);
+      bottom: -0.5 * ($handle-size - $handle-shape-width-idle);
+      left: 50%;
+      width: $track-height;
+      transform: translateX(-50%);
+    }
+
+    &__shape {
+      position: absolute;
+      overflow: hidden;
+      border-radius: $rad;
+
+      @at-root #{$parent-selector}--dir-horizontal #{&} {
+        inset: 0 0.5 * $handle-size;
+      }
+      @at-root #{$parent-selector}--dir-vertical #{&} {
+        inset: 0.5 * $handle-size 0;
+      }
+      @at-root #{$parent-selector}--opt-track-clickable #{&} {
+        cursor: pointer;
+      }
+
+      &__indicator {
+        position: absolute;
+        border-radius: $track-shape-rad;
+        transition: background-color $duration $easing;
+
+        &--type-active {
+          @at-root #{$parent-selector}--dir-horizontal #{&} {
+            inset: 0
+              calc(
+                (1 - var(--x)) * 100% + 0.5 *
+                  ($handle-shape-px + $handle-shape-width-idle)
+              )
+              0 0;
+          }
+          @at-root #{$parent-selector}--dir-vertical #{&} {
+            inset: calc(
+                var(--y) * 100% + 0.5 *
+                  ($handle-shape-px + $handle-shape-width-idle)
+              )
+              0 0;
+          }
+        }
+
+        &--type-inactive {
+          @at-root #{$parent-selector}--dir-horizontal #{&} {
+            inset: 0 0 0
+              calc(
+                var(--x) * 100% + 0.5 *
+                  ($handle-shape-px + $handle-shape-width-idle)
+              );
+          }
+          @at-root #{$parent-selector}--dir-vertical #{&} {
+            inset: 0 0
+              calc(
+                (1 - var(--y)) * 100% + 0.5 *
+                  ($handle-shape-px + $handle-shape-width-idle)
+              );
+          }
+        }
+      }
+    }
+  }
+
+  &__handle {
+    position: absolute;
+    width: $handle-size;
+    height: $handle-size;
+    cursor: pointer;
+
+    @at-root #{$parent-selector}--dir-horizontal #{&} {
+      top: 50%;
+      left: calc((100% - $handle-size) * var(--x));
+      transform: translateY(-50%);
+    }
+    @at-root #{$parent-selector}--dir-vertical #{&} {
+      top: calc((100% - $handle-size) * var(--y));
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: $handle-state-rad;
+      transition: background-color $duration $easing, opacity $duration $easing,
+        transform $duration $easing;
+
+      @at-root #{$parent-selector}--dir-horizontal #{&} {
+        width: $handle-state-width;
+        height: $handle-state-height;
+      }
+      @at-root #{$parent-selector}--dir-vertical #{&} {
+        width: $handle-state-height;
+        height: $handle-state-width;
+      }
+    }
+
+    &__shape {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: $handle-shape-rad;
+      transition: width $duration $easing, height $duration $easing,
+        background-color $duration $easing;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

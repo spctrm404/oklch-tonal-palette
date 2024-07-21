@@ -1,0 +1,90 @@
+$min-width: 12.5rem;
+$height: 1.75rem;
+$track-height: 1rem;
+$handle-size: 3rem;
+$handle-state-width: 1rem;
+$handle-state-height: 2.5rem;
+$handle-shape-px: 0.375rem;
+$handle-shape-width-idle: 0.25rem;
+$handle-shape-width-pressed: 0.125rem;
+$handle-shape-height: $height;
+$handle-shape-rad: 0.25rem;
+$handle-state-rad: 0.25rem;
+$track-shape-rad: 0.125rem;
+$rad: 0.25rem;
+$duration: 100ms;
+$easing: ease-in;
+
+.slider {
+  $parent-selector: &;
+
+  &__track {
+    &__shape {
+      &__indicator {
+        &--type-active {
+          background-color: var(--primary-light);
+          @at-root #{$parent-selector}[data-theme='dark'] #{&} {
+            background-color: var(--primary-dark);
+          }
+        }
+
+        &--type-inactive {
+          background-color: var(--primary-container-light);
+          @at-root #{$parent-selector}[data-theme='dark'] #{&} {
+            background-color: var(--primary-container-dark);
+          }
+        }
+      }
+    }
+  }
+
+  &__handle {
+    &__state {
+      background-color: var(--primary-light);
+      opacity: 0.08;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+      @at-root #{$parent-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+      @at-root #{$parent-selector}--state-hovered #{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}--state-focused #{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}--state-pressed #{&} {
+        opacity: 0.16;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+    }
+
+    &__shape {
+      background-color: var(--primary-light);
+
+      @at-root #{$parent-selector}--dir-horizontal #{&} {
+        width: $handle-shape-width-idle;
+        height: $handle-shape-height;
+      }
+      @at-root #{$parent-selector}--dir-vertical #{&} {
+        width: $handle-shape-height;
+        height: $handle-shape-width-idle;
+      }
+
+      @at-root #{$parent-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+      @at-root #{$parent-selector}--state-pressed #{&} {
+        @at-root #{$parent-selector}--dir-horizontal#{&} {
+          width: $handle-shape-width-pressed;
+          height: $handle-shape-height;
+        }
+        @at-root #{$parent-selector}--dir-vertical#{&} {
+          width: $handle-shape-height;
+          height: $handle-shape-width-pressed;
+        }
+      }
+    }
+  }
+}
