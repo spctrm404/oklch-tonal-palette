@@ -1,3 +1,4 @@
+import Button from './components/Button/Button.jsx';
 import Switch from './components/Switch/Switch.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
 import Palette from './components/Palette/Palette.jsx';
@@ -58,6 +59,7 @@ function App() {
 
   return (
     <>
+      <Button label="button" />
       <p>{theme}</p>
       <Switch state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>

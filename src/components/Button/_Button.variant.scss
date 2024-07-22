@@ -1,0 +1,29 @@
+$px: 1.5rem;
+$px-text-button: 0.75rem;
+$height: 2.5rem;
+
+.button {
+  position: relative;
+  width: fit-content;
+  height: $height;
+  background-color: aquamarine;
+
+  &__shape {
+    position: absolute;
+    inset: 0;
+    background-color: red;
+  }
+
+  &__state {
+    position: absolute;
+    inset: 0;
+    background-color: blue;
+  }
+
+  &__label {
+    position: relative;
+    top: 50%;
+    padding-inline: $px;
+    transform: translateY(-50%);
+  }
+}
