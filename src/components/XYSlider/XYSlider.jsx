@@ -121,23 +121,17 @@ const XYSlider = ({
     };
     sliderRef.current.style.setProperty(`--x`, normalizedPos.x);
     sliderRef.current.style.setProperty(`--y`, 1 - normalizedPos.y);
-  }, [value, min, max, step]);
+  }, [value, min, max]);
 
   return (
     <div
-      className={`${cx(
-        `slider`,
-        {
-          'slider--state-idle':
-            !handlePI.isHovered && !handlePI.isFocused && !handlePI.isPressed,
-        },
-        { 'slider--state-hovered': handlePI.isHovered },
-        { 'slider--state-focused': handlePI.isFocused },
-        { 'slider--state-pressed': handlePI.isPressed || trackPI.isPressed },
-        { 'slider--opt-track-clickable': trackClickable }
-      )} ${className || ''}`}
+      className={`${cx(`slider`)} ${className || ''}`}
       ref={sliderRef}
       data-theme={theme}
+      data-state={
+        trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
+      }
+      data-track-clickable={trackClickable}
     >
       <div className={`${cx(`slider__shape`)} slider-shape`} />
       <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>

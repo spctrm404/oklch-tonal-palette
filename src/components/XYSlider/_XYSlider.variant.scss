@@ -37,15 +37,15 @@ $easing: ease-in;
         background-color: var(--on-surface-dark);
       }
 
-      @at-root #{$parent-selector}--state-hovered #{&} {
+      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-focused #{&} {
+      @at-root #{$parent-selector}[data-state='focused'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         opacity: 0.16;
         transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
       }
@@ -59,19 +59,19 @@ $easing: ease-in;
         background-color: var(--outline-dark);
       }
 
-      @at-root #{$parent-selector}--state-hovered #{&} {
+      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
         }
       }
-      @at-root #{$parent-selector}--state-focused #{&} {
+      @at-root #{$parent-selector}[data-state='focused'] #{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
         }
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         width: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
         height: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
       }

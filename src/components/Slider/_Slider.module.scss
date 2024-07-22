@@ -5,13 +5,13 @@
 
   position: relative;
 
-  &--dir-horizontal {
+  &[data-direction='horizontal'] {
     width: min($min-width + $handle-shape-width-idle, 100%);
     min-width: $min-width + $handle-shape-width-idle;
     height: $height;
   }
 
-  &--dir-vertical {
+  &[data-direction='vertical'] {
     width: $height;
     height: min($min-width + $handle-shape-width-idle, 100%);
     min-height: $min-width + $handle-shape-width-idle;
@@ -20,14 +20,14 @@
   &__track {
     position: absolute;
 
-    @at-root #{$parent-selector}--dir-horizontal #{&} {
+    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
       top: 50%;
       right: -0.5 * ($handle-size - $handle-shape-width-idle);
       left: -0.5 * ($handle-size - $handle-shape-width-idle);
       height: $track-height;
       transform: translateY(-50%);
     }
-    @at-root #{$parent-selector}--dir-vertical #{&} {
+    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
       top: -0.5 * ($handle-size - $handle-shape-width-idle);
       bottom: -0.5 * ($handle-size - $handle-shape-width-idle);
       left: 50%;
@@ -40,13 +40,13 @@
       overflow: hidden;
       border-radius: $rad;
 
-      @at-root #{$parent-selector}--dir-horizontal #{&} {
+      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         inset: 0 0.5 * $handle-size;
       }
-      @at-root #{$parent-selector}--dir-vertical #{&} {
+      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
         inset: 0.5 * $handle-size 0;
       }
-      @at-root #{$parent-selector}--opt-track-clickable #{&} {
+      @at-root #{$parent-selector}[data-track-clickable='true'] #{&} {
         cursor: pointer;
       }
 
@@ -56,17 +56,17 @@
         transition: background-color $duration $easing;
 
         &--type-active {
-          @at-root #{$parent-selector}--dir-horizontal #{&} {
+          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
             inset: 0
               calc(
-                (1 - var(--x)) * 100% + 0.5 *
+                (1 - var(--pos)) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
               )
               0 0;
           }
-          @at-root #{$parent-selector}--dir-vertical #{&} {
+          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
             inset: calc(
-                var(--y) * 100% + 0.5 *
+                (1 - var(--pos)) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
               )
               0 0;
@@ -74,17 +74,17 @@
         }
 
         &--type-inactive {
-          @at-root #{$parent-selector}--dir-horizontal #{&} {
+          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
             inset: 0 0 0
               calc(
-                var(--x) * 100% + 0.5 *
+                var(--pos) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
               );
           }
-          @at-root #{$parent-selector}--dir-vertical #{&} {
+          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
             inset: 0 0
               calc(
-                (1 - var(--y)) * 100% + 0.5 *
+                var(--pos) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
               );
           }
@@ -99,13 +99,13 @@
     height: $handle-size;
     cursor: pointer;
 
-    @at-root #{$parent-selector}--dir-horizontal #{&} {
+    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
       top: 50%;
-      left: calc((100% - $handle-size) * var(--x));
+      left: calc((100% - $handle-size) * var(--pos));
       transform: translateY(-50%);
     }
-    @at-root #{$parent-selector}--dir-vertical #{&} {
-      top: calc((100% - $handle-size) * var(--y));
+    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+      top: calc((100% - $handle-size) * (1 - var(--pos)));
       left: 50%;
       transform: translateX(-50%);
     }
@@ -118,11 +118,11 @@
       transition: background-color $duration $easing, opacity $duration $easing,
         transform $duration $easing;
 
-      @at-root #{$parent-selector}--dir-horizontal #{&} {
+      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         width: $handle-state-width;
         height: $handle-state-height;
       }
-      @at-root #{$parent-selector}--dir-vertical #{&} {
+      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
         width: $handle-state-height;
         height: $handle-state-width;
       }

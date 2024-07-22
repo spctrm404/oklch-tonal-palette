@@ -13,7 +13,7 @@ const Slider = ({
   max = 100,
   step = 1,
   vertical = false,
-  thumbDirection = 0,
+  thumbDirection: handleDirection = 0,
   trackClickable = false,
   onChange = null,
   className = null,
@@ -116,34 +116,26 @@ const Slider = ({
 
   useEffect(() => {
     const normalizedPos = (value - min) / (max - min);
-    sliderRef.current.style.setProperty(
-      vertical ? `--y` : `--x`,
-      vertical ? 1 - normalizedPos : normalizedPos
-    );
+    sliderRef.current.style.setProperty(`--pos`, normalizedPos);
   }, [value, min, max, step, vertical]);
+
+  const getHandleDirection = useCallback(() => {
+    if (handleDirection === 0) return 'center';
+    if (handleDirection === -1) return vertical ? 'top' : 'left';
+    if (handleDirection === 1) return vertical ? 'top' : 'left';
+  }, [vertical, handleDirection]);
 
   return (
     <div
-      className={`${cx(
-        'slider',
-        { 'slider--dir-vertical': vertical },
-        { 'slider--dir-horizontal': !vertical },
-        { 'slider--thumb-dir-left': vertical && thumbDirection === -1 },
-        { 'slider--thumb-dir-right': vertical && thumbDirection === 1 },
-        { 'slider--thumb-dir-top': !vertical && thumbDirection === -1 },
-        { 'slider--thumb-dir-bottom': !vertical && thumbDirection === 1 },
-        { 'slider--thumb-dir-center': thumbDirection === 0 },
-        {
-          'slider--state-idle':
-            !handlePI.isHovered && !handlePI.isFocused && !handlePI.isPressed,
-        },
-        { 'slider--state-hovered': handlePI.isHovered },
-        { 'slider--state-focused': handlePI.isFocused },
-        { 'slider--state-pressed': handlePI.isPressed || trackPI.isPressed },
-        { 'slider--opt-track-clickable': trackClickable }
-      )} ${className || ''}`}
+      className={`${cx('slider')} ${className || ''}`}
       ref={sliderRef}
       data-theme={theme}
+      data-direction={vertical ? 'vertical' : 'horizontal'}
+      data-handle-direction={getHandleDirection()}
+      data-state={
+        trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
+      }
+      data-track-clickable={trackClickable}
     >
       <div className={`${cx('slider__track')} slider-track`} ref={trackRef}>
         <div className={`${cx('slider__track__shape')} slider-track-shape`}>

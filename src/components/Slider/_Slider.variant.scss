@@ -46,15 +46,15 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-dark);
       }
-      @at-root #{$parent-selector}--state-hovered #{&} {
+      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-focused #{&} {
+      @at-root #{$parent-selector}[data-state='focused'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         opacity: 0.16;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
@@ -63,11 +63,11 @@ $easing: ease-in;
     &__shape {
       background-color: var(--primary-light);
 
-      @at-root #{$parent-selector}--dir-horizontal #{&} {
+      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         width: $handle-shape-width-idle;
         height: $handle-shape-height;
       }
-      @at-root #{$parent-selector}--dir-vertical #{&} {
+      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
         width: $handle-shape-height;
         height: $handle-shape-width-idle;
       }
@@ -75,12 +75,12 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-dark);
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
-        @at-root #{$parent-selector}--dir-horizontal#{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+        @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
           width: $handle-shape-width-pressed;
           height: $handle-shape-height;
         }
-        @at-root #{$parent-selector}--dir-vertical#{&} {
+        @at-root #{$parent-selector}[data-direction='vertical']#{&} {
           width: $handle-shape-height;
           height: $handle-shape-width-pressed;
         }
