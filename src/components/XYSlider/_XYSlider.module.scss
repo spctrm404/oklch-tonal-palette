@@ -22,7 +22,7 @@
     &__shape {
       position: absolute;
       inset: 0.5 * $handle-size;
-      @at-root #{$parent-selector}[data-track-clickable='true'] #{&} {
+      @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
         cursor: pointer;
       }
     }

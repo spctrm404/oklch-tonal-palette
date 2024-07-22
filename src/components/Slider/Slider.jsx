@@ -135,7 +135,7 @@ const Slider = ({
       data-state={
         trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
-      data-track-clickable={trackClickable}
+      data-is-track-clickable={trackClickable}
     >
       <div className={`${cx('slider__track')} slider-track`} ref={trackRef}>
         <div className={`${cx('slider__track__shape')} slider-track-shape`}>

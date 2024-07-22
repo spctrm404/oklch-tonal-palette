@@ -131,7 +131,7 @@ const XYSlider = ({
       data-state={
         trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
-      data-track-clickable={trackClickable}
+      data-is-track-clickable={trackClickable}
     >
       <div className={`${cx(`slider__shape`)} slider-shape`} />
       <div className={`${cx(`slider__track`)} slider-track`} ref={trackRef}>
