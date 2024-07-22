@@ -1,33 +1,185 @@
-$px: 1.5rem;
-$px-text-button: 0.75rem;
 $height: 2.5rem;
+$px: 1.5rem;
+$pl-has-icon: 1rem;
+$gx-has-icon: 0.5rem;
+$px-text-button: 0.75rem;
+$pl-has-icon-text-button: 0.75rem;
+$pr-has-icon-text-button: 1rem;
+$border-width: 0.0625rem;
+$icon-size: 1.125rem;
+$font-size: 0.875rem;
+$line-height: 1.25rem;
+$rad: 0.25rem;
+$duration: 100ms;
+$easing: ease-in;
 
 .button {
   $parent-selector: &;
 
-  position: relative;
-  width: fit-content;
-  height: $height;
-  background-color: aquamarine;
+  @at-root #{$parent-selector}[data-style='elevated']#{&} {
+    box-shadow: var(--shadow-1-light);
+    @at-root #{$parent-selector}[data-theme='dark']#{&} {
+      box-shadow: var(--shadow-1-dark);
+    }
+    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+      box-shadow: var(--shadow-2-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        box-shadow: var(--shadow-2-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-state='focused']#{&} {
+      box-shadow: var(--shadow-1-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        box-shadow: var(--shadow-1-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+      box-shadow: var(--shadow-1-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        box-shadow: var(--shadow-1-dark);
+      }
+    }
+  }
+  @at-root #{$parent-selector}[data-style='filled']#{&} {
+    box-shadow: var(--shadow-0);
+    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+      box-shadow: var(--shadow-1-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        box-shadow: var(--shadow-1-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-state='focused']#{&} {
+      box-shadow: var(--shadow-0);
+    }
+    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+      box-shadow: var(--shadow-0);
+    }
+  }
+  @at-root #{$parent-selector}[data-style='tonal']#{&} {
+    box-shadow: var(--shadow-0);
+    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+      box-shadow: var(--shadow-1-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        box-shadow: var(--shadow-1-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-state='focused']#{&} {
+      box-shadow: var(--shadow-0);
+    }
+    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+      box-shadow: var(--shadow-0);
+    }
+  }
 
   &__shape {
-    position: absolute;
-    inset: 0;
-    background-color: red;
+    @at-root #{$parent-selector}[data-style='elevated'] #{&} {
+      background-color: var(--surface-container-low-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--surface-container-low-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      background-color: var(--secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--secondary-container-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      border-color: var(--outline-light);
+      border-style: solid;
+      border-width: $border-width;
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        border-color: var(--outline-dark);
+      }
+      @at-root #{$parent-selector}[data-state='focused']#{&} {
+        border-color: var(--primary-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          border-color: var(--primary-dark);
+        }
+      }
+    }
   }
 
   &__state {
-    position: absolute;
-    inset: 0;
-    background-color: blue;
+    opacity: 0;
+    @at-root #{$parent-selector}[data-state='hovered'] #{&} {
+      opacity: 0.08;
+    }
+    @at-root #{$parent-selector}[data-state='focused'] #{&} {
+      opacity: 0.12;
+    }
+    @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+      opacity: 0.12;
+    }
+
+    @at-root #{$parent-selector}[data-style='elevated'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      background-color: var(--on-primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      background-color: var(--on-secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-secondary-container-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='text'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
   }
 
   &__content {
-    position: relative;
-    top: 50%;
-    padding-inline: $px;
-    transform: translateY(-50%);
-    @at-root #{$parent-selector}[has-selector='true'] #{&} {
+    @at-root #{$parent-selector}[data-style='elevated'] #{&} {
+      color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      color: var(--on-primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      color: var(--on-secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-secondary-container-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='text'] #{&} {
+      color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--primary-dark);
+      }
     }
   }
 }

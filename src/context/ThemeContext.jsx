@@ -203,6 +203,51 @@ const ThemeProvider = ({ children }) => {
     updateCssVariables(neutralVariant, '', NEUTRAL_VARIANT_CHROMA_MAX, 1, root);
     updateCssVariables(neutral, '', NEUTRAL_CHROMA_MAX, 1, root);
 
+    root.style.setProperty(
+      '--shadow-0',
+      '0 0 0 0 rgba(0, 0, 0, 0), 0 0 0 0 rgba(0, 0, 0, 0)'
+    );
+    root.style.setProperty(
+      '--shadow-1-light',
+      '0rem .0625rem .125rem 0rem rgba(0, 0, 0, 0.30), 0rem .0625rem .1875rem .0625rem rgba(0, 0, 0, 0.15)'
+    );
+    root.style.setProperty(
+      '--shadow-2-light',
+      '0rem .0625rem .125rem 0rem rgba(0, 0, 0, 0.30), 0rem .125rem .375rem .125rem rgba(0, 0, 0, 0.15)'
+    );
+    root.style.setProperty(
+      '--shadow-3-light',
+      '0rem .0625rem .125rem 0rem rgba(0, 0, 0, 0.30), 0rem .0625rem .1875rem .0625rem rgba(0, 0, 0, 0.15)'
+    );
+    root.style.setProperty(
+      '--shadow-4-light',
+      '0rem .125rem .1875rem 0rem rgba(0, 0, 0, 0.30), 0rem .375rem .625rem .25rem rgba(0, 0, 0, 0.15)'
+    );
+    root.style.setProperty(
+      '--shadow-5-light',
+      '0rem .25rem .25rem 0rem rgba(0, 0, 0, 0.30), 0rem .5rem .75rem .375rem rgba(0, 0, 0, 0.15)'
+    );
+    root.style.setProperty(
+      '--shadow-1-dark',
+      '0rem .0625rem .1875rem .0625rem rgba(0, 0, 0, 0.15), 0rem .0625rem .125rem 0rem rgba(0, 0, 0, 0.30)'
+    );
+    root.style.setProperty(
+      '--shadow-2-dark',
+      '0rem .125rem .375rem .125rem rgba(0, 0, 0, 0.15), 0rem .0625rem .125rem 0rem rgba(0, 0, 0, 0.30)'
+    );
+    root.style.setProperty(
+      '--shadow-3-dark',
+      '0rem .25rem .5rem .1875rem rgba(0, 0, 0, 0.15), 0rem .0625rem .1875rem 0rem rgba(0, 0, 0, 0.30)'
+    );
+    root.style.setProperty(
+      '--shadow-4-dark',
+      '0rem .375rem .625rem .25rem rgba(0, 0, 0, 0.15), 0rem .125rem .1875rem 0rem rgba(0, 0, 0, 0.30)'
+    );
+    root.style.setProperty(
+      '--shadow-5-dark',
+      '0rem .5rem .75rem .375rem rgba(0, 0, 0, 0.15), 0rem .25rem .25rem 0rem rgba(0, 0, 0, 0.30)'
+    );
+
     const body = document.body;
     body.dataset.theme = theme;
   }, [theme, hue, updateCssVariables]);
