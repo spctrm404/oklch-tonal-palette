@@ -7,10 +7,10 @@ import {
 } from '../../utils/constants';
 import { formatNumLength } from '../../utils/stringUtils';
 import { getApcaTxtColour } from '../../utils/colourUtils';
-import style from './Chip.module.scss';
+import s from './Chip.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
   const renderCnt = useRef(0);

@@ -2,10 +2,10 @@ import { useCallback, useContext, useEffect, useRef } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import style from './_XYSlider.module.scss';
+import s from './_XYSlider.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const XYSlider = ({
   value = { x: 0, y: 0 },

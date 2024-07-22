@@ -8,10 +8,10 @@ import {
 import { formatNumLength } from '../../utils/stringUtils';
 import { createChips } from '../../utils/colourUtils';
 import Chip from '../Chip/Chip.jsx';
-import style from './Palette.module.scss';
+import s from './Palette.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const Palette = ({
   totalChips,
@@ -86,7 +86,7 @@ const Palette = ({
         {chips.map((aChip) => {
           return (
             <Chip
-              className={style.chip}
+              className={s.chip}
               key={aChip.id}
               l={aChip.l}
               c={aChip.c}

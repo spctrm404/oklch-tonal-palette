@@ -1,10 +1,10 @@
 import { useCallback, useContext, useRef } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import style from './_Switch.module.scss';
+import s from './_Switch.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const Switch = ({
   state: value = false,
@@ -16,14 +16,9 @@ const Switch = ({
   const switchRef = useRef(null);
   const handleRef = useRef(null);
 
-  const handleClick = useCallback(
-    (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      onChange?.(!value);
-    },
-    [value, onChange]
-  );
+  const handleClick = useCallback(() => {
+    onChange?.(!value);
+  }, [value, onChange]);
 
   const switchPI = usePointerInteraction({
     targetRef: switchRef,
@@ -44,17 +39,17 @@ const Switch = ({
         switchPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
     >
-      <div className={`${cx('switch__shape')} "toggle-bg"`} />
+      <div className={`${cx('switch__shape')} "switch-shape"`} />
       <div
-        className={`${cx('switch__handle')} "toggle-handle"`}
+        className={`${cx('switch__handle')} "switch-handle"`}
         ref={handleRef}
         tabIndex={0}
       >
         <div
-          className={`${cx('switch__handle__state')} "toggle-handle-state"`}
+          className={`${cx('switch__handle__state')} "switch-handle-state"`}
         />
         <div
-          className={`${cx('switch__handle__shape')} "toggle-handle-shape"`}
+          className={`${cx('switch__handle__shape')} "switch-handle-shape"`}
         />
       </div>
     </div>

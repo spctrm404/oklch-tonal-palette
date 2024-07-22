@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { formatNumLengthToStep } from '../../utils/stringUtils';
-import style from './Inputnumber.module.scss';
+import s from './Inputnumber.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const Inputnumber = ({
   value = 0,

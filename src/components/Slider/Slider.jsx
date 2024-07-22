@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import style from './_Slider.module.scss';
+import s from './_Slider.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(style);
+const cx = classNames.bind(s);
 
 const Slider = ({
   value = 0,
@@ -143,13 +143,13 @@ const Slider = ({
             className={`${cx(
               'slider__track__shape__indicator',
               'slider__track__shape__indicator--type-active'
-            )} slider-track-shape-indicator`}
+            )} slider-track-shape-indicator-active`}
           />
           <div
             className={`${cx(
               'slider__track__shape__indicator',
               'slider__track__shape__indicator--type-inactive'
-            )} slider-track-shape-indicator`}
+            )} slider-track-shape-indicator-inactive`}
           />
         </div>
         <div
