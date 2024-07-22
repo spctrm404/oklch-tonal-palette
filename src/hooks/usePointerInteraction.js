@@ -155,10 +155,10 @@ const usePointerInteraction = ({
   ]);
 
   const getState = useCallback(() => {
-    if (!isHovered && !isFocused && !isPressed) return 'idle';
-    if (isHovered) return 'hovered';
-    if (isFocused) return 'hocused';
     if (isPressed) return 'pressed';
+    if (isFocused) return 'hocused';
+    if (isHovered) return 'hovered';
+    if (!isHovered && !isFocused && !isPressed) return 'idle';
   }, [isHovered, isFocused, isPressed]);
 
   return {

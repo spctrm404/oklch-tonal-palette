@@ -22,7 +22,7 @@ $easing: ease-in;
       background-color: var(--surface-container-highest-dark);
       border-color: var(--outline-dark);
     }
-    @at-root #{$parent-selector}--value-true #{&} {
+    @at-root #{$parent-selector}[data-value='true'] #{&} {
       background-color: var(--primary-light);
       border-color: var(--primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
@@ -34,7 +34,7 @@ $easing: ease-in;
 
   &__handle {
     transform: translate(-50%, -50%);
-    @at-root #{$parent-selector}--value-true #{&} {
+    @at-root #{$parent-selector}[data-value='true'] #{&} {
       transform: translate(calc(-50% + $width - $height), -50%);
     }
 
@@ -45,19 +45,19 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--on-surface-dark);
       }
-      @at-root #{$parent-selector}--state-hovered #{&} {
+      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-focused #{&} {
+      @at-root #{$parent-selector}[data-state='focused'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         opacity: 0.16;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
-      @at-root #{$parent-selector}--value-true #{&} {
+      @at-root #{$parent-selector}[data-value='true'] #{&} {
         background-color: var(--primary-container-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--primary-container-dark);
@@ -72,19 +72,19 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--outline-dark);
       }
-      @at-root #{$parent-selector}--state-hovered #{&} {
+      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
         }
       }
-      @at-root #{$parent-selector}--state-focused #{&} {
+      @at-root #{$parent-selector}[data-state='focused'] #{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
         }
       }
-      @at-root #{$parent-selector}--state-pressed #{&} {
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         width: $handle-shape-size-pressed;
         height: $handle-shape-size-pressed;
         background-color: var(--on-surface-light);
@@ -92,7 +92,7 @@ $easing: ease-in;
           background-color: var(--on-surface-dark);
         }
       }
-      @at-root #{$parent-selector}--value-true #{&} {
+      @at-root #{$parent-selector}[data-value='true'] #{&} {
         width: $handle-shape-size-true;
         height: $handle-shape-size-true;
         background-color: var(--on-primary-light);
@@ -100,21 +100,21 @@ $easing: ease-in;
           background-color: var(--on-primary-dark);
         }
       }
-      @at-root #{$parent-selector}--value-true#{$parent-selector}--state-hovered
+      @at-root #{$parent-selector}[data-value='true']#{$parent-selector}[data-state='hovered']
           #{&} {
         background-color: var(--primary-container-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--primary-container-dark);
         }
       }
-      @at-root #{$parent-selector}--value-true#{$parent-selector}--state-focused
+      @at-root #{$parent-selector}[data-value='true']#{$parent-selector}[data-state='focused']
           #{&} {
         background-color: var(--primary-container-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--primary-container-dark);
         }
       }
-      @at-root #{$parent-selector}--value-true#{$parent-selector}--state-pressed
+      @at-root #{$parent-selector}[data-value='true']#{$parent-selector}[data-state='pressed']
           #{&} {
         width: $handle-shape-size-pressed;
         height: $handle-shape-size-pressed;

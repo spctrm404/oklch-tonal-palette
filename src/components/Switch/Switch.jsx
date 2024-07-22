@@ -36,20 +36,13 @@ const Switch = ({
 
   return (
     <div
-      className={`${cx(
-        'switch',
-        { 'switch--value-false': !value },
-        { 'switch--value-true': value },
-        {
-          'switch--state-idle':
-            !handlePI.isHovered && !handlePI.isFocused && !handlePI.isPressed,
-        },
-        { 'switch--state-hovered': handlePI.isHovered },
-        { 'switch--state-focused': handlePI.isFocused },
-        { 'switch--state-pressed': handlePI.isPressed || switchPI.isPressed }
-      )} ${className || ''}`}
+      className={`${cx('switch')} ${className || ''}`}
       ref={switchRef}
       data-theme={theme}
+      data-value={value}
+      data-state={
+        switchPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
+      }
     >
       <div className={`${cx('switch__shape')} "toggle-bg"`} />
       <div
