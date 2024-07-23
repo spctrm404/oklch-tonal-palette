@@ -2,6 +2,7 @@ import Switch from '../Switch/Switch.jsx';
 import Inputnumber from '../Inputnumber/Inputnumber.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
@@ -14,7 +15,7 @@ import {
   HUE_DECIMAL_LEN,
   CHROMA_MAX,
 } from '../../utils/constants';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 const PaletteController = ({
   totalChips,
@@ -55,6 +56,7 @@ const PaletteController = ({
     },
     [onChange]
   );
+  const { updateHue } = useContext(ThemeContext);
 
   return (
     <>
@@ -104,6 +106,7 @@ const PaletteController = ({
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueFrom');
           if (!isRange) handleChangeSlider(sliderProps, 'hueTo');
+          updateHue('from', Number(sliderProps.value));
         }}
         min={0}
         max={360}
@@ -120,12 +123,14 @@ const PaletteController = ({
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'hueFrom');
           if (!isRange) handleChangeSlider(numboxProps, 'hueTo');
+          updateHue('from', Number(numboxProps.value));
         }}
       />
       <Slider
         value={hTo}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueTo');
+          updateHue('to', Number(sliderProps.value));
         }}
         min={0}
         max={360}
@@ -139,6 +144,7 @@ const PaletteController = ({
         displayLength={HUE_INT_LEN + HUE_DECIMAL_LEN + 2}
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'hueTo');
+          updateHue('to', Number(numboxProps.value));
         }}
       />
     </>
