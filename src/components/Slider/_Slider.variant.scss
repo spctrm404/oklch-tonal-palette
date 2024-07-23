@@ -41,13 +41,13 @@ $easing: ease-in;
   &__handle {
     &__state {
       background-color: var(--primary-light);
-      opacity: 0.08;
+      opacity: 0;
       transform: translate(-50%, -50%) scale(0%, 0%);
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-dark);
       }
       @at-root #{$parent-selector}[data-state='hovered'] #{&} {
-        opacity: 0.12;
+        opacity: 0.08;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-state='focused'] #{&} {
@@ -55,7 +55,7 @@ $easing: ease-in;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-        opacity: 0.16;
+        opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
     }

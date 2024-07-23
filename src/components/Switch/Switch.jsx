@@ -39,18 +39,14 @@ const Switch = ({
         switchPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
     >
-      <div className={`${cx('switch__shape')} "switch-shape"`} />
+      <div className={cx('switch__shape', 'switch-shape')} />
       <div
-        className={`${cx('switch__handle')} "switch-handle"`}
+        className={cx('switch__handle', 'switch-handle')}
         ref={handleRef}
         tabIndex={0}
       >
-        <div
-          className={`${cx('switch__handle__state')} "switch-handle-state"`}
-        />
-        <div
-          className={`${cx('switch__handle__shape')} "switch-handle-shape"`}
-        />
+        <div className={cx('switch__handle__state', 'switch-handle-state')} />
+        <div className={cx('switch__handle__shape', 'switch-handle-shape')} />
       </div>
     </div>
   );

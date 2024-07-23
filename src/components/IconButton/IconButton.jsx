@@ -6,7 +6,7 @@ import classNames from 'classnames/bind';
 
 const cx = classNames.bind(s);
 
-const Button = ({
+const IconButton = ({
   onChange = null,
   style = 'filled',
   materialIcon = '',
@@ -58,4 +58,4 @@ const Button = ({
   );
 };
 
-export default Button;
+export default IconButton;

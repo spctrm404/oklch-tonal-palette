@@ -142,6 +142,12 @@ $easing: ease-in;
         background-color: var(--primary-dark);
       }
     }
+    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
     @at-root #{$parent-selector}[data-style='text'] #{&} {
       background-color: var(--primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
@@ -170,6 +176,12 @@ $easing: ease-in;
       }
     }
     @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--primary-dark);
+      }
+    }
+    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
       color: var(--primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--primary-dark);

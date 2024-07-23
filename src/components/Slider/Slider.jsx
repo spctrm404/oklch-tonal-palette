@@ -137,31 +137,26 @@ const Slider = ({
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={`${cx('slider__track')} slider-track`} ref={trackRef}>
-        <div className={`${cx('slider__track__shape')} slider-track-shape`}>
+      <div className={cx('slider__track', 'slider-track')} ref={trackRef}>
+        <div className={cx('slider__track__shape', 'slider-track-shape')}>
           <div
-            className={`${cx(
+            className={cx(
               'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-active'
-            )} slider-track-shape-indicator-active`}
+              'slider__track__shape__indicator--type-active',
+              'slider-track-shape-indicator-active'
+            )}
           />
           <div
-            className={`${cx(
+            className={cx(
               'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-inactive'
-            )} slider-track-shape-indicator-inactive`}
+              'slider__track__shape__indicator--type-inactive',
+              'slider-track-shape-indicator-inactive'
+            )}
           />
         </div>
-        <div
-          className={`${cx('slider__handle')} slider-handle`}
-          ref={handleRef}
-        >
-          <div
-            className={`${cx('slider__handle__state')} slider-handle-state`}
-          />
-          <div
-            className={`${cx('slider__handle__shape')} slider-handle-shape`}
-          />
+        <div className={cx('slider__handle', 'slider-handle')} ref={handleRef}>
+          <div className={cx('slider__handle__state', 'slider-handle-state')} />
+          <div className={cx('slider__handle__shape', 'slider-handle-shape')} />
         </div>
       </div>
     </div>
