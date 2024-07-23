@@ -125,7 +125,7 @@ const XYSlider = ({
 
   return (
     <div
-      className={`${cx(`slider`)} ${className || ''}`}
+      className={`${cx(`xy-slider`)} ${className || ''}`}
       ref={sliderRef}
       data-theme={theme}
       data-state={
@@ -133,16 +133,22 @@ const XYSlider = ({
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('slider__shape', 'slider-shape')} />
-      <div className={cx('slider__track', 'slider-track')} ref={trackRef}>
-        <div className={cx('slider__track__shape', 'slider-track-shape')} />
+      <div className={cx('xy-slider__shape', 'xy-slider-shape')} />
+      <div className={cx('xy-slider__track', 'xy-slider-track')} ref={trackRef}>
         <div
-          className={cx('slider__handle', 'slider-handle')}
+          className={cx('xy-slider__track__shape', 'xy-slider-track-shape')}
+        />
+        <div
+          className={cx('xy-slider__handle', 'xy-slider-handle')}
           ref={handleRef}
           tabIndex={0}
         >
-          <div className={cx('slider__handle__state', 'slider-handle-state')} />
-          <div className={cx('slider__handle__shape', 'slider-handle-shape')} />
+          <div
+            className={cx('xy-slider__handle__state', 'xy-slider-handle-state')}
+          />
+          <div
+            className={cx('xy-slider__handle__shape', 'xy-slider-handle-shape')}
+          />
         </div>
       </div>
     </div>

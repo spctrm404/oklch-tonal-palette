@@ -10,7 +10,6 @@ const IconButton = ({
   onChange = null,
   style = 'filled',
   materialIcon = '',
-  label = '',
   className = null,
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -28,31 +27,27 @@ const IconButton = ({
 
   return (
     <div
-      className={`${cx('button')} ${className || ''}`}
+      className={`${cx('icon-button')} ${className || ''}`}
       ref={buttonRef}
       data-theme={theme}
       data-state={buttonPI.getState()}
       data-style={style}
-      data-has-icon={materialIcon !== ''}
       tabIndex={0}
     >
-      <div className={cx('button__shape', 'button-shape')} />
-      <div className={cx('button__state', 'button-state')} />
-      <div className={cx('button__content', 'button-content')}>
+      <div className={cx('icon-button__shape', 'icon-button-shape')} />
+      <div className={cx('icon-button__state', 'icon-button-state')} />
+      <div className={cx('icon-button__content', 'icon-button-content')}>
         {materialIcon && (
           <div
             className={cx(
-              'button__content__icon',
-              'button-content-icon',
+              'icon-button__content__icon',
+              'icon-button-content-icon',
               'material-symbols-outlined'
             )}
           >
             {materialIcon}
           </div>
         )}
-        <div className={cx('button__content__label', 'button-content-label')}>
-          {label}
-        </div>
       </div>
     </div>
   );

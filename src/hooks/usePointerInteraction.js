@@ -12,6 +12,7 @@ const usePointerInteraction = ({
   onFocus = null,
   onBlur = null,
 }) => {
+  const [isDisabled, setDisabled] = useState(false);
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
   const [isPressed, setPressed] = useState(false);
@@ -27,36 +28,40 @@ const usePointerInteraction = ({
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (isDisabled) return;
       onPointerEnter?.(e);
       setHovered(true);
     },
-    [onPointerEnter, setHovered]
+    [onPointerEnter, isDisabled, setHovered]
   );
   const handlePointerMove = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (isDisabled) return;
       if (pressing.current) {
         dragging.current = true;
         onPointerDrag?.(e);
       }
       onPointerMove?.(e);
     },
-    [onPointerMove, onPointerDrag, pressing, dragging]
+    [onPointerMove, onPointerDrag, isDisabled, pressing, dragging]
   );
   const handlePointerUp = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
-      if (pressing.current && !dragging.current) {
-        if (isFocused) targetRef.current.blur();
-        onPointerClick?.(e);
+      if (!isDisabled) {
+        if (pressing.current && !dragging.current) {
+          if (isFocused) targetRef.current.blur();
+          onPointerClick?.(e);
+        }
+        onPointerUp?.(e);
+        pressing.current = true;
+        dragging.current = true;
+        isFocusedByPointer.current = false;
+        setPressed(false);
       }
-      onPointerUp?.(e);
-      pressing.current = true;
-      dragging.current = true;
-      isFocusedByPointer.current = false;
-      setPressed(false);
       document.removeEventListener('touchstart', preventDefault);
       document.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('pointerup', handlePointerUp);
@@ -65,6 +70,7 @@ const usePointerInteraction = ({
       targetRef,
       onPointerClick,
       onPointerUp,
+      isDisabled,
       isFocused,
       handlePointerMove,
       preventDefault,
@@ -77,16 +83,19 @@ const usePointerInteraction = ({
       document.addEventListener('touchstart', preventDefault);
       e.stopPropagation();
       e.preventDefault();
-      onPointerDown?.(e);
-      pressing.current = true;
-      dragging.current = false;
-      isFocusedByPointer.current = true;
-      setPressed(true);
+      if (!isDisabled) {
+        onPointerDown?.(e);
+        pressing.current = true;
+        dragging.current = false;
+        isFocusedByPointer.current = true;
+        setPressed(true);
+      }
       document.addEventListener('pointermove', handlePointerMove);
       document.addEventListener('pointerup', handlePointerUp);
     },
     [
       onPointerDown,
+      isDisabled,
       setPressed,
       pressing,
       dragging,
@@ -100,29 +109,32 @@ const usePointerInteraction = ({
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (isDisabled) return;
       onPointerLeave?.(e);
       setHovered(false);
     },
-    [onPointerLeave, setHovered]
+    [onPointerLeave, isDisabled, setHovered]
   );
   const handleFocusTarget = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (isDisabled) return;
       onFocus?.(e);
       if (isFocusedByPointer.current) return;
       setFocused(true);
     },
-    [onFocus, setFocused, isFocusedByPointer]
+    [onFocus, isDisabled, setFocused, isFocusedByPointer]
   );
   const handleBlurTarget = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
+      if (isDisabled) return;
       onBlur?.(e);
       setFocused(false);
     },
-    [onBlur, setFocused]
+    [onBlur, isDisabled, setFocused]
   );
 
   useEffect(() => {
@@ -155,14 +167,17 @@ const usePointerInteraction = ({
   ]);
 
   const getState = useCallback(() => {
+    if (isDisabled) return 'disabled';
     if (isPressed) return 'pressed';
     if (isFocused) return 'focused';
     if (isHovered) return 'hovered';
-    if (!isHovered && !isFocused && !isPressed) return 'idle';
-  }, [isHovered, isFocused, isPressed]);
+    return 'idle';
+  }, [isDisabled, isHovered, isFocused, isPressed]);
 
   return {
     targetRef: targetRef,
+    isDisabled: isDisabled,
+    setDisabled: setDisabled,
     isHovered: isHovered,
     setHovered: setHovered,
     isFocused: isFocused,
