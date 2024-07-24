@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import s from './_Switch.module.scss';
@@ -20,14 +20,16 @@ const Switch = ({
     onChange?.(!value);
   }, [value, onChange]);
 
-  const switchPI = usePointerInteraction({
-    targetRef: switchRef,
-    onPointerClick: handleClick,
-  });
-  const handlePI = usePointerInteraction({
-    targetRef: handleRef,
-    onPointerClick: handleClick,
-  });
+  const switchPI = usePointerInteraction();
+  useEffect(() => {
+    switchPI.setTargetRef(switchRef.current);
+    switchPI.setOnPointerClick(handleClick);
+  }, [switchPI, handleClick]);
+  const handlePI = usePointerInteraction();
+  useEffect(() => {
+    handlePI.setTargetRef(handleRef.current);
+    handlePI.setOnPointerClick(handleClick);
+  }, [handlePI, handleClick]);
 
   return (
     <div

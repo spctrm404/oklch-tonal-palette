@@ -1,17 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const usePointerInteraction = ({
-  targetRef = null,
-  onPointerEnter = null,
-  onPointerDown = null,
-  onPointerMove = null,
-  onPointerUp = null,
-  onPointerLeave = null,
-  onPointerClick = null,
-  onPointerDrag = null,
-  onFocus = null,
-  onBlur = null,
-}) => {
+const useCreateHandlerRef = (initialValue = null) => {
+  const handlerRef = useRef(initialValue);
+  const setHandler = useCallback((fn) => {
+    handlerRef.current = fn;
+  }, []);
+  return [handlerRef, setHandler];
+};
+
+const usePointerInteraction = () => {
+  const targetRef = useRef(null);
+  const setTargetRef = useCallback((ref) => {
+    targetRef.current = ref;
+  }, []);
+
+  const [onPointerEnter, setOnPointerEnter] = useCreateHandlerRef();
+  const [onPointerDown, setOnPointerDown] = useCreateHandlerRef();
+  const [onPointerMove, setOnPointerMove] = useCreateHandlerRef();
+  const [onPointerUp, setOnPointerUp] = useCreateHandlerRef();
+  const [onPointerLeave, setOnPointerLeave] = useCreateHandlerRef();
+  const [onPointerClick, setOnPointerClick] = useCreateHandlerRef();
+  const [onPointerDrag, setOnPointerDrag] = useCreateHandlerRef();
+  const [onFocus, setOnFocus] = useCreateHandlerRef();
+  const [onBlur, setOnBlur] = useCreateHandlerRef();
+
   const [isDisabled, setDisabled] = useState(false);
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
@@ -29,11 +41,12 @@ const usePointerInteraction = ({
       e.stopPropagation();
       e.preventDefault();
       if (isDisabled) return;
-      onPointerEnter?.(e);
+      onPointerEnter.current?.(e);
       setHovered(true);
     },
     [onPointerEnter, isDisabled, setHovered]
   );
+
   const handlePointerMove = useCallback(
     (e) => {
       e.stopPropagation();
@@ -41,12 +54,13 @@ const usePointerInteraction = ({
       if (isDisabled) return;
       if (pressing.current) {
         dragging.current = true;
-        onPointerDrag?.(e);
+        onPointerDrag.current?.(e);
       }
-      onPointerMove?.(e);
+      onPointerMove.current?.(e);
     },
-    [onPointerMove, onPointerDrag, isDisabled, pressing, dragging]
+    [onPointerMove, onPointerDrag, isDisabled]
   );
+
   const handlePointerUp = useCallback(
     (e) => {
       e.stopPropagation();
@@ -54,11 +68,11 @@ const usePointerInteraction = ({
       if (!isDisabled) {
         if (pressing.current && !dragging.current) {
           if (isFocused) targetRef.current.blur();
-          onPointerClick?.(e);
+          onPointerClick.current?.(e);
         }
-        onPointerUp?.(e);
-        pressing.current = true;
-        dragging.current = true;
+        onPointerUp.current?.(e);
+        pressing.current = false;
+        dragging.current = false;
         isFocusedByPointer.current = false;
         setPressed(false);
       }
@@ -67,24 +81,22 @@ const usePointerInteraction = ({
       document.removeEventListener('pointerup', handlePointerUp);
     },
     [
-      targetRef,
-      onPointerClick,
       onPointerUp,
+      onPointerClick,
       isDisabled,
       isFocused,
       handlePointerMove,
       preventDefault,
-      pressing,
-      dragging,
     ]
   );
+
   const handlePointerDownTarget = useCallback(
     (e) => {
       document.addEventListener('touchstart', preventDefault);
       e.stopPropagation();
       e.preventDefault();
       if (!isDisabled) {
-        onPointerDown?.(e);
+        onPointerDown.current?.(e);
         pressing.current = true;
         dragging.current = false;
         isFocusedByPointer.current = true;
@@ -96,42 +108,41 @@ const usePointerInteraction = ({
     [
       onPointerDown,
       isDisabled,
-      setPressed,
-      pressing,
-      dragging,
-      isFocusedByPointer,
       handlePointerMove,
       handlePointerUp,
       preventDefault,
     ]
   );
+
   const handlePointerLeaveTarget = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
       if (isDisabled) return;
-      onPointerLeave?.(e);
+      onPointerLeave.current?.(e);
       setHovered(false);
     },
     [onPointerLeave, isDisabled, setHovered]
   );
+
   const handleFocusTarget = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
       if (isDisabled) return;
-      onFocus?.(e);
+      onFocus.current?.(e);
       if (isFocusedByPointer.current) return;
       setFocused(true);
     },
-    [onFocus, isDisabled, setFocused, isFocusedByPointer]
+    [onFocus, isDisabled, setFocused]
   );
+
   const handleBlurTarget = useCallback(
     (e) => {
       e.stopPropagation();
       e.preventDefault();
       if (isDisabled) return;
-      onBlur?.(e);
+      onBlur.current?.(e);
       setFocused(false);
     },
     [onBlur, isDisabled, setFocused]
@@ -157,7 +168,6 @@ const usePointerInteraction = ({
       target?.removeEventListener('blur', handleBlurTarget);
     };
   }, [
-    targetRef,
     handlePointerEnterTarget,
     handlePointerLeaveTarget,
     handleFocusTarget,
@@ -175,16 +185,26 @@ const usePointerInteraction = ({
   }, [isDisabled, isHovered, isFocused, isPressed]);
 
   return {
-    targetRef: targetRef,
-    isDisabled: isDisabled,
-    setDisabled: setDisabled,
-    isHovered: isHovered,
-    setHovered: setHovered,
-    isFocused: isFocused,
-    setFocused: setFocused,
-    isPressed: isPressed,
-    setPressed: setPressed,
-    getState: getState,
+    targetRef,
+    setTargetRef,
+    setOnPointerEnter,
+    setOnPointerDown,
+    setOnPointerMove,
+    setOnPointerUp,
+    setOnPointerLeave,
+    setOnPointerClick,
+    setOnPointerDrag,
+    setOnFocus,
+    setOnBlur,
+    isDisabled,
+    setDisabled,
+    isHovered,
+    setHovered,
+    isFocused,
+    setFocused,
+    isPressed,
+    setPressed,
+    getState,
   };
 };
 

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import s from './_Button.module.scss';
@@ -21,10 +21,11 @@ const Button = ({
     onChange?.();
   }, [onChange]);
 
-  const buttonPI = usePointerInteraction({
-    targetRef: buttonRef,
-    onPointerClick: handleClick,
-  });
+  const buttonPI = usePointerInteraction();
+  useEffect(() => {
+    buttonPI.setTargetRef(buttonRef.current);
+    buttonPI.setOnPointerClick(handleClick);
+  }, [buttonPI, handleClick]);
 
   return (
     <div

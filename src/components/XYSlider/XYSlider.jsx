@@ -62,13 +62,16 @@ const XYSlider = ({
     },
     [min, max, step]
   );
-  const onPointerDrag = (e) => {
-    const newValue = getNewValue(e);
-    onChange?.({ value: newValue, min: min, max: max });
-  };
-  const onPointerUp = () => {
+  const onPointerDrag = useCallback(
+    (e) => {
+      const newValue = getNewValue(e);
+      onChange?.({ value: newValue, min: min, max: max });
+    },
+    [min, max, onChange, getNewValue]
+  );
+  const onPointerUp = useCallback(() => {
     document.body.style.cursor = 'auto';
-  };
+  }, []);
   const onPointerDown = useCallback(
     (e, offset) => {
       document.body.style.cursor = 'pointer';
@@ -101,18 +104,20 @@ const XYSlider = ({
     [onPointerDown]
   );
 
-  const trackPI = usePointerInteraction({
-    targetRef: trackRef,
-    onPointerDown: trackClickable ? onPointerDownTrack : null,
-    onPointerDrag: trackClickable ? onPointerDrag : null,
-    onPointerUp: trackClickable ? onPointerUp : null,
-  });
-  const handlePI = usePointerInteraction({
-    targetRef: handleRef,
-    onPointerDown: onPointerDownHandle,
-    onPointerDrag: onPointerDrag,
-    onPointerUp: onPointerUp,
-  });
+  const trackPI = usePointerInteraction();
+  useEffect(() => {
+    trackPI.setTargetRef(trackRef.current);
+    trackPI.setOnPointerDown(trackClickable ? onPointerDownTrack : null);
+    trackPI.setOnPointerDrag(trackClickable ? onPointerDrag : null);
+    trackPI.setOnPointerUp(trackClickable ? onPointerUp : null);
+  }, [trackPI, trackClickable, onPointerDownTrack, onPointerDrag, onPointerUp]);
+  const handlePI = usePointerInteraction();
+  useEffect(() => {
+    handlePI.setTargetRef(handleRef.current);
+    handlePI.setOnPointerDown(onPointerDownHandle);
+    handlePI.setOnPointerDrag(onPointerDrag);
+    handlePI.setOnPointerUp(onPointerUp);
+  }, [handlePI, onPointerDownHandle, onPointerDrag, onPointerUp]);
 
   useEffect(() => {
     const normalizedPos = {
