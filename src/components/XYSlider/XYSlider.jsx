@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
@@ -13,6 +19,7 @@ const XYSlider = ({
   max = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
   trackClickable = true,
+  disabled = false,
   onChange = null,
   className = null,
 }) => {
@@ -119,7 +126,12 @@ const XYSlider = ({
     handlePI.setOnPointerUp(onPointerUp);
   }, [handlePI, onPointerDownHandle, onPointerDrag, onPointerUp]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    trackPI.setDisabled(disabled);
+    handlePI.setDisabled(disabled);
+  }, [trackPI, handlePI, disabled]);
+
+  useLayoutEffect(() => {
     const normalizedPos = {
       x: (value.x - min.x) / (max.x - min.x),
       y: (value.y - min.y) / (max.y - min.y),
@@ -153,7 +165,32 @@ const XYSlider = ({
           />
           <div
             className={cx('xy-slider__handle__shape', 'xy-slider-handle-shape')}
-          />
+          >
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>

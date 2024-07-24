@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import s from './_Switch.module.scss';
@@ -8,6 +14,7 @@ const cx = classNames.bind(s);
 
 const Switch = ({
   state: value = false,
+  disabled = false,
   onChange = null,
   className = null,
 }) => {
@@ -30,6 +37,11 @@ const Switch = ({
     handlePI.setTargetRef(handleRef.current);
     handlePI.setOnPointerClick(handleClick);
   }, [handlePI, handleClick]);
+
+  useLayoutEffect(() => {
+    switchPI.setDisabled(disabled);
+    handlePI.setDisabled(disabled);
+  }, [switchPI, handlePI, disabled]);
 
   return (
     <div

@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
@@ -15,6 +21,7 @@ const Slider = ({
   vertical = false,
   thumbDirection: handleDirection = 0,
   trackClickable = false,
+  disabled = false,
   onChange = null,
   className = null,
 }) => {
@@ -119,16 +126,21 @@ const Slider = ({
     handlePI.setOnPointerUp(onPointerUp);
   }, [handlePI, onPointerDownHandle, onPointerDrag, onPointerUp]);
 
-  useEffect(() => {
-    const normalizedPos = (value - min) / (max - min);
-    sliderRef.current.style.setProperty(`--pos`, normalizedPos);
-  }, [value, min, max, step, vertical]);
+  useLayoutEffect(() => {
+    trackPI.setDisabled(disabled);
+    handlePI.setDisabled(disabled);
+  }, [trackPI, handlePI, disabled]);
 
   const getHandleDirection = useCallback(() => {
     if (handleDirection === 0) return 'center';
     if (handleDirection === -1) return vertical ? 'top' : 'left';
     if (handleDirection === 1) return vertical ? 'top' : 'left';
   }, [vertical, handleDirection]);
+
+  useEffect(() => {
+    const normalizedPos = (value - min) / (max - min);
+    sliderRef.current.style.setProperty(`--pos`, normalizedPos);
+  }, [value, min, max, step, vertical]);
 
   return (
     <div

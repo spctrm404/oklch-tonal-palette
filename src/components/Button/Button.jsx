@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import s from './_Button.module.scss';
@@ -8,9 +14,10 @@ const cx = classNames.bind(s);
 
 const Button = ({
   onChange = null,
-  style = 'filled',
+  style = 'outlined',
   materialIcon = '',
   label = '',
+  disabled = true,
   className = null,
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -26,6 +33,10 @@ const Button = ({
     buttonPI.setTargetRef(buttonRef.current);
     buttonPI.setOnPointerClick(handleClick);
   }, [buttonPI, handleClick]);
+
+  useLayoutEffect(() => {
+    buttonPI.setDisabled(disabled);
+  }, [buttonPI, disabled]);
 
   return (
     <div

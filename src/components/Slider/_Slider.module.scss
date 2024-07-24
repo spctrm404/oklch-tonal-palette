@@ -4,14 +4,12 @@
   $parent-selector: &;
 
   position: relative;
-
-  &[data-direction='horizontal'] {
+  @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
     width: min($min-width + $handle-shape-width-idle, 100%);
     min-width: $min-width + $handle-shape-width-idle;
     height: $height;
   }
-
-  &[data-direction='vertical'] {
+  @at-root #{$parent-selector}[data-direction='vertical']#{&} {
     width: $height;
     height: min($min-width + $handle-shape-width-idle, 100%);
     min-height: $min-width + $handle-shape-width-idle;
@@ -19,7 +17,6 @@
 
   &__track {
     position: absolute;
-
     @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
       top: 50%;
       right: -0.5 * ($handle-size - $handle-shape-width-idle);
@@ -39,13 +36,13 @@
       position: absolute;
       overflow: hidden;
       border-radius: $rad;
-
       @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         inset: 0 0.5 * $handle-size;
       }
       @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
         inset: 0.5 * $handle-size 0;
       }
+
       @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
         cursor: pointer;
       }
@@ -53,7 +50,8 @@
       &__indicator {
         position: absolute;
         border-radius: $track-shape-rad;
-        transition: background-color $duration $easing;
+        transition: background-color $duration $easing,
+          opacity $duration $easing;
 
         &--type-active {
           @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
@@ -98,7 +96,6 @@
     width: $handle-size;
     height: $handle-size;
     cursor: pointer;
-
     @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
       top: 50%;
       left: calc((100% - $handle-size) * var(--pos));
@@ -117,7 +114,6 @@
       border-radius: $handle-state-rad;
       transition: background-color $duration $easing, opacity $duration $easing,
         transform $duration $easing;
-
       @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         width: $handle-state-width;
         height: $handle-state-height;
@@ -134,7 +130,7 @@
       left: 50%;
       border-radius: $handle-shape-rad;
       transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing;
+        background-color $duration $easing, opacity $duration $easing;
       transform: translate(-50%, -50%);
     }
   }

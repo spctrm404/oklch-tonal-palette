@@ -13,7 +13,7 @@
     border-width: $border-width;
     border-radius: $rad;
     transition: background-color $duration $easing,
-      border-color $duration $easing;
+      border-color $duration $easing, opacity $duration $easing;
   }
 
   &__handle {
@@ -42,7 +42,7 @@
       left: 50%;
       border-radius: $handle-shape-rad;
       transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing;
+        background-color $duration $easing, opacity $duration $easing;
       transform: translate(-50%, -50%);
     }
   }

@@ -4,24 +4,28 @@
   $parent-selector: &;
 
   position: relative;
-  width: min($min-size + $handle-shape-size-idle, 100%);
-  min-width: $min-size + $handle-shape-size-idle;
-  height: min($min-size + $handle-shape-size-idle, 100%);
-  min-height: $min-size + $handle-shape-size-idle;
+  width: min($min-size + $handle-shape-size, 100%);
+  min-width: $min-size + $handle-shape-size;
+  height: min($min-size + $handle-shape-size, 100%);
+  min-height: $min-size + $handle-shape-size;
 
   &__shape {
     position: absolute;
     inset: 0;
+    border-style: solid;
+    border-width: 0.5 * $handle-shape-size;
     border-radius: $rad;
+    transition: border-color $duration $easing;
   }
 
   &__track {
     position: absolute;
-    inset: -0.5 * ($handle-size - $handle-shape-size-idle);
+    inset: -0.5 * ($handle-size - $handle-shape-size);
 
     &__shape {
       position: absolute;
       inset: 0.5 * $handle-size;
+      transition: background-color $duration $easing;
       @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
         cursor: pointer;
       }
@@ -40,9 +44,9 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: calc($handle-state-size * sqrt(2) * 0.5);
-      height: calc($handle-state-size * sqrt(2) * 0.5);
-      border-radius: $handle-state-rad;
+      width: $handle-state-size;
+      height: $handle-state-size;
+      border-radius: 512rem;
       transition: opacity $duration $easing, transform $duration $easing;
     }
 
@@ -50,10 +54,34 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      border-radius: $handle-shape-rad;
-      transition: background-color $duration $easing, width $duration $easing,
-        height $duration $easing;
-      transform: translate(-50%, -50%) rotate(45deg);
+      width: $handle-shape-size;
+      height: $handle-shape-size;
+      transform: translate(-50%, -50%);
+
+      &__tick {
+        position: absolute;
+        border-radius: 512rem;
+
+        &:nth-child(1) {
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        &:nth-child(2) {
+          top: 50%;
+          transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        &:nth-child(3) {
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        &:nth-child(4) {
+          top: 50%;
+          transform: translate(-50%, -50%) rotate(90deg);
+        }
+      }
     }
   }
 }

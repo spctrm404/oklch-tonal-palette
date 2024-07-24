@@ -16,7 +16,7 @@
     inset: 0;
     border-radius: $rad;
     transition: background-color $duration $easing,
-      border-color $duration $easing;
+      border-color $duration $easing, opacity $duration $easing;
   }
 
   &__state {
@@ -30,6 +30,7 @@
     top: 50%;
     align-items: center;
     padding-inline: $px;
+    transition: color $duration $easing, opacity $duration $easing;
     transform: translateY(-50%);
     @at-root #{$parent-selector}[data-style='text'] #{&} {
       padding-inline: $px-text-button;

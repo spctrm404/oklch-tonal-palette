@@ -59,8 +59,8 @@ const PaletteController = ({
   const { updateHue } = useContext(ThemeContext);
 
   useEffect(() => {
-    updateHue('from', hFrom);
-    updateHue('to', hTo);
+    // updateHue('from', hFrom);
+    // updateHue('to', hTo);
   }, [updateHue, hFrom, hTo]);
 
   return (

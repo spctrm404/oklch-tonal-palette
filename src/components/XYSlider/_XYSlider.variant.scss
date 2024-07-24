@@ -1,8 +1,11 @@
 $min-size: 25rem;
 $handle-size: 3rem;
 $handle-state-size: 2.5rem;
-$handle-shape-size-idle: 1rem;
-$handle-shape-size-pressed: 1.75rem;
+$handle-shape-size: 1.75rem;
+$handle-shape-tick-length-idle: 0.625rem;
+$handle-shape-tick-length-pressed: 0.75rem;
+$handle-shape-tick-width-idle: 0.25rem;
+$handle-shape-tick-width-pressed: 0.125rem;
 $handle-shape-rad: 0;
 $handle-state-rad: 0.25rem;
 $rad: 0.25rem;
@@ -13,67 +16,86 @@ $easing: ease-in;
   $parent-selector: &;
 
   &__shape {
-    background-color: var(--surface-container-low-light);
+    border-color: var(--surface-light);
     @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-      background-color: var(--surface-container-low-dark);
+      border-color: var(--surface-dark);
     }
   }
 
   &__track {
     &__shape {
-      background-color: var(--surface-container-highest-light);
+      background-color: var(--secondary-container-light);
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-        background-color: var(--surface-container-highest-dark);
+        background-color: var(--secondary-container-dark);
       }
     }
   }
 
   &__handle {
     &__state {
-      background-color: var(--on-surface-light);
+      background-color: var(--primary-light);
       opacity: 0;
-      transform: translate(-50%, -50%) rotate(45deg) scale(0%, 0%);
+      transform: translate(-50%, -50%) scale(0%, 0%);
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-        background-color: var(--on-surface-dark);
+        background-color: var(--primary-dark);
       }
 
       @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         opacity: 0.08;
-        transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
+        transform: translate(-50%, -50%) scale(100%, 100%);
       }
+
       @at-root #{$parent-selector}[data-state='focused'] #{&} {
         opacity: 0.12;
-        transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
+        transform: translate(-50%, -50%) scale(100%, 100%);
       }
+
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         opacity: 0.12;
-        transform: translate(-50%, -50%) rotate(45deg) scale(100%, 100%);
+        transform: translate(-50%, -50%) scale(100%, 100%);
       }
     }
 
     &__shape {
-      width: calc($handle-shape-size-idle * sqrt(2) * 0.5);
-      height: calc($handle-shape-size-idle * sqrt(2) * 0.5);
-      background-color: var(--outline-light);
-      @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-        background-color: var(--outline-dark);
-      }
+      &__tick {
+        width: $handle-shape-tick-width-idle;
+        height: $handle-shape-tick-length-idle;
+        background-color: var(--primary-light);
+        @at-root #{$parent-selector}[data-theme='dark'] #{&} {
+          background-color: var(--primary-dark);
+        }
 
-      @at-root #{$parent-selector}[data-state='hovered'] #{&} {
-        background-color: var(--on-surface-light);
-        @at-root #{$parent-selector}[data-theme='dark']#{&} {
-          background-color: var(--on-surface-dark);
+        @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+          width: $handle-shape-tick-width-pressed;
         }
-      }
-      @at-root #{$parent-selector}[data-state='focused'] #{&} {
-        background-color: var(--on-surface-light);
-        @at-root #{$parent-selector}[data-theme='dark']#{&} {
-          background-color: var(--on-surface-dark);
+
+        &:nth-child(1) {
+          top: 0.5 * $handle-shape-tick-length-idle;
+          @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+            top: 0.5 * $handle-shape-tick-length-pressed;
+          }
         }
-      }
-      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-        width: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
-        height: calc($handle-shape-size-pressed * sqrt(2) * 0.5);
+
+        &:nth-child(2) {
+          left: $handle-shape-size - 0.5 * $handle-shape-tick-length-idle;
+          @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+            left: $handle-shape-size - 0.5 * $handle-shape-tick-length-pressed;
+          }
+        }
+
+        &:nth-child(3) {
+          top: $handle-shape-size - 0.5 * $handle-shape-tick-length-idle;
+          @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+            top: $handle-shape-size - 0.5 * $handle-shape-tick-length-pressed;
+          }
+        }
+
+        &:nth-child(4) {
+          left: 0.5 * $handle-shape-tick-length-idle;
+          @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+            left: 0.5 * $handle-shape-tick-length-pressed;
+          }
+        }
       }
     }
   }

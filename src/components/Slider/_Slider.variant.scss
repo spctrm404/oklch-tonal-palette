@@ -21,17 +21,34 @@ $easing: ease-in;
   &__track {
     &__shape {
       &__indicator {
+        opacity: 1;
+
+        @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+          background-color: var(--on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--on-surface-dark);
+          }
+        }
+
         &--type-active {
           background-color: var(--primary-light);
           @at-root #{$parent-selector}[data-theme='dark'] #{&} {
             background-color: var(--primary-dark);
           }
+
+          @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+            opacity: 0.38;
+          }
         }
 
         &--type-inactive {
-          background-color: var(--primary-container-light);
+          background-color: var(--secondary-container-light);
           @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-            background-color: var(--primary-container-dark);
+            background-color: var(--secondary-container-dark);
+          }
+
+          @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+            opacity: 0.12;
           }
         }
       }
@@ -46,14 +63,17 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-dark);
       }
+
       @at-root #{$parent-selector}[data-state='hovered'] #{&} {
         opacity: 0.08;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
+
       @at-root #{$parent-selector}[data-state='focused'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
       }
+
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         opacity: 0.12;
         transform: translate(-50%, -50%) scale(100%, 100%);
@@ -62,7 +82,7 @@ $easing: ease-in;
 
     &__shape {
       background-color: var(--primary-light);
-
+      opacity: 1;
       @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
         width: $handle-shape-width-idle;
         height: $handle-shape-height;
@@ -71,10 +91,10 @@ $easing: ease-in;
         width: $handle-shape-height;
         height: $handle-shape-width-idle;
       }
-
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-dark);
       }
+
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
           width: $handle-shape-width-pressed;
@@ -83,6 +103,14 @@ $easing: ease-in;
         @at-root #{$parent-selector}[data-direction='vertical']#{&} {
           width: $handle-shape-height;
           height: $handle-shape-width-pressed;
+        }
+      }
+
+      @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+        background-color: var(--on-surface-light);
+        opacity: 0.38;
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-dark);
         }
       }
     }

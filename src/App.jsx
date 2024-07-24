@@ -60,6 +60,8 @@ function App() {
   return (
     <>
       <Button label="button" />
+      <Switch state={true} disabled={true} />
+      <Switch state={false} disabled={true} />
       <p>{theme}</p>
       <Switch state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>
