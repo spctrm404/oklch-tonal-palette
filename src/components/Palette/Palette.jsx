@@ -32,7 +32,7 @@ const Palette = ({
   useEffect(() => {
     setChips((prevChips) => {
       const newChips = createChips(totalChips, lInflect, cMax, hFrom, hTo);
-      console.log(newChips);
+      // console.log(newChips);
       return newChips.map((aNewChip, idx) => {
         const aPrevChip = prevChips[idx];
         return aPrevChip ? { ...aNewChip, id: aPrevChip.id } : aNewChip;
@@ -40,7 +40,7 @@ const Palette = ({
     });
 
     renderCnt.current = renderCnt.current + 1;
-    console.log('palette', renderCnt.current);
+    // console.log('palette', renderCnt.current);
   }, [totalChips, lInflect, cMax, hFrom, hTo]);
 
   useEffect(() => {

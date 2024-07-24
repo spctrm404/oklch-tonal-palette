@@ -46,7 +46,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     chip.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
 
     renderCnt.current = renderCnt.current + 1;
-    console.log('chip', renderCnt.current);
+    // console.log('chip', renderCnt.current);
   }, [l, c, h, inP3, inSrgb]);
 
   return (
