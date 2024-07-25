@@ -1,3 +1,4 @@
+import IconButton from './components/IconButton/IconButton.jsx';
 import Button from './components/Button/Button.jsx';
 import Switch from './components/Switch/Switch.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
@@ -57,9 +58,18 @@ function App() {
 
   const { theme, updateTheme } = useContext(ThemeContext);
 
+  const [test, setTest] = useState(true);
+
   return (
     <>
-      <Button label="button" />
+      <IconButton
+        value={test}
+        materialIcon="settings"
+        style="standard"
+        disabled={false}
+        onChange={setTest}
+      />
+      <Button label="button" disabled={true} />
       <Switch state={true} disabled={true} />
       <Switch state={false} disabled={true} />
       <p>{theme}</p>

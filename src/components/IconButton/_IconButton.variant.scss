@@ -1,0 +1,318 @@
+$height: 2.5rem;
+$px: 1.5rem;
+$pl-has-icon: 1rem;
+$gx-has-icon: 0.5rem;
+$px-text-button: 0.75rem;
+$pl-has-icon-text-button: 0.75rem;
+$pr-has-icon-text-button: 1rem;
+$border-width: 0.0625rem;
+$icon-size: 1.5rem;
+$rad: 0.25rem;
+$duration: 150ms;
+$easing: ease-in;
+
+.icon-button {
+  $parent-selector: &;
+
+  &__shape {
+    opacity: 1;
+    @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+      opacity: 0.12;
+    }
+
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+        background-color: var(--on-surface-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-dark);
+        }
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        background-color: var(--surface-container-highest-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--surface-container-highest-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--primary-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      background-color: var(--secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--secondary-container-dark);
+      }
+
+      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+        background-color: var(--on-surface-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-dark);
+        }
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        background-color: var(--surface-container-highest-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--surface-container-highest-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--secondary-container-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--secondary-container-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      background-color: unset;
+      border-color: var(--outline-light);
+      border-style: solid;
+      border-width: $border-width;
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        border-color: var(--outline-dark);
+      }
+
+      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+        border-color: var(--on-surface-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          border-color: var(--on-surface-dark);
+        }
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--inverse-surface-light);
+          border-color: var(--inverse-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--inverse-surface-dark);
+            border-color: var(--inverse-surface-dark);
+          }
+        }
+      }
+    }
+  }
+
+  &__state {
+    opacity: 0;
+    @at-root #{$parent-selector}[data-state='hovered'] #{&} {
+      opacity: 0.08;
+    }
+    @at-root #{$parent-selector}[data-state='focused'] #{&} {
+      opacity: 0.12;
+    }
+    @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+      opacity: 0.12;
+    }
+
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      background-color: var(--on-primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        background-color: var(--primary-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--primary-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--on-primary-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--on-primary-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      background-color: var(--on-secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-secondary-container-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        background-color: var(--on-surface-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--on-secondary-container-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--on-secondary-container-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      background-color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--inverse-on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--inverse-on-surface-dark);
+          }
+        }
+      }
+    }
+    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
+      background-color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--inverse-on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--inverse-on-surface-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='standard'] #{&} {
+      background-color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          background-color: var(--primary-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-dark);
+          }
+        }
+      }
+    }
+  }
+
+  &__content {
+    opacity: 1;
+
+    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+      color: var(--on-primary-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        color: var(--primary-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          color: var(--primary-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          color: var(--on-primary-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            color: var(--on-primary-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+      color: var(--on-secondary-container-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-secondary-container-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        color: var(--on-surface-light);
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          color: var(--on-surface-dark);
+        }
+
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          color: var(--on-secondary-container-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            color: var(--on-secondary-container-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+      color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          color: var(--inverse-on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            color: var(--inverse-on-surface-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
+      color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          color: var(--inverse-on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            color: var(--inverse-on-surface-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-style='standard'] #{&} {
+      color: var(--on-surface-variant-light);
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$parent-selector}[data-is-toggle='true']#{&} {
+        @at-root #{$parent-selector}[data-value='true']#{&} {
+          color: var(--primary-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            color: var(--primary-dark);
+          }
+        }
+      }
+    }
+
+    @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+      color: var(--on-surface-light);
+      opacity: 0.38;
+      @at-root #{$parent-selector}[data-theme='dark']#{&} {
+        color: var(--on-surface-dark);
+      }
+    }
+
+    &__icon {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      @at-root #{$parent-selector}[data-value='true'] #{&} {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      }
+    }
+  }
+}

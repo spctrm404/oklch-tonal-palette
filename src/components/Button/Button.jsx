@@ -14,10 +14,10 @@ const cx = classNames.bind(s);
 
 const Button = ({
   onChange = null,
-  style = 'outlined',
+  style = 'text',
   materialIcon = '',
   label = '',
-  disabled = true,
+  disabled = false,
   className = null,
 }) => {
   const { theme } = useContext(ThemeContext);
