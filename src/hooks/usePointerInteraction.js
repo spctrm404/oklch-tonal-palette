@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useCreateHandlerRef = (initialValue = null) => {
-  const handlerRef = useRef(initialValue);
-  const setHandler = useCallback((fn) => {
-    handlerRef.current = fn;
-  }, []);
-  return [handlerRef, setHandler];
+const useCreateHandlerRef = () => {
+  const stopPropagation = useRef(true);
+  const preventDefault = useRef(true);
+  const handlerRef = useRef(null);
+  const setHandler = useCallback(
+    (fn, stopPropagationFlag = true, preventDefaultFlag = true) => {
+      handlerRef.current = fn;
+      stopPropagation.current = stopPropagationFlag;
+      preventDefault.current = preventDefaultFlag;
+    },
+    []
+  );
+  return [stopPropagation, preventDefault, handlerRef, setHandler];
 };
 
 const usePointerInteraction = () => {
@@ -14,15 +21,52 @@ const usePointerInteraction = () => {
     targetRef.current = ref;
   }, []);
 
-  const [onPointerEnter, setOnPointerEnter] = useCreateHandlerRef();
-  const [onPointerDown, setOnPointerDown] = useCreateHandlerRef();
-  const [onPointerMove, setOnPointerMove] = useCreateHandlerRef();
-  const [onPointerUp, setOnPointerUp] = useCreateHandlerRef();
-  const [onPointerLeave, setOnPointerLeave] = useCreateHandlerRef();
-  const [onPointerClick, setOnPointerClick] = useCreateHandlerRef();
-  const [onPointerDrag, setOnPointerDrag] = useCreateHandlerRef();
-  const [onFocus, setOnFocus] = useCreateHandlerRef();
-  const [onBlur, setOnBlur] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerEnter,
+    preventDefaultOnPointerEnter,
+    onPointerEnter,
+    setOnPointerEnter,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerDown,
+    preventDefaultOnPointerDown,
+    onPointerDown,
+    setOnPointerDown,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerMove,
+    preventDefaultOnPointerMove,
+    onPointerMove,
+    setOnPointerMove,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerUp,
+    preventDefaultOnPointerUp,
+    onPointerUp,
+    setOnPointerUp,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerLeave,
+    preventDefaultOnPointerLeave,
+    onPointerLeave,
+    setOnPointerLeave,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerClick,
+    preventDefaultOnPointerClick,
+    onPointerClick,
+    setOnPointerClick,
+  ] = useCreateHandlerRef();
+  const [
+    stopPropagationOnPointerDrag,
+    preventDefaultOnPointerDrag,
+    onPointerDrag,
+    setOnPointerDrag,
+  ] = useCreateHandlerRef();
+  const [stopPropagationOnFocus, preventDefaultOnFocus, onFocus, setOnFocus] =
+    useCreateHandlerRef();
+  const [stopPropagationOnBlur, preventDefaultOnBlur, onBlur, setOnBlur] =
+    useCreateHandlerRef();
 
   const [isDisabled, setDisabled] = useState(false);
   const [isHovered, setHovered] = useState(false);
@@ -38,19 +82,25 @@ const usePointerInteraction = () => {
 
   const handlePointerEnterTarget = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnPointerEnter) e.stopPropagation();
+      if (preventDefaultOnPointerEnter) e.preventDefault();
       if (isDisabled) return;
       onPointerEnter.current?.(e);
       setHovered(true);
     },
-    [onPointerEnter, isDisabled, setHovered]
+    [
+      stopPropagationOnPointerEnter,
+      preventDefaultOnPointerEnter,
+      onPointerEnter,
+      isDisabled,
+      setHovered,
+    ]
   );
 
   const handlePointerMove = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnPointerMove) e.stopPropagation();
+      if (preventDefaultOnPointerMove) e.preventDefault();
       if (isDisabled) return;
       if (pressing.current) {
         dragging.current = true;
@@ -58,13 +108,19 @@ const usePointerInteraction = () => {
       }
       onPointerMove.current?.(e);
     },
-    [onPointerMove, onPointerDrag, isDisabled]
+    [
+      stopPropagationOnPointerMove,
+      preventDefaultOnPointerMove,
+      onPointerMove,
+      onPointerDrag,
+      isDisabled,
+    ]
   );
 
   const handlePointerUp = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnPointerUp) e.stopPropagation();
+      if (preventDefaultOnPointerUp) e.preventDefault();
       if (!isDisabled) {
         if (pressing.current && !dragging.current) {
           if (isFocused) targetRef.current.blur();
@@ -81,6 +137,8 @@ const usePointerInteraction = () => {
       document.removeEventListener('pointerup', handlePointerUp);
     },
     [
+      stopPropagationOnPointerUp,
+      preventDefaultOnPointerUp,
       onPointerUp,
       onPointerClick,
       isDisabled,
@@ -93,8 +151,8 @@ const usePointerInteraction = () => {
   const handlePointerDownTarget = useCallback(
     (e) => {
       document.addEventListener('touchstart', preventDefault);
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnPointerDown) e.stopPropagation();
+      if (preventDefaultOnPointerDown) e.preventDefault();
       if (!isDisabled) {
         onPointerDown.current?.(e);
         pressing.current = true;
@@ -106,6 +164,8 @@ const usePointerInteraction = () => {
       document.addEventListener('pointerup', handlePointerUp);
     },
     [
+      stopPropagationOnPointerDown,
+      preventDefaultOnPointerDown,
       onPointerDown,
       isDisabled,
       handlePointerMove,
@@ -116,36 +176,54 @@ const usePointerInteraction = () => {
 
   const handlePointerLeaveTarget = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnPointerLeave) e.stopPropagation();
+      if (preventDefaultOnPointerLeave) e.preventDefault();
       if (isDisabled) return;
       onPointerLeave.current?.(e);
       setHovered(false);
     },
-    [onPointerLeave, isDisabled, setHovered]
+    [
+      stopPropagationOnPointerLeave,
+      preventDefaultOnPointerLeave,
+      onPointerLeave,
+      isDisabled,
+      setHovered,
+    ]
   );
 
   const handleFocusTarget = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnFocus) e.stopPropagation();
+      if (preventDefaultOnFocus) e.preventDefault();
       if (isDisabled) return;
       onFocus.current?.(e);
       if (isFocusedByPointer.current) return;
       setFocused(true);
     },
-    [onFocus, isDisabled, setFocused]
+    [
+      stopPropagationOnFocus,
+      preventDefaultOnFocus,
+      onFocus,
+      isDisabled,
+      setFocused,
+    ]
   );
 
   const handleBlurTarget = useCallback(
     (e) => {
-      e.stopPropagation();
-      e.preventDefault();
+      if (stopPropagationOnBlur) e.stopPropagation();
+      if (preventDefaultOnBlur) e.preventDefault();
       if (isDisabled) return;
       onBlur.current?.(e);
       setFocused(false);
     },
-    [onBlur, isDisabled, setFocused]
+    [
+      stopPropagationOnBlur,
+      preventDefaultOnBlur,
+      onBlur,
+      isDisabled,
+      setFocused,
+    ]
   );
 
   useEffect(() => {

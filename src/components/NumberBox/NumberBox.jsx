@@ -1,33 +1,50 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import IconButton from '../IconButton/IconButton.jsx';
+import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { formatNumLengthToStep } from '../../utils/stringUtils';
-import s from './Inputnumber.module.scss';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
+import s from './NumberBox.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(s);
 
-const Inputnumber = ({
+const NumberBox = ({
   value = 0,
   min = 0,
   max = 100,
   step = 1,
   displayLength = 6,
+  disabled = false,
   onChange = null,
   className = null,
 }) => {
+  const { theme } = useContext(ThemeContext);
+
   const [localValue, setLocalValue] = useState(
     formatNumLengthToStep(value, step)
   );
-  const inputnumberRef = useRef(null);
-  const decBtnRef = useRef(null);
-  const incBtnRef = useRef(null);
+  const numberBoxRef = useRef(null);
+  const inputNumberRef = useRef(null);
 
-  const handleChangeInput = useCallback((e) => {
+  const handleChangeInputNumber = useCallback((e) => {
     setLocalValue(e.currentTarget.value);
   }, []);
 
-  const handleBlurInput = useCallback(
+  const handlePointerDownInputNumber = useCallback(() => {
+    inputNumberRef.current.focus();
+  }, []);
+
+  const handleBlurInputNumber = useCallback(
     (e) => {
+      console.log(e);
       const newValue = clamp(Number(e.currentTarget.value), min, max);
       const steppedValue = setMultipleOfStep(newValue, step);
       onChange?.({ value: steppedValue, min: min, max: max });
@@ -47,32 +64,27 @@ const Inputnumber = ({
     onChange?.({ value: steppedValue, min: min, max: max });
   }, [value, min, max, step, onChange]);
 
-  useEffect(() => {
-    const inputnumber = inputnumberRef.current;
+  useLayoutEffect(() => {
+    const inputnumber = numberBoxRef.current;
     inputnumber.style.setProperty(`--ch`, displayLength);
   }, [displayLength]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setLocalValue(formatNumLengthToStep(value, step));
   }, [value, step]);
 
+  const inputNumberPI = usePointerInteraction();
   useEffect(() => {
-    const decBtn = decBtnRef.current;
-    const incBtn = incBtnRef.current;
+    inputNumberPI.setTargetRef(inputNumberRef.current);
+    inputNumberPI.setOnPointerDown(handlePointerDownInputNumber);
 
-    decBtn.addEventListener('click', handleDecButtonClick);
-    incBtn.addEventListener('click', handleIncButtonClick);
-
-    return () => {
-      decBtn.removeEventListener('click', handleDecButtonClick);
-      incBtn.removeEventListener('click', handleIncButtonClick);
-    };
-  }, [handleDecButtonClick, handleIncButtonClick]);
+    inputNumberPI.setOnBlur(handleBlurInputNumber);
+  }, [inputNumberPI, handlePointerDownInputNumber, handleBlurInputNumber]);
 
   return (
     <div
       className={`${cx('inputnumber')} ${className || ''}`}
-      ref={inputnumberRef}
+      ref={numberBoxRef}
     >
       <input
         className={`${cx('inputnumber__field')} inputnumber-field`}
@@ -81,29 +93,21 @@ const Inputnumber = ({
         min={min}
         max={max}
         step={step}
-        onChange={handleChangeInput}
-        onBlur={handleBlurInput}
+        ref={inputNumberRef}
+        onChange={handleChangeInputNumber}
       />
-      <div
-        className={`${cx(
-          'inputnumber__button',
-          'inputnumber__button--role-decrease'
-        )} inputnumber-decrease-button`}
-        ref={decBtnRef}
-      >
-        &#8722;
-      </div>
-      <div
-        className={`${cx(
-          'inputnumber__button',
-          'inputnumber__button--role-increase'
-        )} inputnumber-increase-button`}
-        ref={incBtnRef}
-      >
-        &#43;
-      </div>
+      <IconButton
+        style="standard"
+        materialIcon="remove"
+        onChange={handleDecButtonClick}
+      />
+      <IconButton
+        style="standard"
+        materialIcon="add"
+        onChange={handleIncButtonClick}
+      />
     </div>
   );
 };
 
-export default Inputnumber;
+export default NumberBox;

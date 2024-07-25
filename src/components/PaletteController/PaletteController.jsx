@@ -1,5 +1,5 @@
 import Switch from '../Switch/Switch.jsx';
-import Inputnumber from '../Inputnumber/Inputnumber.jsx';
+import NumberBox from '../NumberBox/NumberBox.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
@@ -66,7 +66,7 @@ const PaletteController = ({
   return (
     <>
       <Switch state={isRange} onChange={updateIsRange} />
-      <Inputnumber
+      <NumberBox
         value={totalChips}
         min={2}
         max={100}
@@ -86,7 +86,7 @@ const PaletteController = ({
           handleChangeXYSlider(sliderProps, 'lInflect', 'cMax');
         }}
       />
-      <Inputnumber
+      <NumberBox
         value={lInflect}
         min={0}
         max={1}
@@ -96,7 +96,7 @@ const PaletteController = ({
           handleChangeNumbox(numboxProps, 'lInflect');
         }}
       />
-      <Inputnumber
+      <NumberBox
         value={cMax}
         min={0}
         max={CHROMA_MAX}
@@ -118,7 +118,7 @@ const PaletteController = ({
         trackClickable={true}
         step={HUE_STEP}
       />
-      <Inputnumber
+      <NumberBox
         value={hFrom}
         min={0}
         max={360}
@@ -138,7 +138,7 @@ const PaletteController = ({
         max={360}
         step={HUE_STEP}
       />
-      <Inputnumber
+      <NumberBox
         value={hTo}
         min={0}
         max={360}
