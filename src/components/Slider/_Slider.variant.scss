@@ -42,9 +42,9 @@ $easing: ease-in;
         }
 
         &--type-inactive {
-          background-color: var(--secondary-container-light);
+          background-color: var(--primary-container-light);
           @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-            background-color: var(--secondary-container-dark);
+            background-color: var(--primary-container-dark);
           }
 
           @at-root #{$parent-selector}[data-state='disabled'] #{&} {

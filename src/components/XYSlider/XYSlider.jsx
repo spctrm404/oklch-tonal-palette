@@ -22,6 +22,7 @@ const XYSlider = ({
   disabled = false,
   onChange = null,
   className = null,
+  children = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
@@ -166,30 +167,34 @@ const XYSlider = ({
           <div
             className={cx('xy-slider__handle__shape', 'xy-slider-handle-shape')}
           >
-            <div
-              className={cx(
-                'xy-slider__handle__shape__tick',
-                'xy-slider-handle-shape-tick'
-              )}
-            />
-            <div
-              className={cx(
-                'xy-slider__handle__shape__tick',
-                'xy-slider-handle-shape-tick'
-              )}
-            />
-            <div
-              className={cx(
-                'xy-slider__handle__shape__tick',
-                'xy-slider-handle-shape-tick'
-              )}
-            />
-            <div
-              className={cx(
-                'xy-slider__handle__shape__tick',
-                'xy-slider-handle-shape-tick'
-              )}
-            />
+            {children || (
+              <>
+                <div
+                  className={cx(
+                    'xy-slider__handle__shape__tick',
+                    'xy-slider-handle-shape-tick'
+                  )}
+                />
+                <div
+                  className={cx(
+                    'xy-slider__handle__shape__tick',
+                    'xy-slider-handle-shape-tick'
+                  )}
+                />
+                <div
+                  className={cx(
+                    'xy-slider__handle__shape__tick',
+                    'xy-slider-handle-shape-tick'
+                  )}
+                />
+                <div
+                  className={cx(
+                    'xy-slider__handle__shape__tick',
+                    'xy-slider-handle-shape-tick'
+                  )}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -1,13 +1,14 @@
 $min-size: 25rem;
 $handle-size: 3rem;
 $handle-state-size: 2.5rem;
-$handle-shape-size: 1.75rem;
-$handle-shape-tick-length-idle: 0.625rem;
-$handle-shape-tick-length-pressed: 0.75rem;
+$handle-shape-size-idle: 1rem;
+$handle-shape-size-pressed: 1.75rem;
+$handle-shape-tick-gap-idle: 0.25rem;
+$handle-shape-tick-gap-pressed: 0.5rem;
 $handle-shape-tick-width-idle: 0.25rem;
 $handle-shape-tick-width-pressed: 0.125rem;
-$handle-shape-rad: 0;
-$handle-state-rad: 0.25rem;
+$handle-shape-tick-rad: 512rem;
+$handle-state-rad: 512rem;
 $rad: 0.25rem;
 $duration: 100ms;
 $easing: ease-in;
@@ -16,17 +17,17 @@ $easing: ease-in;
   $parent-selector: &;
 
   &__shape {
-    border-color: var(--surface-light);
+    border-color: var(--surface-container-light);
     @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-      border-color: var(--surface-dark);
+      border-color: var(--surface-container-dark);
     }
   }
 
   &__track {
     &__shape {
-      background-color: var(--secondary-container-light);
+      background-color: var(--primary-container-light);
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-        background-color: var(--secondary-container-dark);
+        background-color: var(--primary-container-dark);
       }
     }
   }
@@ -57,43 +58,59 @@ $easing: ease-in;
     }
 
     &__shape {
-      &__tick {
-        width: $handle-shape-tick-width-idle;
-        height: $handle-shape-tick-length-idle;
+      width: $handle-shape-size-idle;
+      height: $handle-shape-size-idle;
+
+      @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+        width: $handle-shape-size-pressed;
+        height: $handle-shape-size-pressed;
+      }
+
+      > * {
         background-color: var(--primary-light);
         @at-root #{$parent-selector}[data-theme='dark'] #{&} {
           background-color: var(--primary-dark);
         }
+      }
 
-        @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-          width: $handle-shape-tick-width-pressed;
-        }
-
-        &:nth-child(1) {
-          top: 0.5 * $handle-shape-tick-length-idle;
+      &__tick {
+        &:nth-of-type(1) {
+          inset: 0 calc(50% - 0.5 * $handle-shape-tick-width-idle)
+            calc(50% + 0.5 * $handle-shape-tick-gap-idle);
           @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-            top: 0.5 * $handle-shape-tick-length-pressed;
+            inset: 0 calc(50% - 0.5 * $handle-shape-tick-width-pressed)
+              calc(50% + 0.5 * $handle-shape-tick-gap-pressed);
           }
         }
 
-        &:nth-child(2) {
-          left: $handle-shape-size - 0.5 * $handle-shape-tick-length-idle;
+        &:nth-of-type(2) {
+          inset: calc(50% - 0.5 * $handle-shape-tick-width-idle) 0
+            calc(50% - 0.5 * $handle-shape-tick-width-idle)
+            calc(50% + 0.5 * $handle-shape-tick-gap-idle);
           @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-            left: $handle-shape-size - 0.5 * $handle-shape-tick-length-pressed;
+            inset: calc(50% - 0.5 * $handle-shape-tick-width-pressed) 0
+              calc(50% - 0.5 * $handle-shape-tick-width-pressed)
+              calc(50% + 0.5 * $handle-shape-tick-gap-pressed);
           }
         }
 
-        &:nth-child(3) {
-          top: $handle-shape-size - 0.5 * $handle-shape-tick-length-idle;
+        &:nth-of-type(3) {
+          inset: calc(50% + 0.5 * $handle-shape-tick-gap-idle)
+            calc(50% - 0.5 * $handle-shape-tick-width-idle) 0;
           @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-            top: $handle-shape-size - 0.5 * $handle-shape-tick-length-pressed;
+            inset: calc(50% + 0.5 * $handle-shape-tick-gap-pressed)
+              calc(50% - 0.5 * $handle-shape-tick-width-pressed) 0;
           }
         }
 
-        &:nth-child(4) {
-          left: 0.5 * $handle-shape-tick-length-idle;
+        &:nth-of-type(4) {
+          inset: calc(50% - 0.5 * $handle-shape-tick-width-idle)
+            calc(50% + 0.5 * $handle-shape-tick-gap-idle)
+            calc(50% - 0.5 * $handle-shape-tick-width-idle) 0;
           @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-            left: 0.5 * $handle-shape-tick-length-pressed;
+            inset: calc(50% - 0.5 * $handle-shape-tick-width-pressed)
+              calc(50% + 0.5 * $handle-shape-tick-gap-pressed)
+              calc(50% - 0.5 * $handle-shape-tick-width-pressed) 0;
           }
         }
       }
