@@ -5,28 +5,28 @@
 
   position: relative;
   @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
-    width: min($min-width + $handle-shape-width-idle, 100%);
-    min-width: $min-width + $handle-shape-width-idle;
+    width: min($min-width, 100%);
+    min-width: $min-width;
     height: $height;
   }
   @at-root #{$parent-selector}[data-direction='vertical']#{&} {
     width: $height;
-    height: min($min-width + $handle-shape-width-idle, 100%);
-    min-height: $min-width + $handle-shape-width-idle;
+    height: min($min-width, 100%);
+    min-height: $min-width;
   }
 
   &__track {
     position: absolute;
     @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
       top: 50%;
-      right: -0.5 * ($handle-size - $handle-shape-width-idle);
-      left: -0.5 * ($handle-size - $handle-shape-width-idle);
+      right: -0.5 * $handle-size;
+      left: -0.5 * $handle-size;
       height: $track-height;
       transform: translateY(-50%);
     }
     @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-      top: -0.5 * ($handle-size - $handle-shape-width-idle);
-      bottom: -0.5 * ($handle-size - $handle-shape-width-idle);
+      top: -0.5 * $handle-size;
+      bottom: -0.5 * $handle-size;
       left: 50%;
       width: $track-height;
       transform: translateX(-50%);

@@ -4,28 +4,19 @@
   $parent-selector: &;
 
   position: relative;
-  width: min($min-size + $handle-shape-size-pressed, 100%);
-  min-width: $min-size + $handle-shape-size-pressed;
-  height: min($min-size + $handle-shape-size-pressed, 100%);
-  min-height: $min-size + $handle-shape-size-pressed;
-
-  &__shape {
-    position: absolute;
-    inset: 0;
-    border-style: solid;
-    border-width: 0.5 * $handle-shape-size-pressed;
-    border-radius: $rad;
-    transition: border-color $duration $easing;
-  }
+  width: min($min-size, 100%);
+  min-width: $min-size;
+  height: min($min-size, 100%);
+  min-height: $min-size;
 
   &__track {
     position: absolute;
-    inset: -0.5 * ($handle-size - $handle-shape-size-pressed);
+    inset: -0.5 * $handle-size;
 
     &__shape {
       position: absolute;
       inset: 0.5 * $handle-size;
-      transition: background-color $duration $easing;
+      transition: background-color $duration $easing, opacity $duration $easing;
       @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
         cursor: pointer;
       }
@@ -54,7 +45,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transition: width $duration $easing, height $duration $easing;
+      transition: width $duration $easing, height $duration $easing,
+        opacity $duration $easing;
       transform: translate(-50%, -50%);
 
       &__tick {

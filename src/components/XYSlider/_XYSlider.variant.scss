@@ -16,18 +16,20 @@ $easing: ease-in;
 .xy-slider {
   $parent-selector: &;
 
-  &__shape {
-    border-color: var(--surface-container-light);
-    @at-root #{$parent-selector}[data-theme='dark'] #{&} {
-      border-color: var(--surface-container-dark);
-    }
-  }
-
   &__track {
     &__shape {
       background-color: var(--primary-container-light);
+      opacity: 1;
       @at-root #{$parent-selector}[data-theme='dark'] #{&} {
         background-color: var(--primary-container-dark);
+      }
+
+      @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+        background-color: var(--on-surface-light);
+        opacity: 0.12;
+        @at-root #{$parent-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-dark);
+        }
       }
     }
   }
@@ -60,16 +62,27 @@ $easing: ease-in;
     &__shape {
       width: $handle-shape-size-idle;
       height: $handle-shape-size-idle;
+      opacity: 1;
 
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
         width: $handle-shape-size-pressed;
         height: $handle-shape-size-pressed;
+      }
+      @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+        opacity: 0.38;
       }
 
       > * {
         background-color: var(--primary-light);
         @at-root #{$parent-selector}[data-theme='dark'] #{&} {
           background-color: var(--primary-dark);
+        }
+
+        @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+          background-color: var(--on-surface-light);
+          @at-root #{$parent-selector}[data-theme='dark']#{&} {
+            background-color: var(--on-surface-dark);
+          }
         }
       }
 

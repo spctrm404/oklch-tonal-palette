@@ -151,7 +151,6 @@ const XYSlider = ({
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('xy-slider__shape', 'xy-slider-shape')} />
       <div className={cx('xy-slider__track', 'xy-slider-track')} ref={trackRef}>
         <div
           className={cx('xy-slider__track__shape', 'xy-slider-track-shape')}
