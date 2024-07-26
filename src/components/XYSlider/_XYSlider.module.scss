@@ -32,6 +32,10 @@
     height: $handle-size;
     cursor: pointer;
 
+    &:focus {
+      outline: none;
+    }
+
     &__state {
       position: absolute;
       top: 50%;

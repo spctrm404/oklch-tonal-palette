@@ -70,14 +70,14 @@ const XYSlider = ({
     },
     [min, max, step]
   );
-  const onPointerDrag = useCallback(
+  const onPointerDragHandler = useCallback(
     (e) => {
       const newValue = getNewValue(e);
       onChange?.({ value: newValue, min: min, max: max });
     },
     [min, max, onChange, getNewValue]
   );
-  const onPointerUp = useCallback(() => {
+  const onPointerUpHandler = useCallback(() => {
     document.body.style.cursor = 'auto';
   }, []);
   const onPointerDown = useCallback(
@@ -89,7 +89,7 @@ const XYSlider = ({
     },
     [min, max, onChange, getNewValue]
   );
-  const onPointerDownTrack = useCallback(
+  const onPointerDownTrackHandler = useCallback(
     (e) => {
       const handleRect = handleDom.current.getBoundingClientRect();
       const offset = {
@@ -100,7 +100,7 @@ const XYSlider = ({
     },
     [onPointerDown]
   );
-  const onPointerDownHandle = useCallback(
+  const onPointerDownHandleHandler = useCallback(
     (e) => {
       const handleRect = handleDom.current.getBoundingClientRect();
       const offset = {
@@ -115,17 +115,29 @@ const XYSlider = ({
   const trackPI = usePointerInteraction();
   useEffect(() => {
     trackPI.setTargetRef(trackDom.current);
-    trackPI.setOnPointerDown(trackClickable ? onPointerDownTrack : null);
-    trackPI.setOnPointerDrag(trackClickable ? onPointerDrag : null);
-    trackPI.setOnPointerUp(trackClickable ? onPointerUp : null);
-  }, [trackPI, trackClickable, onPointerDownTrack, onPointerDrag, onPointerUp]);
+    trackPI.setOnPointerDown(trackClickable ? onPointerDownTrackHandler : null);
+    trackPI.setOnPointerDrag(trackClickable ? onPointerDragHandler : null);
+    trackPI.setOnPointerUp(trackClickable ? onPointerUpHandler : null);
+    trackPI.setOnPointerClick(null, false);
+  }, [
+    trackPI,
+    trackClickable,
+    onPointerDownTrackHandler,
+    onPointerDragHandler,
+    onPointerUpHandler,
+  ]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
     handlePI.setTargetRef(handleDom.current);
-    handlePI.setOnPointerDown(onPointerDownHandle);
-    handlePI.setOnPointerDrag(onPointerDrag);
-    handlePI.setOnPointerUp(onPointerUp);
-  }, [handlePI, onPointerDownHandle, onPointerDrag, onPointerUp]);
+    handlePI.setOnPointerDown(onPointerDownHandleHandler);
+    handlePI.setOnPointerDrag(onPointerDragHandler);
+    handlePI.setOnPointerUp(onPointerUpHandler);
+  }, [
+    handlePI,
+    onPointerDownHandleHandler,
+    onPointerDragHandler,
+    onPointerUpHandler,
+  ]);
 
   useLayoutEffect(() => {
     trackPI.setDisabled(disabled);

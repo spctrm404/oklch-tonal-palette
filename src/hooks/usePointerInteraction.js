@@ -5,10 +5,14 @@ const useCreateHandlerRef = () => {
   const preventDefault = useRef(true);
   const handler = useRef(null);
   const setHandler = useCallback(
-    (_handler, _stopPropagation = true, _preventDefault = true) => {
-      handler.current = _handler;
-      stopPropagation.current = _stopPropagation;
-      preventDefault.current = _preventDefault;
+    (
+      handlerFunction,
+      stopPropagationFlag = true,
+      preventDefaultFlag = true
+    ) => {
+      handler.current = handlerFunction;
+      stopPropagation.current = stopPropagationFlag;
+      preventDefault.current = preventDefaultFlag;
     },
     []
   );
@@ -34,10 +38,10 @@ const usePointerInteraction = () => {
     setOnPointerDown,
   ] = useCreateHandlerRef();
   const [
-    stopPropagationOnPointerMove,
-    preventDefaultOnPointerMove,
-    onPointerMove,
-    setOnPointerMove,
+    stopPropagationOnPointerDrag,
+    preventDefaultOnPointerDrag,
+    onPointerDrag,
+    setOnPointerDrag,
   ] = useCreateHandlerRef();
   const [
     stopPropagationOnPointerUp,
@@ -46,22 +50,16 @@ const usePointerInteraction = () => {
     setOnPointerUp,
   ] = useCreateHandlerRef();
   const [
-    stopPropagationOnPointerLeave,
-    preventDefaultOnPointerLeave,
-    onPointerLeave,
-    setOnPointerLeave,
-  ] = useCreateHandlerRef();
-  const [
     stopPropagationOnPointerClick,
     preventDefaultOnPointerClick,
     onPointerClick,
     setOnPointerClick,
   ] = useCreateHandlerRef();
   const [
-    stopPropagationOnPointerDrag,
-    preventDefaultOnPointerDrag,
-    onPointerDrag,
-    setOnPointerDrag,
+    stopPropagationOnPointerLeave,
+    preventDefaultOnPointerLeave,
+    onPointerLeave,
+    setOnPointerLeave,
   ] = useCreateHandlerRef();
   const [stopPropagationOnFocus, preventDefaultOnFocus, onFocus, setOnFocus] =
     useCreateHandlerRef();
@@ -72,9 +70,9 @@ const usePointerInteraction = () => {
   const [isHovered, setHovered] = useState(false);
   const [isFocused, setFocused] = useState(false);
   const [isPressed, setPressed] = useState(false);
+  const added = useRef(false);
   const pressing = useRef(false);
   const dragging = useRef(false);
-  const isFocusedByPointer = useRef(false);
 
   const preventDefault = useCallback((e) => {
     e.preventDefault();
@@ -82,8 +80,8 @@ const usePointerInteraction = () => {
 
   const onPointerEnterTargetHandler = useCallback(
     (e) => {
-      if (stopPropagationOnPointerEnter) e.stopPropagation();
-      if (preventDefaultOnPointerEnter) e.preventDefault();
+      if (stopPropagationOnPointerEnter.current) e.stopPropagation();
+      if (preventDefaultOnPointerEnter.current) e.preventDefault();
       if (isDisabled) return;
       onPointerEnter.current?.(e);
       setHovered(true);
@@ -97,87 +95,112 @@ const usePointerInteraction = () => {
     ]
   );
 
-  const handlePointerMove = useCallback(
+  const onPointerDragHandler = useCallback(
     (e) => {
-      if (stopPropagationOnPointerMove) e.stopPropagation();
-      if (preventDefaultOnPointerMove) e.preventDefault();
+      if (stopPropagationOnPointerDrag.current) e.stopPropagation();
+      if (preventDefaultOnPointerDrag.current) e.preventDefault();
       if (isDisabled) return;
       if (pressing.current) {
         dragging.current = true;
         onPointerDrag.current?.(e);
       }
-      onPointerMove.current?.(e);
     },
     [
-      stopPropagationOnPointerMove,
-      preventDefaultOnPointerMove,
-      onPointerMove,
+      stopPropagationOnPointerDrag,
+      preventDefaultOnPointerDrag,
       onPointerDrag,
       isDisabled,
     ]
   );
 
-  const handlePointerUp = useCallback(
+  const onPointerUpHandler = useCallback(
     (e) => {
-      if (stopPropagationOnPointerUp) e.stopPropagation();
-      if (preventDefaultOnPointerUp) e.preventDefault();
+      if (stopPropagationOnPointerUp.current) e.stopPropagation();
+      if (preventDefaultOnPointerUp.current) e.preventDefault();
       if (!isDisabled) {
-        if (pressing.current && !dragging.current) {
-          if (isFocused) targetRef.current.blur();
-          onPointerClick.current?.(e);
-        }
         onPointerUp.current?.(e);
         pressing.current = false;
         dragging.current = false;
-        isFocusedByPointer.current = false;
         setPressed(false);
       }
       document.removeEventListener('touchstart', preventDefault);
-      document.removeEventListener('pointermove', handlePointerMove);
-      document.removeEventListener('pointerup', handlePointerUp);
+      document.removeEventListener('pointermove', onPointerDragHandler);
+      document.removeEventListener('pointerup', onPointerUpHandler);
     },
     [
       stopPropagationOnPointerUp,
       preventDefaultOnPointerUp,
       onPointerUp,
-      onPointerClick,
       isDisabled,
-      isFocused,
-      handlePointerMove,
+      onPointerDragHandler,
       preventDefault,
     ]
   );
 
+  const onPointerDownNullHandler = useCallback((e) => {
+    if (
+      targetRef.current &&
+      targetRef.current !== e.target &&
+      !targetRef.current.contains(e.target)
+    ) {
+      added.current = false;
+      targetRef.current.blur();
+      document.removeEventListener('pointerdown', onPointerDownNullHandler);
+    }
+  }, []);
+
   const onPointerDownTargetHandler = useCallback(
     (e) => {
       document.addEventListener('touchstart', preventDefault);
-      if (stopPropagationOnPointerDown) e.stopPropagation();
-      if (preventDefaultOnPointerDown) e.preventDefault();
+      if (stopPropagationOnPointerDown.current) e.stopPropagation();
+      if (preventDefaultOnPointerDown.current) e.preventDefault();
       if (!isDisabled) {
         onPointerDown.current?.(e);
         pressing.current = true;
         dragging.current = false;
-        isFocusedByPointer.current = true;
         setPressed(true);
+        targetRef.current.focus();
       }
-      document.addEventListener('pointermove', handlePointerMove);
-      document.addEventListener('pointerup', handlePointerUp);
+      document.addEventListener('pointermove', onPointerDragHandler);
+      document.addEventListener('pointerup', onPointerUpHandler);
+      if (!added.current) {
+        added.current = true;
+        document.addEventListener('pointerdown', onPointerDownNullHandler);
+      }
     },
     [
       stopPropagationOnPointerDown,
       preventDefaultOnPointerDown,
       onPointerDown,
       isDisabled,
-      handlePointerMove,
-      handlePointerUp,
+      onPointerDragHandler,
+      onPointerUpHandler,
+      onPointerDownNullHandler,
       preventDefault,
+    ]
+  );
+
+  const onPointerUpTargetHandler = useCallback(
+    (e) => {
+      if (!onPointerUp.current && stopPropagationOnPointerClick.current)
+        e.stopPropagation();
+      if (preventDefaultOnPointerClick.current) e.preventDefault();
+      if (isDisabled) return;
+      onPointerClick.current?.(e);
+    },
+    [
+      onPointerUp,
+      stopPropagationOnPointerClick,
+      preventDefaultOnPointerClick,
+      isDisabled,
+      onPointerClick,
     ]
   );
 
   const onPointerLeaveTargetHandler = useCallback(
     (e) => {
-      if (stopPropagationOnPointerLeave) e.stopPropagation();
-      if (preventDefaultOnPointerLeave) e.preventDefault();
+      if (stopPropagationOnPointerLeave.current) e.stopPropagation();
+      if (preventDefaultOnPointerLeave.current) e.preventDefault();
       if (isDisabled) return;
       onPointerLeave.current?.(e);
       setHovered(false);
@@ -193,11 +216,10 @@ const usePointerInteraction = () => {
 
   const onFocusTargetHandler = useCallback(
     (e) => {
-      if (stopPropagationOnFocus) e.stopPropagation();
-      if (preventDefaultOnFocus) e.preventDefault();
+      if (stopPropagationOnFocus.current) e.stopPropagation();
+      if (preventDefaultOnFocus.current) e.preventDefault();
       if (isDisabled) return;
       onFocus.current?.(e);
-      if (isFocusedByPointer.current) return;
       setFocused(true);
     },
     [
@@ -211,8 +233,8 @@ const usePointerInteraction = () => {
 
   const onBlurTargetHandler = useCallback(
     (e) => {
-      if (stopPropagationOnBlur) e.stopPropagation();
-      if (preventDefaultOnBlur) e.preventDefault();
+      if (stopPropagationOnBlur.current) e.stopPropagation();
+      if (preventDefaultOnBlur.current) e.preventDefault();
       if (isDisabled) return;
       onBlur.current?.(e);
       setFocused(false);
@@ -233,6 +255,7 @@ const usePointerInteraction = () => {
     target?.addEventListener('touchstart', preventDefault);
     target?.addEventListener('pointerenter', onPointerEnterTargetHandler);
     target?.addEventListener('pointerdown', onPointerDownTargetHandler);
+    target?.addEventListener('pointerup', onPointerUpTargetHandler);
     target?.addEventListener('pointerleave', onPointerLeaveTargetHandler);
     target?.addEventListener('focus', onFocusTargetHandler);
     target?.addEventListener('blur', onBlurTargetHandler);
@@ -241,16 +264,18 @@ const usePointerInteraction = () => {
       target?.removeEventListener('touchstart', preventDefault);
       target?.removeEventListener('pointerenter', onPointerEnterTargetHandler);
       target?.removeEventListener('pointerdown', onPointerDownTargetHandler);
+      target?.removeEventListener('pointerup', onPointerUpTargetHandler);
       target?.removeEventListener('pointerleave', onPointerLeaveTargetHandler);
       target?.removeEventListener('focus', onFocusTargetHandler);
       target?.removeEventListener('blur', onBlurTargetHandler);
     };
   }, [
     onPointerEnterTargetHandler,
+    onPointerDownTargetHandler,
+    onPointerUpTargetHandler,
     onPointerLeaveTargetHandler,
     onFocusTargetHandler,
     onBlurTargetHandler,
-    onPointerDownTargetHandler,
     preventDefault,
   ]);
 
@@ -267,11 +292,10 @@ const usePointerInteraction = () => {
     setTargetRef,
     setOnPointerEnter,
     setOnPointerDown,
-    setOnPointerMove,
-    setOnPointerUp,
-    setOnPointerLeave,
-    setOnPointerClick,
     setOnPointerDrag,
+    setOnPointerUp,
+    setOnPointerClick,
+    setOnPointerLeave,
     setOnFocus,
     setOnBlur,
     isDisabled,

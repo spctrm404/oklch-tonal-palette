@@ -7,10 +7,10 @@ import {
 } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import s from './_Switch.module.scss';
+import st from './_Switch.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
 const Switch = ({
   state: value = false,
@@ -20,23 +20,23 @@ const Switch = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const switchRef = useRef(null);
-  const handleRef = useRef(null);
+  const rootDom = useRef(null);
+  const handleDom = useRef(null);
 
-  const handleClick = useCallback(() => {
+  const onClickHandler = useCallback(() => {
     onChange?.(!value);
   }, [value, onChange]);
 
   const switchPI = usePointerInteraction();
   useEffect(() => {
-    switchPI.setTargetRef(switchRef.current);
-    switchPI.setOnPointerClick(handleClick);
-  }, [switchPI, handleClick]);
+    switchPI.setTargetRef(rootDom.current);
+    switchPI.setOnPointerClick(onClickHandler);
+  }, [switchPI, onClickHandler]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleRef.current);
-    handlePI.setOnPointerClick(handleClick);
-  }, [handlePI, handleClick]);
+    handlePI.setTargetRef(handleDom.current);
+    handlePI.setOnPointerClick(onClickHandler);
+  }, [handlePI, onClickHandler]);
 
   useLayoutEffect(() => {
     switchPI.setDisabled(disabled);
@@ -46,7 +46,7 @@ const Switch = ({
   return (
     <div
       className={`${cx('switch')} ${className || ''}`}
-      ref={switchRef}
+      ref={rootDom}
       data-theme={theme}
       data-value={value}
       data-state={
@@ -56,7 +56,7 @@ const Switch = ({
       <div className={cx('switch__shape', 'switch-shape')} />
       <div
         className={cx('switch__handle', 'switch-handle')}
-        ref={handleRef}
+        ref={handleDom}
         tabIndex={0}
       >
         <div className={cx('switch__handle__state', 'switch-handle-state')} />
