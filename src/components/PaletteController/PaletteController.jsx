@@ -43,7 +43,7 @@ const PaletteController = ({
   );
 
   const handleChangeSlider = useCallback(
-    ({ value }, key) => {
+    (value, key) => {
       onChange(key, Number(value));
     },
     [onChange]
@@ -107,14 +107,13 @@ const PaletteController = ({
         }}
       />
       <Slider
-        value={hFrom}
+        value={[hFrom]}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueFrom');
           if (!isRange) handleChangeSlider(sliderProps, 'hueTo');
         }}
         min={0}
         max={360}
-        vertical={true}
         trackClickable={true}
         step={HUE_STEP}
       />
@@ -130,7 +129,7 @@ const PaletteController = ({
         }}
       />
       <Slider
-        value={hTo}
+        value={[hTo]}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueTo');
         }}

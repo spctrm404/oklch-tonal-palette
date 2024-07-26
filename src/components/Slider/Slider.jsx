@@ -1,182 +1,61 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
-import usePointerInteraction from '../../hooks/usePointerInteraction';
-import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
+import { useCallback, useContext } from 'react';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
+import * as RadixSlider from '@radix-ui/react-slider';
+import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import s from './_Slider.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(s);
 
 const Slider = ({
-  value = 0,
+  value = [0],
+  onChange: onValueChange = null,
+  onValueCommit = null,
+  name = '',
+  disabled = false,
+  vertical: orientation = 'horizontal',
   min = 0,
   max = 100,
   step = 1,
-  vertical = false,
   thumbDirection: handleDirection = 0,
   trackClickable = false,
-  disabled = false,
-  onChange = null,
   className = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const sliderRef = useRef(null);
-  const trackRef = useRef(null);
-  const handleRef = useRef(null);
-
-  const offsetRef = useRef(null);
-
-  const getNewValue = useCallback(
-    (e) => {
-      const offset = offsetRef.current;
-      const handleRect = handleRef.current.getBoundingClientRect();
-      const trackRect = trackRef.current.getBoundingClientRect();
-
-      let newValue;
-      if (vertical) {
-        let newHandlePos = e.clientY - trackRect.top - offset.y;
-        newHandlePos = clamp(
-          newHandlePos,
-          0,
-          trackRect.height - handleRect.height
-        );
-        const normalizedPos =
-          1 - newHandlePos / (trackRect.height - handleRect.height);
-        newValue = min + (max - min) * normalizedPos;
-      } else {
-        let newHandlePos = e.clientX - trackRect.left - offset.x;
-        newHandlePos = clamp(
-          newHandlePos,
-          0,
-          trackRect.width - handleRect.width
-        );
-        const normalizedPos =
-          newHandlePos / (trackRect.width - handleRect.width);
-        newValue = min + (max - min) * normalizedPos;
-      }
-
-      newValue = setMultipleOfStep(newValue, step);
-
-      return newValue;
+  const onValueChangeHandler = useCallback(
+    (numArray) => {
+      onValueChange?.(numArray[0]);
     },
-    [min, max, step, vertical]
+    [onValueChange]
   );
-  const onPointerDrag = useCallback(
-    (e) => {
-      const newValue = getNewValue(e);
-      onChange?.({ value: newValue, min: min, max: max });
+  const onValueCommitHandler = useCallback(
+    (numArray) => {
+      onValueCommit?.(numArray[0]);
     },
-    [min, max, onChange, getNewValue]
+    [onValueCommit]
   );
-  const onPointerUp = useCallback(() => {
-    document.body.style.cursor = 'auto';
-  }, []);
-  const onPointerDown = useCallback(
-    (e, offset) => {
-      document.body.style.cursor = 'pointer';
-      offsetRef.current = offset;
-      const newValue = getNewValue(e);
-      onChange?.({ value: newValue, min: min, max: max });
-    },
-    [min, max, onChange, getNewValue]
-  );
-  const onPointerDownTrack = useCallback(
-    (e) => {
-      const thumbRect = handleRef.current.getBoundingClientRect();
-      const offset = {
-        x: 0.5 * thumbRect.width,
-        y: 0.5 * thumbRect.height,
-      };
-      onPointerDown(e, offset);
-    },
-    [onPointerDown]
-  );
-
-  const onPointerDownHandle = useCallback(
-    (e) => {
-      const thumbRect = handleRef.current.getBoundingClientRect();
-      const offset = {
-        x: e.clientX - thumbRect.left,
-        y: e.clientY - thumbRect.top,
-      };
-      onPointerDown(e, offset);
-    },
-    [onPointerDown]
-  );
-
-  const trackPI = usePointerInteraction();
-  useEffect(() => {
-    trackPI.setTargetRef(trackRef.current);
-    trackPI.setOnPointerDown(trackClickable ? onPointerDownTrack : null);
-    trackPI.setOnPointerDrag(trackClickable ? onPointerDrag : null);
-    trackPI.setOnPointerUp(trackClickable ? onPointerUp : null);
-  }, [trackPI, trackClickable, onPointerDownTrack, onPointerDrag, onPointerUp]);
-  const handlePI = usePointerInteraction();
-  useEffect(() => {
-    handlePI.setTargetRef(handleRef.current);
-    handlePI.setOnPointerDown(onPointerDownHandle);
-    handlePI.setOnPointerDrag(onPointerDrag);
-    handlePI.setOnPointerUp(onPointerUp);
-  }, [handlePI, onPointerDownHandle, onPointerDrag, onPointerUp]);
-
-  useLayoutEffect(() => {
-    trackPI.setDisabled(disabled);
-    handlePI.setDisabled(disabled);
-  }, [trackPI, handlePI, disabled]);
-
-  const getHandleDirection = useCallback(() => {
-    if (handleDirection === 0) return 'center';
-    if (handleDirection === -1) return vertical ? 'top' : 'left';
-    if (handleDirection === 1) return vertical ? 'top' : 'left';
-  }, [vertical, handleDirection]);
-
-  useEffect(() => {
-    const normalizedPos = (value - min) / (max - min);
-    sliderRef.current.style.setProperty(`--pos`, normalizedPos);
-  }, [value, min, max, step, vertical]);
 
   return (
-    <div
-      className={`${cx('slider')} ${className || ''}`}
-      ref={sliderRef}
+    <RadixSlider.Root
+      className={cx('slider', { className })}
+      value={value}
+      onValueChange={onValueChangeHandler}
+      onValueCommit={onValueCommitHandler}
+      name={name}
+      disabled={disabled}
+      orientation={orientation}
+      min={min}
+      max={max}
+      step={step}
       data-theme={theme}
-      data-direction={vertical ? 'vertical' : 'horizontal'}
-      data-handle-direction={getHandleDirection()}
-      data-state={
-        trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
-      }
-      data-is-track-clickable={trackClickable}
     >
-      <div className={cx('slider__track', 'slider-track')} ref={trackRef}>
-        <div className={cx('slider__track__shape', 'slider-track-shape')}>
-          <div
-            className={cx(
-              'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-active',
-              'slider-track-shape-indicator-active'
-            )}
-          />
-          <div
-            className={cx(
-              'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-inactive',
-              'slider-track-shape-indicator-inactive'
-            )}
-          />
-        </div>
-        <div className={cx('slider__handle', 'slider-handle')} ref={handleRef}>
-          <div className={cx('slider__handle__state', 'slider-handle-state')} />
-          <div className={cx('slider__handle__shape', 'slider-handle-shape')} />
-        </div>
-      </div>
-    </div>
+      <RadixSlider.Track className={cx('slider-track')}></RadixSlider.Track>
+      <RadixSlider.Thumb className={cx('slider-thumb')}>
+        <span className={cx('slider-thumb-state')} />
+        <span className={cx('slider-thumb-shape')} />
+      </RadixSlider.Thumb>
+    </RadixSlider.Root>
   );
 };
 

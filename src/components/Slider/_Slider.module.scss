@@ -1,136 +1,50 @@
-@import 'Slider.variant';
+$min-width: 12.5rem;
+$track-height: 1rem;
+$thumb-pointer-width: 1.5rem;
+$thumb-pointer-height: 3rem;
+$thumb-height: 2.75rem;
+$thumb-width: 0.375rem;
+$thumb-width-pressed: 0.25rem;
+$track-rad: 0.25rem;
 
 .slider {
-  $parent-selector: &;
-
   position: relative;
-  @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
-    width: min($min-width, 100%);
-    min-width: $min-width;
-    height: $height;
-  }
-  @at-root #{$parent-selector}[data-direction='vertical']#{&} {
-    width: $height;
-    height: min($min-width, 100%);
-    min-height: $min-width;
-  }
+  display: inline-block;
+  width: $min-width;
+  min-width: min($min-width, 100%);
+  max-width: 100%;
+  height: max($thumb-height, $thumb-pointer-height);
+  touch-action: none;
+  user-select: none;
+  background-color: aqua;
 
-  &__track {
+  &-track {
     position: absolute;
-    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-      top: 50%;
-      right: -0.5 * $handle-size;
-      left: -0.5 * $handle-size;
-      height: $track-height;
-      transform: translateY(-50%);
-    }
-    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-      top: -0.5 * $handle-size;
-      bottom: -0.5 * $handle-size;
-      left: 50%;
-      width: $track-height;
-      transform: translateX(-50%);
-    }
-
-    &__shape {
-      position: absolute;
-      overflow: hidden;
-      border-radius: $rad;
-      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-        inset: 0 0.5 * $handle-size;
-      }
-      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-        inset: 0.5 * $handle-size 0;
-      }
-
-      @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
-        cursor: pointer;
-      }
-
-      &__indicator {
-        position: absolute;
-        border-radius: $track-shape-rad;
-        transition: background-color $duration $easing,
-          opacity $duration $easing;
-
-        &--type-active {
-          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-            inset: 0
-              calc(
-                (1 - var(--pos)) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              )
-              0 0;
-          }
-          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-            inset: calc(
-                (1 - var(--pos)) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              )
-              0 0;
-          }
-        }
-
-        &--type-inactive {
-          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-            inset: 0 0 0
-              calc(
-                var(--pos) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              );
-          }
-          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-            inset: 0 0
-              calc(
-                var(--pos) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              );
-          }
-        }
-      }
-    }
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: calc(100% - $thumb-pointer-width);
+    height: $track-height;
+    background-color: bisque;
+    transform: translate(-50%, -50%);
   }
 
-  &__handle {
-    position: absolute;
-    width: $handle-size;
-    height: $handle-size;
-    cursor: pointer;
-    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-      top: 50%;
-      left: calc((100% - $handle-size) * var(--pos));
-      transform: translateY(-50%);
-    }
-    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-      top: calc((100% - $handle-size) * (1 - var(--pos)));
-      left: 50%;
-      transform: translateX(-50%);
+  &-thumb {
+    display: block;
+    width: $thumb-pointer-width;
+    height: $thumb-pointer-height;
+
+    &-state {
     }
 
-    &__state {
+    &-shape {
       position: absolute;
       top: 50%;
       left: 50%;
-      border-radius: $handle-state-rad;
-      transition: background-color $duration $easing, opacity $duration $easing,
-        transform $duration $easing;
-      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
-        width: $handle-state-width;
-        height: $handle-state-height;
-      }
-      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
-        width: $handle-state-height;
-        height: $handle-state-width;
-      }
-    }
-
-    &__shape {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border-radius: $handle-shape-rad;
-      transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing, opacity $duration $easing;
+      display: block;
+      width: $thumb-width;
+      height: $thumb-height;
+      background-color: var(--primary-light);
       transform: translate(-50%, -50%);
     }
   }
