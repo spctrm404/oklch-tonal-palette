@@ -49,12 +49,7 @@ const usePointerInteraction = () => {
     onPointerUp,
     setOnPointerUp,
   ] = useCreateHandlerRef();
-  const [
-    stopPropagationOnPointerClick,
-    preventDefaultOnPointerClick,
-    onPointerClick,
-    setOnPointerClick,
-  ] = useCreateHandlerRef();
+  const [, , onPointerClick, setOnPointerClick] = useCreateHandlerRef();
   const [
     stopPropagationOnPointerLeave,
     preventDefaultOnPointerLeave,
@@ -119,6 +114,11 @@ const usePointerInteraction = () => {
       if (preventDefaultOnPointerUp.current) e.preventDefault();
       if (!isDisabled) {
         onPointerUp.current?.(e);
+        if (
+          (pressing.current && targetRef.current === e.target) ||
+          targetRef.current.contains(e.target)
+        )
+          onPointerClick.current?.(e);
         pressing.current = false;
         dragging.current = false;
         setPressed(false);
@@ -131,6 +131,7 @@ const usePointerInteraction = () => {
       stopPropagationOnPointerUp,
       preventDefaultOnPointerUp,
       onPointerUp,
+      onPointerClick,
       isDisabled,
       onPointerDragHandler,
       preventDefault,
@@ -177,23 +178,6 @@ const usePointerInteraction = () => {
       onPointerUpHandler,
       onPointerDownNullHandler,
       preventDefault,
-    ]
-  );
-
-  const onPointerUpTargetHandler = useCallback(
-    (e) => {
-      if (!onPointerUp.current && stopPropagationOnPointerClick.current)
-        e.stopPropagation();
-      if (preventDefaultOnPointerClick.current) e.preventDefault();
-      if (isDisabled) return;
-      onPointerClick.current?.(e);
-    },
-    [
-      onPointerUp,
-      stopPropagationOnPointerClick,
-      preventDefaultOnPointerClick,
-      isDisabled,
-      onPointerClick,
     ]
   );
 
@@ -255,7 +239,6 @@ const usePointerInteraction = () => {
     target?.addEventListener('touchstart', preventDefault);
     target?.addEventListener('pointerenter', onPointerEnterTargetHandler);
     target?.addEventListener('pointerdown', onPointerDownTargetHandler);
-    target?.addEventListener('pointerup', onPointerUpTargetHandler);
     target?.addEventListener('pointerleave', onPointerLeaveTargetHandler);
     target?.addEventListener('focus', onFocusTargetHandler);
     target?.addEventListener('blur', onBlurTargetHandler);
@@ -264,7 +247,6 @@ const usePointerInteraction = () => {
       target?.removeEventListener('touchstart', preventDefault);
       target?.removeEventListener('pointerenter', onPointerEnterTargetHandler);
       target?.removeEventListener('pointerdown', onPointerDownTargetHandler);
-      target?.removeEventListener('pointerup', onPointerUpTargetHandler);
       target?.removeEventListener('pointerleave', onPointerLeaveTargetHandler);
       target?.removeEventListener('focus', onFocusTargetHandler);
       target?.removeEventListener('blur', onBlurTargetHandler);
@@ -272,7 +254,6 @@ const usePointerInteraction = () => {
   }, [
     onPointerEnterTargetHandler,
     onPointerDownTargetHandler,
-    onPointerUpTargetHandler,
     onPointerLeaveTargetHandler,
     onFocusTargetHandler,
     onBlurTargetHandler,

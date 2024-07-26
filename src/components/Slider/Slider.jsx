@@ -119,7 +119,6 @@ const Slider = ({
     trackPI.setOnPointerDown(trackClickable ? onPointerDownTrackHandler : null);
     trackPI.setOnPointerDrag(trackClickable ? onPointerDragHandler : null);
     trackPI.setOnPointerUp(trackClickable ? onPointerUpHandler : null);
-    trackPI.setOnPointerClick(null, false);
   }, [
     trackPI,
     trackClickable,
