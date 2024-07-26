@@ -25,6 +25,10 @@
     cursor: pointer;
     transition: transform $duration $easing;
 
+    &:focus {
+      outline: none;
+    }
+
     &__state {
       position: absolute;
       top: 50%;
