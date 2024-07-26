@@ -4,12 +4,12 @@
   $parent-selector: &;
 
   position: relative;
-  @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
+  @at-root #{$parent-selector}[data-orientation='horizontal']#{&} {
     width: min($min-width, 100%);
     min-width: $min-width;
     height: $height;
   }
-  @at-root #{$parent-selector}[data-direction='vertical']#{&} {
+  @at-root #{$parent-selector}[data-orientation='vertical']#{&} {
     width: $height;
     height: min($min-width, 100%);
     min-height: $min-width;
@@ -17,14 +17,14 @@
 
   &__track {
     position: absolute;
-    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+    @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
       top: 50%;
       right: -0.5 * $handle-size;
       left: -0.5 * $handle-size;
       height: $track-height;
       transform: translateY(-50%);
     }
-    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+    @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
       top: -0.5 * $handle-size;
       bottom: -0.5 * $handle-size;
       left: 50%;
@@ -36,10 +36,10 @@
       position: absolute;
       overflow: hidden;
       border-radius: $rad;
-      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
         inset: 0 0.5 * $handle-size;
       }
-      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
         inset: 0.5 * $handle-size 0;
       }
 
@@ -54,7 +54,7 @@
           opacity $duration $easing;
 
         &--type-active {
-          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+          @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
             inset: 0
               calc(
                 (1 - var(--pos)) * 100% + 0.5 *
@@ -62,7 +62,7 @@
               )
               0 0;
           }
-          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+          @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
             inset: calc(
                 (1 - var(--pos)) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
@@ -72,14 +72,14 @@
         }
 
         &--type-inactive {
-          @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+          @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
             inset: 0 0 0
               calc(
                 var(--pos) * 100% + 0.5 *
                   ($handle-shape-px + $handle-shape-width-idle)
               );
           }
-          @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+          @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
             inset: 0 0
               calc(
                 var(--pos) * 100% + 0.5 *
@@ -96,12 +96,12 @@
     width: $handle-size;
     height: $handle-size;
     cursor: pointer;
-    @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+    @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
       top: 50%;
       left: calc((100% - $handle-size) * var(--pos));
       transform: translateY(-50%);
     }
-    @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+    @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
       top: calc((100% - $handle-size) * (1 - var(--pos)));
       left: 50%;
       transform: translateX(-50%);
@@ -114,11 +114,11 @@
       border-radius: $handle-state-rad;
       transition: background-color $duration $easing, opacity $duration $easing,
         transform $duration $easing;
-      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
         width: $handle-state-width;
         height: $handle-state-height;
       }
-      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
         width: $handle-state-height;
         height: $handle-state-width;
       }

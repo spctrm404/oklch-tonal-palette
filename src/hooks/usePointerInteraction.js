@@ -3,16 +3,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const useCreateHandlerRef = () => {
   const stopPropagation = useRef(true);
   const preventDefault = useRef(true);
-  const handlerRef = useRef(null);
+  const handler = useRef(null);
   const setHandler = useCallback(
-    (fn, stopPropagationFlag = true, preventDefaultFlag = true) => {
-      handlerRef.current = fn;
-      stopPropagation.current = stopPropagationFlag;
-      preventDefault.current = preventDefaultFlag;
+    (_handler, _stopPropagation = true, _preventDefault = true) => {
+      handler.current = _handler;
+      stopPropagation.current = _stopPropagation;
+      preventDefault.current = _preventDefault;
     },
     []
   );
-  return [stopPropagation, preventDefault, handlerRef, setHandler];
+  return [stopPropagation, preventDefault, handler, setHandler];
 };
 
 const usePointerInteraction = () => {
@@ -80,7 +80,7 @@ const usePointerInteraction = () => {
     e.preventDefault();
   }, []);
 
-  const handlePointerEnterTarget = useCallback(
+  const onPointerEnterTargetHandler = useCallback(
     (e) => {
       if (stopPropagationOnPointerEnter) e.stopPropagation();
       if (preventDefaultOnPointerEnter) e.preventDefault();
@@ -148,7 +148,7 @@ const usePointerInteraction = () => {
     ]
   );
 
-  const handlePointerDownTarget = useCallback(
+  const onPointerDownTargetHandler = useCallback(
     (e) => {
       document.addEventListener('touchstart', preventDefault);
       if (stopPropagationOnPointerDown) e.stopPropagation();
@@ -174,7 +174,7 @@ const usePointerInteraction = () => {
     ]
   );
 
-  const handlePointerLeaveTarget = useCallback(
+  const onPointerLeaveTargetHandler = useCallback(
     (e) => {
       if (stopPropagationOnPointerLeave) e.stopPropagation();
       if (preventDefaultOnPointerLeave) e.preventDefault();
@@ -191,7 +191,7 @@ const usePointerInteraction = () => {
     ]
   );
 
-  const handleFocusTarget = useCallback(
+  const onFocusTargetHandler = useCallback(
     (e) => {
       if (stopPropagationOnFocus) e.stopPropagation();
       if (preventDefaultOnFocus) e.preventDefault();
@@ -209,7 +209,7 @@ const usePointerInteraction = () => {
     ]
   );
 
-  const handleBlurTarget = useCallback(
+  const onBlurTargetHandler = useCallback(
     (e) => {
       if (stopPropagationOnBlur) e.stopPropagation();
       if (preventDefaultOnBlur) e.preventDefault();
@@ -231,26 +231,26 @@ const usePointerInteraction = () => {
 
     if (target) target.style.touchAction = 'none';
     target?.addEventListener('touchstart', preventDefault);
-    target?.addEventListener('pointerenter', handlePointerEnterTarget);
-    target?.addEventListener('pointerdown', handlePointerDownTarget);
-    target?.addEventListener('pointerleave', handlePointerLeaveTarget);
-    target?.addEventListener('focus', handleFocusTarget);
-    target?.addEventListener('blur', handleBlurTarget);
+    target?.addEventListener('pointerenter', onPointerEnterTargetHandler);
+    target?.addEventListener('pointerdown', onPointerDownTargetHandler);
+    target?.addEventListener('pointerleave', onPointerLeaveTargetHandler);
+    target?.addEventListener('focus', onFocusTargetHandler);
+    target?.addEventListener('blur', onBlurTargetHandler);
 
     return () => {
       target?.removeEventListener('touchstart', preventDefault);
-      target?.removeEventListener('pointerenter', handlePointerEnterTarget);
-      target?.removeEventListener('pointerdown', handlePointerDownTarget);
-      target?.removeEventListener('pointerleave', handlePointerLeaveTarget);
-      target?.removeEventListener('focus', handleFocusTarget);
-      target?.removeEventListener('blur', handleBlurTarget);
+      target?.removeEventListener('pointerenter', onPointerEnterTargetHandler);
+      target?.removeEventListener('pointerdown', onPointerDownTargetHandler);
+      target?.removeEventListener('pointerleave', onPointerLeaveTargetHandler);
+      target?.removeEventListener('focus', onFocusTargetHandler);
+      target?.removeEventListener('blur', onBlurTargetHandler);
     };
   }, [
-    handlePointerEnterTarget,
-    handlePointerLeaveTarget,
-    handleFocusTarget,
-    handleBlurTarget,
-    handlePointerDownTarget,
+    onPointerEnterTargetHandler,
+    onPointerLeaveTargetHandler,
+    onFocusTargetHandler,
+    onBlurTargetHandler,
+    onPointerDownTargetHandler,
     preventDefault,
   ]);
 

@@ -8,10 +8,10 @@ import {
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import s from './_Slider.module.scss';
+import st from './_Slider.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
 const Slider = ({
   value = 0,
@@ -27,38 +27,40 @@ const Slider = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const sliderRef = useRef(null);
-  const trackRef = useRef(null);
-  const handleRef = useRef(null);
+  const rootDom = useRef(null);
+  const trackDom = useRef(null);
+  const handleDom = useRef(null);
 
-  const offsetRef = useRef(null);
+  const pointerOffset = useRef(null);
 
   const getNewValue = useCallback(
     (e) => {
-      const offset = offsetRef.current;
-      const handleRect = handleRef.current.getBoundingClientRect();
-      const trackRect = trackRef.current.getBoundingClientRect();
+      const offset = pointerOffset.current;
+      const handleRect = handleDom.current.getBoundingClientRect();
+      const trackRect = trackDom.current.getBoundingClientRect();
 
+      let newHandlePos;
+      let normalizedPos;
       let newValue;
+
       if (vertical) {
-        let newHandlePos = e.clientY - trackRect.top - offset.y;
+        newHandlePos = e.clientY - trackRect.top - offset.y;
         newHandlePos = clamp(
           newHandlePos,
           0,
           trackRect.height - handleRect.height
         );
-        const normalizedPos =
+        normalizedPos =
           1 - newHandlePos / (trackRect.height - handleRect.height);
         newValue = min + (max - min) * normalizedPos;
       } else {
-        let newHandlePos = e.clientX - trackRect.left - offset.x;
+        newHandlePos = e.clientX - trackRect.left - offset.x;
         newHandlePos = clamp(
           newHandlePos,
           0,
           trackRect.width - handleRect.width
         );
-        const normalizedPos =
-          newHandlePos / (trackRect.width - handleRect.width);
+        normalizedPos = newHandlePos / (trackRect.width - handleRect.width);
         newValue = min + (max - min) * normalizedPos;
       }
 
@@ -81,7 +83,7 @@ const Slider = ({
   const onPointerDown = useCallback(
     (e, offset) => {
       document.body.style.cursor = 'pointer';
-      offsetRef.current = offset;
+      pointerOffset.current = offset;
       const newValue = getNewValue(e);
       onChange?.({ value: newValue, min: min, max: max });
     },
@@ -89,7 +91,7 @@ const Slider = ({
   );
   const onPointerDownTrack = useCallback(
     (e) => {
-      const thumbRect = handleRef.current.getBoundingClientRect();
+      const thumbRect = handleDom.current.getBoundingClientRect();
       const offset = {
         x: 0.5 * thumbRect.width,
         y: 0.5 * thumbRect.height,
@@ -101,7 +103,7 @@ const Slider = ({
 
   const onPointerDownHandle = useCallback(
     (e) => {
-      const thumbRect = handleRef.current.getBoundingClientRect();
+      const thumbRect = handleDom.current.getBoundingClientRect();
       const offset = {
         x: e.clientX - thumbRect.left,
         y: e.clientY - thumbRect.top,
@@ -113,14 +115,14 @@ const Slider = ({
 
   const trackPI = usePointerInteraction();
   useEffect(() => {
-    trackPI.setTargetRef(trackRef.current);
+    trackPI.setTargetRef(trackDom.current);
     trackPI.setOnPointerDown(trackClickable ? onPointerDownTrack : null);
     trackPI.setOnPointerDrag(trackClickable ? onPointerDrag : null);
     trackPI.setOnPointerUp(trackClickable ? onPointerUp : null);
   }, [trackPI, trackClickable, onPointerDownTrack, onPointerDrag, onPointerUp]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleRef.current);
+    handlePI.setTargetRef(handleDom.current);
     handlePI.setOnPointerDown(onPointerDownHandle);
     handlePI.setOnPointerDrag(onPointerDrag);
     handlePI.setOnPointerUp(onPointerUp);
@@ -131,30 +133,23 @@ const Slider = ({
     handlePI.setDisabled(disabled);
   }, [trackPI, handlePI, disabled]);
 
-  const getHandleDirection = useCallback(() => {
-    if (handleDirection === 0) return 'center';
-    if (handleDirection === -1) return vertical ? 'top' : 'left';
-    if (handleDirection === 1) return vertical ? 'top' : 'left';
-  }, [vertical, handleDirection]);
-
   useEffect(() => {
     const normalizedPos = (value - min) / (max - min);
-    sliderRef.current.style.setProperty(`--pos`, normalizedPos);
+    rootDom.current.style.setProperty(`--pos`, normalizedPos);
   }, [value, min, max, step, vertical]);
 
   return (
     <div
       className={`${cx('slider')} ${className || ''}`}
-      ref={sliderRef}
+      ref={rootDom}
       data-theme={theme}
-      data-direction={vertical ? 'vertical' : 'horizontal'}
-      data-handle-direction={getHandleDirection()}
+      data-orientation={vertical ? 'vertical' : 'horizontal'}
       data-state={
         trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('slider__track', 'slider-track')} ref={trackRef}>
+      <div className={cx('slider__track', 'slider-track')} ref={trackDom}>
         <div className={cx('slider__track__shape', 'slider-track-shape')}>
           <div
             className={cx(
@@ -171,7 +166,7 @@ const Slider = ({
             )}
           />
         </div>
-        <div className={cx('slider__handle', 'slider-handle')} ref={handleRef}>
+        <div className={cx('slider__handle', 'slider-handle')} ref={handleDom}>
           <div className={cx('slider__handle__state', 'slider-handle-state')} />
           <div className={cx('slider__handle__shape', 'slider-handle-shape')} />
         </div>

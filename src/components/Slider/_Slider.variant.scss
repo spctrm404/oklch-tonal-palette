@@ -12,7 +12,7 @@ $handle-shape-rad: 0.25rem;
 $handle-state-rad: 0.25rem;
 $track-shape-rad: 0.125rem;
 $rad: 0.25rem;
-$duration: 100ms;
+$duration: 150ms;
 $easing: ease-in;
 
 .slider {
@@ -83,11 +83,11 @@ $easing: ease-in;
     &__shape {
       background-color: var(--primary-light);
       opacity: 1;
-      @at-root #{$parent-selector}[data-direction='horizontal'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
         width: $handle-shape-width-idle;
         height: $handle-shape-height;
       }
-      @at-root #{$parent-selector}[data-direction='vertical'] #{&} {
+      @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
         width: $handle-shape-height;
         height: $handle-shape-width-idle;
       }
@@ -96,11 +96,11 @@ $easing: ease-in;
       }
 
       @at-root #{$parent-selector}[data-state='pressed'] #{&} {
-        @at-root #{$parent-selector}[data-direction='horizontal']#{&} {
+        @at-root #{$parent-selector}[data-orientation='horizontal']#{&} {
           width: $handle-shape-width-pressed;
           height: $handle-shape-height;
         }
-        @at-root #{$parent-selector}[data-direction='vertical']#{&} {
+        @at-root #{$parent-selector}[data-orientation='vertical']#{&} {
           width: $handle-shape-height;
           height: $handle-shape-width-pressed;
         }

@@ -8,10 +8,10 @@ import {
 import usePointerInteraction from '../../hooks/usePointerInteraction';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import s from './_XYSlider.module.scss';
+import st from './_XYSlider.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
 const XYSlider = ({
   value = { x: 0, y: 0 },
@@ -26,17 +26,17 @@ const XYSlider = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const sliderRef = useRef(null);
-  const trackRef = useRef(null);
-  const handleRef = useRef(null);
+  const rootDom = useRef(null);
+  const trackDom = useRef(null);
+  const handleDom = useRef(null);
 
-  const offsetRef = useRef(null);
+  const pointerOffset = useRef(null);
 
   const getNewValue = useCallback(
     (e) => {
-      const offset = offsetRef.current;
-      const trackRect = trackRef.current.getBoundingClientRect();
-      const handleRect = handleRef.current.getBoundingClientRect();
+      const offset = pointerOffset.current;
+      const trackRect = trackDom.current.getBoundingClientRect();
+      const handleRect = handleDom.current.getBoundingClientRect();
 
       const newHandlePos = {};
       const normalizedPos = {};
@@ -83,7 +83,7 @@ const XYSlider = ({
   const onPointerDown = useCallback(
     (e, offset) => {
       document.body.style.cursor = 'pointer';
-      offsetRef.current = offset;
+      pointerOffset.current = offset;
       const newValue = getNewValue(e);
       onChange?.({ value: newValue, min: min, max: max });
     },
@@ -91,7 +91,7 @@ const XYSlider = ({
   );
   const onPointerDownTrack = useCallback(
     (e) => {
-      const handleRect = handleRef.current.getBoundingClientRect();
+      const handleRect = handleDom.current.getBoundingClientRect();
       const offset = {
         x: 0.5 * handleRect.width,
         y: 0.5 * handleRect.height,
@@ -102,7 +102,7 @@ const XYSlider = ({
   );
   const onPointerDownHandle = useCallback(
     (e) => {
-      const handleRect = handleRef.current.getBoundingClientRect();
+      const handleRect = handleDom.current.getBoundingClientRect();
       const offset = {
         x: e.clientX - handleRect.left,
         y: e.clientY - handleRect.top,
@@ -114,14 +114,14 @@ const XYSlider = ({
 
   const trackPI = usePointerInteraction();
   useEffect(() => {
-    trackPI.setTargetRef(trackRef.current);
+    trackPI.setTargetRef(trackDom.current);
     trackPI.setOnPointerDown(trackClickable ? onPointerDownTrack : null);
     trackPI.setOnPointerDrag(trackClickable ? onPointerDrag : null);
     trackPI.setOnPointerUp(trackClickable ? onPointerUp : null);
   }, [trackPI, trackClickable, onPointerDownTrack, onPointerDrag, onPointerUp]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleRef.current);
+    handlePI.setTargetRef(handleDom.current);
     handlePI.setOnPointerDown(onPointerDownHandle);
     handlePI.setOnPointerDrag(onPointerDrag);
     handlePI.setOnPointerUp(onPointerUp);
@@ -137,27 +137,27 @@ const XYSlider = ({
       x: (value.x - min.x) / (max.x - min.x),
       y: (value.y - min.y) / (max.y - min.y),
     };
-    sliderRef.current.style.setProperty(`--x`, normalizedPos.x);
-    sliderRef.current.style.setProperty(`--y`, 1 - normalizedPos.y);
+    rootDom.current.style.setProperty(`--x`, normalizedPos.x);
+    rootDom.current.style.setProperty(`--y`, 1 - normalizedPos.y);
   }, [value, min, max]);
 
   return (
     <div
       className={`${cx(`xy-slider`)} ${className || ''}`}
-      ref={sliderRef}
+      ref={rootDom}
       data-theme={theme}
       data-state={
         trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('xy-slider__track', 'xy-slider-track')} ref={trackRef}>
+      <div className={cx('xy-slider__track', 'xy-slider-track')} ref={trackDom}>
         <div
           className={cx('xy-slider__track__shape', 'xy-slider-track-shape')}
         />
         <div
           className={cx('xy-slider__handle', 'xy-slider-handle')}
-          ref={handleRef}
+          ref={handleDom}
           tabIndex={0}
         >
           <div
