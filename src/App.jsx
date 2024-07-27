@@ -1,3 +1,5 @@
+import SliderTwo from './components/SliderTwo/SliderTwo.jsx';
+import Slider2D from './components/Slider2D/Slider2D.jsx';
 import IconButton from './components/IconButton/IconButton.jsx';
 import Button from './components/Button/Button.jsx';
 import Switch from './components/Switch/Switch.jsx';
@@ -60,6 +62,8 @@ function App() {
 
   const [test, setTest] = useState(true);
 
+  const [twod, setTwod] = useState({ x: 0, y: 0 });
+
   return (
     <>
       <IconButton
@@ -71,8 +75,10 @@ function App() {
       />
       <Button label="button" />
       <Button label="button" disabled={true} />
+      <SliderTwo></SliderTwo>
       <Switch state={true} disabled={true} />
       <Switch state={false} disabled={true} />
+      <Slider2D value={twod} onChange={setTwod} />
       <p>{theme}</p>
       <Switch state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>

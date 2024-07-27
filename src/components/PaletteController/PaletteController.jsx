@@ -115,7 +115,7 @@ const PaletteController = ({
         }}
         minValue={0}
         maxValue={360}
-        // orientation={'vertical'}
+        orientation={'vertical'}
         step={HUE_STEP}
       />
       <NumberBox

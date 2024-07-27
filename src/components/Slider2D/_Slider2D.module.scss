@@ -1,0 +1,65 @@
+$min-width: 6.25rem;
+$min-height: 6.25rem;
+$track-height: 1rem;
+$thumb-size: 3rem;
+$thumb-shape-height: 1.5rem;
+$thumb-shape-height-pressed: 1.75rem;
+
+.slider2d {
+  $root-selector: &;
+
+  position: relative;
+  width: 400px;
+  min-width: $min-width;
+  height: 400px;
+  min-height: $min-height;
+  background-color: aqua;
+
+  &__slider {
+    position: absolute;
+    opacity: 0.5;
+
+    &--axis {
+      &-x {
+        bottom: calc(100% * var(--y));
+        width: 100%;
+        height: max($track-height, $thumb-size);
+        transform: translateY(50%);
+      }
+
+      &-y {
+        left: calc(100% * var(--x));
+        width: max($track-height, $thumb-size);
+        height: 100%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+
+  &__track {
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: $track-height;
+    background-color: red;
+    transform: translate(-50%, -50%);
+    @at-root #{$root-selector}__slider--axis-y #{&} {
+      width: $track-height;
+      height: 100%;
+      background-color: blue;
+    }
+  }
+
+  &__thumb {
+    top: 50%;
+    width: $thumb-size;
+    height: $thumb-size;
+    background-color: red;
+    transform: translate(0, -50%);
+    @at-root #{$root-selector}__slider--axis-y #{&} {
+      left: 50%;
+      background-color: blue;
+      transform: translate(-50%, 0);
+    }
+  }
+}

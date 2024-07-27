@@ -1,9 +1,9 @@
-import { useCallback, useContext, useLayoutEffect, useRef } from 'react';
+import { useCallback, useContext } from 'react';
 
 import {
-  SliderOutput as AriaSliderOutput,
   Label as AriaLabel,
   Slider as AriaSlider,
+  SliderOutput as AriaSliderOutput,
   SliderThumb as AriaSliderThumb,
   SliderTrack as AriaSliderTrack,
 } from 'react-aria-components';
@@ -14,32 +14,29 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Slider = ({
-  ariaLabel = '',
+  ariaLabel: name = '',
   minValue = 0,
   maxValue = 100,
   step = 1,
   value = 50,
-  defaultValue = 50,
   orientation = 'horizontal',
   isDisable = false,
   onChangeEnd = null,
   onChange = null,
-  children = null,
   className = '',
-  style = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
   const onChangeEndHandler = useCallback(
-    (value) => {
-      onChangeEnd?.(value);
+    (newValue) => {
+      onChangeEnd?.(newValue);
     },
     [onChangeEnd]
   );
 
   const onChangeHandler = useCallback(
-    (value) => {
-      onChange?.(value);
+    (newValue) => {
+      onChange?.(newValue);
     },
     [onChange]
   );
@@ -51,7 +48,7 @@ const Slider = ({
 
   return (
     <AriaSlider
-      aria-label={ariaLabel}
+      aria-label={name}
       minValue={minValue}
       maxValue={maxValue}
       step={step}

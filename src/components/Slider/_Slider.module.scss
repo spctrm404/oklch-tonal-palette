@@ -1,5 +1,4 @@
 $min-width: 6.25rem;
-$max-width: 25rem;
 $track-height: 1rem;
 $thumb-size: 3rem;
 $thumb-shape-height: 1.5rem;
@@ -13,13 +12,19 @@ $thumb-shape-rad: 0.125rem;
 $state-width: 2.5rem;
 $state-height: $state-width;
 $state-rad: 0.25rem;
+$duration: 150ms;
+$easing: ease-in;
 
 .slider {
-  $parent-selector: &;
+  $root-selector: &;
 
   min-width: $min-width;
-  max-width: $max-width;
-  height: max($track-height, $thumb-shape-height);
+  height: max($track-height, $thumb-size);
+
+  &[data-orientation='vertical'] {
+    width: max($track-height, $thumb-size);
+    min-height: $min-width;
+  }
 
   &__track {
     top: 50%;
@@ -27,6 +32,10 @@ $state-rad: 0.25rem;
     width: 100%;
     height: $track-height;
     transform: translate(-50%, -50%);
+    @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+      width: $track-height;
+      height: 100%;
+    }
 
     &::before,
     &::after {
@@ -43,6 +52,16 @@ $state-rad: 0.25rem;
       z-index: 1;
       background-color: var(--primary-light);
       border-radius: $track-rad-l $track-rad-s $track-rad-s $track-rad-l;
+      @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+        inset: calc(
+            100% * (1 - var(--normalized-value)) + 0.5 * $track-indicator-gap
+          )
+          0 0;
+        border-radius: $track-rad-s $track-rad-s $track-rad-l $track-rad-l;
+      }
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
     }
 
     &::after {
@@ -51,16 +70,30 @@ $state-rad: 0.25rem;
       z-index: 1;
       background-color: var(--secondary-container-light);
       border-radius: $track-rad-s $track-rad-l $track-rad-l $track-rad-s;
+      @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+        inset: 0 0
+          calc(100% * var(--normalized-value) + 0.5 * $track-indicator-gap);
+        border-radius: $track-rad-l $track-rad-l $track-rad-s $track-rad-s;
+      }
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--secondary-container-light);
+      }
     }
   }
 
   &__thumb {
+    $parent-selector: &;
+
     top: 50%;
     z-index: 2;
     width: $thumb-size;
     height: $thumb-size;
     isolation: isolate;
-    transform: translateY(-50%);
+    transform: translate(0, -50%);
+    @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
 
     &::before,
     &::after {
@@ -78,8 +111,37 @@ $state-rad: 0.25rem;
       height: $state-height;
       background-color: var(--primary-light);
       border-radius: $state-rad;
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
+      opacity: 0;
+      transition: opacity $duration $easing, transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+      @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+        width: $state-height;
+        height: $state-width;
+      }
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-hovered]#{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-focused]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[focus-visible]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-dragging]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-disabled]#{&} {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+      }
     }
 
     &::after {
@@ -88,7 +150,33 @@ $state-rad: 0.25rem;
       height: $thumb-shape-height;
       background-color: var(--primary-light);
       border-radius: $thumb-shape-rad;
+      opacity: 1;
+      transition: width $duration $easing, height $duration $easing,
+        background-color $duration $easing, opacity $duration $easing;
       transform: translate(-50%, -50%);
+      @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+        width: $thumb-shape-height;
+        height: $thumb-shape-width;
+      }
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-dragging]#{&} {
+        width: $thumb-shape-width-pressed;
+        height: $thumb-shape-height-pressed;
+        @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+          width: $thumb-shape-height-pressed;
+          height: $thumb-shape-width-pressed;
+        }
+      }
+      @at-root #{$parent-selector}[data-disabled]#{&} {
+        background-color: var(--on-surface-light);
+        opacity: 0.38;
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          background-color: var(--on-surface-dark);
+        }
+      }
     }
   }
 }
