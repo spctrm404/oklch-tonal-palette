@@ -88,7 +88,7 @@ function App() {
           onChange={handleChangePaletteController}
         ></PaletteController>
       </div>
-      <div>
+      <div className="palette">
         {palettes.map((aPalette, idx) => (
           <Palette
             key={aPalette.id}
