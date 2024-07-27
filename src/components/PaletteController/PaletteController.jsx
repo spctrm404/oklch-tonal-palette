@@ -43,7 +43,7 @@ const PaletteController = ({
   );
 
   const handleChangeSlider = useCallback(
-    ({ value }, key) => {
+    (value, key) => {
       onChange(key, Number(value));
     },
     [onChange]
@@ -107,15 +107,15 @@ const PaletteController = ({
         }}
       />
       <Slider
+        ariaLabel="Hue From"
         value={hFrom}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueFrom');
           if (!isRange) handleChangeSlider(sliderProps, 'hueTo');
         }}
-        min={0}
-        max={360}
-        vertical={true}
-        trackClickable={true}
+        minValue={0}
+        maxValue={360}
+        // orientation={'vertical'}
         step={HUE_STEP}
       />
       <NumberBox
@@ -130,12 +130,13 @@ const PaletteController = ({
         }}
       />
       <Slider
+        ariaLabel="Hue To"
         value={hTo}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueTo');
         }}
-        min={0}
-        max={360}
+        minValue={0}
+        maxValue={360}
         step={HUE_STEP}
       />
       <NumberBox

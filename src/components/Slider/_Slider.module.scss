@@ -1,137 +1,93 @@
-@import 'Slider.variant';
+$min-width: 6.25rem;
+$max-width: 25rem;
+$track-height: 1rem;
+$thumb-size: 3rem;
+$thumb-shape-height: 1.5rem;
+$thumb-shape-height-pressed: 1.75rem;
+$track-indicator-gap: 1rem;
+$track-rad-l: 0.25rem;
+$track-rad-s: 0.125rem;
+$thumb-shape-width: 0.25rem;
+$thumb-shape-width-pressed: 0.125rem;
+$thumb-shape-rad: 0.125rem;
+$state-width: 2.5rem;
+$state-height: $state-width;
+$state-rad: 0.25rem;
 
 .slider {
   $parent-selector: &;
 
-  position: relative;
-
-  &[data-orientation='horizontal'] {
-    width: min($min-width, 100%);
-    min-width: $min-width;
-    height: max($track-height, $handle-shape-height);
-  }
-
-  &[data-orientation='vertical'] {
-    width: max($track-height, $handle-shape-height);
-    height: min($min-width, 100%);
-    min-height: $min-width;
-  }
+  min-width: $min-width;
+  max-width: $max-width;
+  height: max($track-height, $thumb-shape-height);
 
   &__track {
-    position: absolute;
-    @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-      inset: calc(50% - 0.5 * $track-height) -0.5 * $handle-size calc(
-          50% - 0.5 * $track-height
-        ) -0.5 * $handle-size;
-    }
-    @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-      inset: -0.5 * $handle-size calc(50% - 0.5 * $track-height) -0.5 * $handle-size
-        calc(50% - 0.5 * $track-height);
-    }
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: $track-height;
+    transform: translate(-50%, -50%);
 
-    &__shape {
+    &::before,
+    &::after {
       position: absolute;
-      overflow: hidden;
-      border-radius: $track-shape-rad;
-      @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-        inset: 0 0.5 * $handle-size;
-      }
-      @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-        inset: 0.5 * $handle-size 0;
-      }
+      display: block;
+      content: '';
+      isolation: isolate;
+    }
 
-      @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
-        cursor: pointer;
-      }
+    &::before {
+      inset: 0
+        calc(100% * (1 - var(--normalized-value)) + 0.5 * $track-indicator-gap)
+        0 0;
+      z-index: 1;
+      background-color: var(--primary-light);
+      border-radius: $track-rad-l $track-rad-s $track-rad-s $track-rad-l;
+    }
 
-      &__indicator {
-        position: absolute;
-        border-radius: $track-shape-indicator-rad;
-        transition: background-color $duration $easing,
-          opacity $duration $easing;
-
-        &--type-active {
-          @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-            inset: 0
-              calc(
-                (1 - var(--pos)) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              )
-              0 0;
-          }
-          @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-            inset: calc(
-                (1 - var(--pos)) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              )
-              0 0;
-          }
-        }
-
-        &--type-inactive {
-          @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-            inset: 0 0 0
-              calc(
-                var(--pos) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              );
-          }
-          @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-            inset: 0 0
-              calc(
-                var(--pos) * 100% + 0.5 *
-                  ($handle-shape-px + $handle-shape-width-idle)
-              );
-          }
-        }
-      }
+    &::after {
+      inset: 0 0 0
+        calc(100% * var(--normalized-value) + 0.5 * $track-indicator-gap);
+      z-index: 1;
+      background-color: var(--secondary-container-light);
+      border-radius: $track-rad-s $track-rad-l $track-rad-l $track-rad-s;
     }
   }
 
-  &__handle {
-    position: absolute;
-    width: $handle-size;
-    height: $handle-size;
-    cursor: pointer;
-    @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-      top: 50%;
-      left: calc((100% - $handle-size) * var(--pos));
-      transform: translateY(-50%);
-    }
-    @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-      top: calc((100% - $handle-size) * (1 - var(--pos)));
-      left: 50%;
-      transform: translateX(-50%);
-    }
+  &__thumb {
+    top: 50%;
+    z-index: 2;
+    width: $thumb-size;
+    height: $thumb-size;
+    isolation: isolate;
+    transform: translateY(-50%);
 
-    &:focus {
-      outline: none;
-    }
-
-    &__state {
+    &::before,
+    &::after {
       position: absolute;
       top: 50%;
       left: 50%;
-      border-radius: $handle-state-rad;
-      transition: background-color $duration $easing, opacity $duration $easing,
-        transform $duration $easing;
-      @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-        width: $handle-state-width;
-        height: $handle-state-height;
-      }
-      @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-        width: $handle-state-height;
-        height: $handle-state-width;
-      }
+      display: block;
+      content: '';
+      isolation: isolate;
     }
 
-    &__shape {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      border-radius: $handle-shape-rad;
-      transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing, opacity $duration $easing;
+    &::before {
+      z-index: 1;
+      width: $state-width;
+      height: $state-height;
+      background-color: var(--primary-light);
+      border-radius: $state-rad;
+      opacity: 0.08;
+      transform: translate(-50%, -50%) scale(100%, 100%);
+    }
+
+    &::after {
+      z-index: 2;
+      width: $thumb-shape-width;
+      height: $thumb-shape-height;
+      background-color: var(--primary-light);
+      border-radius: $thumb-shape-rad;
       transform: translate(-50%, -50%);
     }
   }

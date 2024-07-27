@@ -1,12 +1,12 @@
+import { useCallback, useContext, useLayoutEffect, useRef } from 'react';
+
 import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
-import usePointerInteraction from '../../hooks/usePointerInteraction';
-import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
+  SliderOutput as AriaSliderOutput,
+  Label as AriaLabel,
+  Slider as AriaSlider,
+  SliderThumb as AriaSliderThumb,
+  SliderTrack as AriaSliderTrack,
+} from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_Slider.module.scss';
 import classNames from 'classnames/bind';
@@ -14,177 +14,60 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Slider = ({
-  value = 0,
-  min = 0,
-  max = 100,
+  ariaLabel = '',
+  minValue = 0,
+  maxValue = 100,
   step = 1,
-  vertical = false,
-  thumbDirection: handleDirection = 0,
-  trackClickable = false,
-  disabled = false,
+  value = 50,
+  defaultValue = 50,
+  orientation = 'horizontal',
+  isDisable = false,
+  onChangeEnd = null,
   onChange = null,
-  className = null,
+  children = null,
+  className = '',
+  style = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const rootDomRef = useRef(null);
-  const trackDomRef = useRef(null);
-  const handleDomRef = useRef(null);
-
-  const pointerOffset = useRef(null);
-
-  const getNewValue = useCallback(
-    (e) => {
-      const offset = pointerOffset.current;
-      const handleRect = handleDomRef.current.getBoundingClientRect();
-      const trackRect = trackDomRef.current.getBoundingClientRect();
-
-      let newHandlePos;
-      let normalizedPos;
-      let newValue;
-
-      if (vertical) {
-        newHandlePos = e.clientY - trackRect.top - offset.y;
-        newHandlePos = clamp(
-          newHandlePos,
-          0,
-          trackRect.height - handleRect.height
-        );
-        normalizedPos =
-          1 - newHandlePos / (trackRect.height - handleRect.height);
-        newValue = min + (max - min) * normalizedPos;
-      } else {
-        newHandlePos = e.clientX - trackRect.left - offset.x;
-        newHandlePos = clamp(
-          newHandlePos,
-          0,
-          trackRect.width - handleRect.width
-        );
-        normalizedPos = newHandlePos / (trackRect.width - handleRect.width);
-        newValue = min + (max - min) * normalizedPos;
-      }
-
-      newValue = setMultipleOfStep(newValue, step);
-
-      return newValue;
+  const onChangeEndHandler = useCallback(
+    (value) => {
+      onChangeEnd?.(value);
     },
-    [min, max, step, vertical]
-  );
-  const onPointerDragHandler = useCallback(
-    (e) => {
-      const newValue = getNewValue(e);
-      onChange?.({ value: newValue, min: min, max: max });
-    },
-    [min, max, onChange, getNewValue]
-  );
-  const onPointerUpHandler = useCallback(() => {
-    document.body.style.cursor = 'auto';
-  }, []);
-  const onPointerDown = useCallback(
-    (e, offset) => {
-      document.body.style.cursor = 'pointer';
-      pointerOffset.current = offset;
-      const newValue = getNewValue(e);
-      onChange?.({ value: newValue, min: min, max: max });
-    },
-    [min, max, onChange, getNewValue]
-  );
-  const onPointerDownTrackHandler = useCallback(
-    (e) => {
-      const thumbRect = handleDomRef.current.getBoundingClientRect();
-      const offset = {
-        x: 0.5 * thumbRect.width,
-        y: 0.5 * thumbRect.height,
-      };
-      onPointerDown(e, offset);
-    },
-    [onPointerDown]
-  );
-  const onPointerDownHandleHandler = useCallback(
-    (e) => {
-      const thumbRect = handleDomRef.current.getBoundingClientRect();
-      const offset = {
-        x: e.clientX - thumbRect.left,
-        y: e.clientY - thumbRect.top,
-      };
-      onPointerDown(e, offset);
-    },
-    [onPointerDown]
+    [onChangeEnd]
   );
 
-  const trackPI = usePointerInteraction();
-  useEffect(() => {
-    trackPI.setTargetRef(trackDomRef.current);
-    trackPI.setOnPointerDown(trackClickable ? onPointerDownTrackHandler : null);
-    trackPI.setOnPointerDrag(trackClickable ? onPointerDragHandler : null);
-    trackPI.setOnPointerUp(trackClickable ? onPointerUpHandler : null);
-  }, [
-    trackPI,
-    trackClickable,
-    onPointerDownTrackHandler,
-    onPointerDragHandler,
-    onPointerUpHandler,
-  ]);
-  const handlePI = usePointerInteraction();
-  useEffect(() => {
-    handlePI.setTargetRef(handleDomRef.current);
-    handlePI.setOnPointerDown(onPointerDownHandleHandler);
-    handlePI.setOnPointerDrag(onPointerDragHandler);
-    handlePI.setOnPointerUp(onPointerUpHandler);
-  }, [
-    handlePI,
-    onPointerDownHandleHandler,
-    onPointerDragHandler,
-    onPointerUpHandler,
-  ]);
+  const onChangeHandler = useCallback(
+    (value) => {
+      onChange?.(value);
+    },
+    [onChange]
+  );
 
-  useLayoutEffect(() => {
-    trackPI.setDisabled(disabled);
-    handlePI.setDisabled(disabled);
-  }, [trackPI, handlePI, disabled]);
-  useLayoutEffect(() => {
-    const normalizedPos = (value - min) / (max - min);
-    rootDomRef.current.style.setProperty(`--pos`, normalizedPos);
-  }, [value, min, max, step, vertical]);
+  const normalizedValue = useCallback(() => {
+    const nomalizedValue = (value - minValue) / (maxValue - minValue);
+    return nomalizedValue;
+  }, [maxValue, minValue, value]);
 
   return (
-    <div
-      className={`${cx('slider')} ${className || ''}`}
-      ref={rootDomRef}
+    <AriaSlider
+      aria-label={ariaLabel}
+      minValue={minValue}
+      maxValue={maxValue}
+      step={step}
+      value={value}
+      orientation={orientation}
+      isDisable={isDisable}
+      onChangeEnd={onChangeEndHandler}
+      onChange={onChangeHandler}
+      className={cx('slider', { className })}
       data-theme={theme}
-      data-orientation={vertical ? 'vertical' : 'horizontal'}
-      data-state={
-        trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
-      }
-      data-is-track-clickable={trackClickable}
+      style={{ '--normalized-value': normalizedValue() }}
     >
-      <div className={cx('slider__track', 'slider-track')} ref={trackDomRef}>
-        <div className={cx('slider__track__shape', 'slider-track-shape')}>
-          <div
-            className={cx(
-              'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-active',
-              'slider-track-shape-indicator-active'
-            )}
-          />
-          <div
-            className={cx(
-              'slider__track__shape__indicator',
-              'slider__track__shape__indicator--type-inactive',
-              'slider-track-shape-indicator-inactive'
-            )}
-          />
-        </div>
-        <div
-          className={cx('slider__handle', 'slider-handle')}
-          ref={handleDomRef}
-          tabIndex={disabled ? -1 : 0}
-        >
-          <div className={cx('slider__handle__state', 'slider-handle-state')} />
-          <div className={cx('slider__handle__shape', 'slider-handle-shape')} />
-        </div>
-      </div>
-    </div>
+      <AriaSliderTrack className={cx('slider__track')}>
+        <AriaSliderThumb className={cx('slider__thumb')} />
+      </AriaSliderTrack>
+    </AriaSlider>
   );
 };
 
