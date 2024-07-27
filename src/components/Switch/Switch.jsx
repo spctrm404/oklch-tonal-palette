@@ -20,23 +20,23 @@ const Switch = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const rootDom = useRef(null);
-  const handleDom = useRef(null);
+  const rootDomRef = useRef(null);
+  const handleDomRef = useRef(null);
 
-  const onClickHandler = useCallback(() => {
+  const onPointerClickHandler = useCallback(() => {
     onChange?.(!value);
   }, [value, onChange]);
 
   const switchPI = usePointerInteraction();
   useEffect(() => {
-    switchPI.setTargetRef(rootDom.current);
-    switchPI.setOnPointerClick(onClickHandler);
-  }, [switchPI, onClickHandler]);
+    switchPI.setTargetRef(rootDomRef.current);
+    switchPI.setOnPointerClick(onPointerClickHandler);
+  }, [switchPI, onPointerClickHandler]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleDom.current);
-    handlePI.setOnPointerClick(onClickHandler);
-  }, [handlePI, onClickHandler]);
+    handlePI.setTargetRef(handleDomRef.current);
+    handlePI.setOnPointerClick(onPointerClickHandler);
+  }, [handlePI, onPointerClickHandler]);
 
   useLayoutEffect(() => {
     switchPI.setDisabled(disabled);
@@ -46,7 +46,7 @@ const Switch = ({
   return (
     <div
       className={`${cx('switch')} ${className || ''}`}
-      ref={rootDom}
+      ref={rootDomRef}
       data-theme={theme}
       data-value={value}
       data-state={
@@ -56,8 +56,8 @@ const Switch = ({
       <div className={cx('switch__shape', 'switch-shape')} />
       <div
         className={cx('switch__handle', 'switch-handle')}
-        ref={handleDom}
-        tabIndex={0}
+        ref={handleDomRef}
+        tabIndex={disabled ? -1 : 0}
       >
         <div className={cx('switch__handle__state', 'switch-handle-state')} />
         <div className={cx('switch__handle__shape', 'switch-handle-shape')} />

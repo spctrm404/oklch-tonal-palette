@@ -4,13 +4,15 @@
   $parent-selector: &;
 
   position: relative;
-  @at-root #{$parent-selector}[data-orientation='horizontal']#{&} {
+
+  &[data-orientation='horizontal'] {
     width: min($min-width, 100%);
     min-width: $min-width;
-    height: $height;
+    height: max($track-height, $handle-shape-height);
   }
-  @at-root #{$parent-selector}[data-orientation='vertical']#{&} {
-    width: $height;
+
+  &[data-orientation='vertical'] {
+    width: max($track-height, $handle-shape-height);
     height: min($min-width, 100%);
     min-height: $min-width;
   }
@@ -18,24 +20,19 @@
   &__track {
     position: absolute;
     @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
-      top: 50%;
-      right: -0.5 * $handle-size;
-      left: -0.5 * $handle-size;
-      height: $track-height;
-      transform: translateY(-50%);
+      inset: calc(50% - 0.5 * $track-height) -0.5 * $handle-size calc(
+          50% - 0.5 * $track-height
+        ) -0.5 * $handle-size;
     }
     @at-root #{$parent-selector}[data-orientation='vertical'] #{&} {
-      top: -0.5 * $handle-size;
-      bottom: -0.5 * $handle-size;
-      left: 50%;
-      width: $track-height;
-      transform: translateX(-50%);
+      inset: -0.5 * $handle-size calc(50% - 0.5 * $track-height) -0.5 * $handle-size
+        calc(50% - 0.5 * $track-height);
     }
 
     &__shape {
       position: absolute;
       overflow: hidden;
-      border-radius: $rad;
+      border-radius: $track-shape-rad;
       @at-root #{$parent-selector}[data-orientation='horizontal'] #{&} {
         inset: 0 0.5 * $handle-size;
       }
@@ -49,7 +46,7 @@
 
       &__indicator {
         position: absolute;
-        border-radius: $track-shape-rad;
+        border-radius: $track-shape-indicator-rad;
         transition: background-color $duration $easing,
           opacity $duration $easing;
 

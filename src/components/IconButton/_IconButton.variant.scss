@@ -20,7 +20,7 @@ $easing: ease-in;
       opacity: 0.12;
     }
 
-    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+    @at-root #{$parent-selector}[data-type='filled'] #{&} {
       background-color: var(--primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--primary-dark);
@@ -48,7 +48,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+    @at-root #{$parent-selector}[data-type='tonal'] #{&} {
       background-color: var(--secondary-container-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--secondary-container-dark);
@@ -76,7 +76,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+    @at-root #{$parent-selector}[data-type='outlined'] #{&} {
       background-color: unset;
       border-color: var(--outline-light);
       border-style: solid;
@@ -117,7 +117,7 @@ $easing: ease-in;
       opacity: 0.12;
     }
 
-    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+    @at-root #{$parent-selector}[data-type='filled'] #{&} {
       background-color: var(--on-primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--on-primary-dark);
@@ -138,7 +138,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+    @at-root #{$parent-selector}[data-type='tonal'] #{&} {
       background-color: var(--on-secondary-container-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--on-secondary-container-dark);
@@ -159,7 +159,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+    @at-root #{$parent-selector}[data-type='outlined'] #{&} {
       background-color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--on-surface-variant-dark);
@@ -174,7 +174,7 @@ $easing: ease-in;
         }
       }
     }
-    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
+    @at-root #{$parent-selector}[data-type='outlined-children'] #{&} {
       background-color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--on-surface-variant-dark);
@@ -190,7 +190,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='standard'] #{&} {
+    @at-root #{$parent-selector}[data-type='standard'] #{&} {
       background-color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--on-surface-variant-dark);
@@ -210,7 +210,7 @@ $easing: ease-in;
   &__content {
     opacity: 1;
 
-    @at-root #{$parent-selector}[data-style='filled'] #{&} {
+    @at-root #{$parent-selector}[data-type='filled'] #{&} {
       color: var(--on-primary-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--on-primary-dark);
@@ -231,7 +231,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='tonal'] #{&} {
+    @at-root #{$parent-selector}[data-type='tonal'] #{&} {
       color: var(--on-secondary-container-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--on-secondary-container-dark);
@@ -252,7 +252,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='outlined'] #{&} {
+    @at-root #{$parent-selector}[data-type='outlined'] #{&} {
       color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--on-surface-variant-dark);
@@ -268,7 +268,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='outlined-children'] #{&} {
+    @at-root #{$parent-selector}[data-type='outlined-children'] #{&} {
       color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--on-surface-variant-dark);
@@ -284,7 +284,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-style='standard'] #{&} {
+    @at-root #{$parent-selector}[data-type='standard'] #{&} {
       color: var(--on-surface-variant-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         color: var(--on-surface-variant-dark);

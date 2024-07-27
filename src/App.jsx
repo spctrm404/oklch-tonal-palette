@@ -69,6 +69,7 @@ function App() {
         disabled={false}
         onChange={setTest}
       />
+      <Button label="button" />
       <Button label="button" disabled={true} />
       <Switch state={true} disabled={true} />
       <Switch state={false} disabled={true} />

@@ -16,7 +16,7 @@
     &__shape {
       position: absolute;
       inset: 0.5 * $handle-size;
-      border-radius: $rad;
+      border-radius: $track-shape-rad;
       transition: background-color $duration $easing, opacity $duration $easing;
       @at-root #{$parent-selector}[data-is-track-clickable='true'] #{&} {
         cursor: pointer;

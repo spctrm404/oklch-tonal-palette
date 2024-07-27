@@ -11,6 +11,10 @@
   border-radius: $rad;
   transition: box-shadow $duration $easing;
 
+  &:focus {
+    outline: none;
+  }
+
   &__shape {
     position: absolute;
     inset: 0;
@@ -32,7 +36,7 @@
     padding-inline: $px;
     transition: color $duration $easing, opacity $duration $easing;
     transform: translateY(-50%);
-    @at-root #{$parent-selector}[data-style='text'] #{&} {
+    @at-root #{$parent-selector}[data-type='text'] #{&} {
       padding-inline: $px-text-button;
     }
     @at-root #{$parent-selector}[data-has-icon='true'] #{&} {
@@ -41,7 +45,7 @@
       column-gap: $gx-has-icon;
       padding-left: $pl-has-icon;
 
-      @at-root #{$parent-selector}[data-style='text']#{&} {
+      @at-root #{$parent-selector}[data-type='text']#{&} {
         padding-inline: $pl-has-icon-text-button $pr-has-icon-text-button;
       }
     }

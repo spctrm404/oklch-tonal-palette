@@ -22,21 +22,20 @@ const XYSlider = ({
   disabled = false,
   onChange = null,
   className = null,
-  children = null,
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const rootDom = useRef(null);
-  const trackDom = useRef(null);
-  const handleDom = useRef(null);
+  const rootDomRef = useRef(null);
+  const trackDomRef = useRef(null);
+  const handleDomRef = useRef(null);
 
   const pointerOffset = useRef(null);
 
   const getNewValue = useCallback(
     (e) => {
       const offset = pointerOffset.current;
-      const trackRect = trackDom.current.getBoundingClientRect();
-      const handleRect = handleDom.current.getBoundingClientRect();
+      const trackRect = trackDomRef.current.getBoundingClientRect();
+      const handleRect = handleDomRef.current.getBoundingClientRect();
 
       const newHandlePos = {};
       const normalizedPos = {};
@@ -91,7 +90,7 @@ const XYSlider = ({
   );
   const onPointerDownTrackHandler = useCallback(
     (e) => {
-      const handleRect = handleDom.current.getBoundingClientRect();
+      const handleRect = handleDomRef.current.getBoundingClientRect();
       const offset = {
         x: 0.5 * handleRect.width,
         y: 0.5 * handleRect.height,
@@ -102,7 +101,7 @@ const XYSlider = ({
   );
   const onPointerDownHandleHandler = useCallback(
     (e) => {
-      const handleRect = handleDom.current.getBoundingClientRect();
+      const handleRect = handleDomRef.current.getBoundingClientRect();
       const offset = {
         x: e.clientX - handleRect.left,
         y: e.clientY - handleRect.top,
@@ -114,7 +113,7 @@ const XYSlider = ({
 
   const trackPI = usePointerInteraction();
   useEffect(() => {
-    trackPI.setTargetRef(trackDom.current);
+    trackPI.setTargetRef(trackDomRef.current);
     trackPI.setOnPointerDown(trackClickable ? onPointerDownTrackHandler : null);
     trackPI.setOnPointerDrag(trackClickable ? onPointerDragHandler : null);
     trackPI.setOnPointerUp(trackClickable ? onPointerUpHandler : null);
@@ -127,7 +126,7 @@ const XYSlider = ({
   ]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleDom.current);
+    handlePI.setTargetRef(handleDomRef.current);
     handlePI.setOnPointerDown(onPointerDownHandleHandler);
     handlePI.setOnPointerDrag(onPointerDragHandler);
     handlePI.setOnPointerUp(onPointerUpHandler);
@@ -142,34 +141,36 @@ const XYSlider = ({
     trackPI.setDisabled(disabled);
     handlePI.setDisabled(disabled);
   }, [trackPI, handlePI, disabled]);
-
   useLayoutEffect(() => {
     const normalizedPos = {
       x: (value.x - min.x) / (max.x - min.x),
       y: (value.y - min.y) / (max.y - min.y),
     };
-    rootDom.current.style.setProperty(`--x`, normalizedPos.x);
-    rootDom.current.style.setProperty(`--y`, 1 - normalizedPos.y);
+    rootDomRef.current.style.setProperty(`--x`, normalizedPos.x);
+    rootDomRef.current.style.setProperty(`--y`, 1 - normalizedPos.y);
   }, [value, min, max]);
 
   return (
     <div
       className={`${cx(`xy-slider`)} ${className || ''}`}
-      ref={rootDom}
+      ref={rootDomRef}
       data-theme={theme}
       data-state={
         trackPI.getState() === 'pressed' ? 'pressed' : handlePI.getState()
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('xy-slider__track', 'xy-slider-track')} ref={trackDom}>
+      <div
+        className={cx('xy-slider__track', 'xy-slider-track')}
+        ref={trackDomRef}
+      >
         <div
           className={cx('xy-slider__track__shape', 'xy-slider-track-shape')}
         />
         <div
           className={cx('xy-slider__handle', 'xy-slider-handle')}
-          ref={handleDom}
-          tabIndex={0}
+          ref={handleDomRef}
+          tabIndex={disabled ? -1 : 0}
         >
           <div
             className={cx('xy-slider__handle__state', 'xy-slider-handle-state')}
@@ -177,34 +178,30 @@ const XYSlider = ({
           <div
             className={cx('xy-slider__handle__shape', 'xy-slider-handle-shape')}
           >
-            {children || (
-              <>
-                <div
-                  className={cx(
-                    'xy-slider__handle__shape__tick',
-                    'xy-slider-handle-shape-tick'
-                  )}
-                />
-                <div
-                  className={cx(
-                    'xy-slider__handle__shape__tick',
-                    'xy-slider-handle-shape-tick'
-                  )}
-                />
-                <div
-                  className={cx(
-                    'xy-slider__handle__shape__tick',
-                    'xy-slider-handle-shape-tick'
-                  )}
-                />
-                <div
-                  className={cx(
-                    'xy-slider__handle__shape__tick',
-                    'xy-slider-handle-shape-tick'
-                  )}
-                />
-              </>
-            )}
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
+            <div
+              className={cx(
+                'xy-slider__handle__shape__tick',
+                'xy-slider-handle-shape-tick'
+              )}
+            />
           </div>
         </div>
       </div>

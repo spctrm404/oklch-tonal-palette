@@ -7,15 +7,15 @@ import {
 } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import s from './_IconButton.module.scss';
+import st from './_IconButton.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
 const IconButton = ({
   value = null,
   onChange = null,
-  style = 'standard',
+  style: type = 'standard',
   materialIcon = '',
   disabled = false,
   className = null,
@@ -24,9 +24,8 @@ const IconButton = ({
 
   const buttonRef = useRef(null);
 
-  const handleClick = useCallback(() => {
+  const onPointerClickHandler = useCallback(() => {
     if (value !== null) {
-      console.log(value);
       onChange?.(!value);
     } else {
       onChange?.();
@@ -36,8 +35,8 @@ const IconButton = ({
   const buttonPI = usePointerInteraction();
   useEffect(() => {
     buttonPI.setTargetRef(buttonRef.current);
-    buttonPI.setOnPointerClick(handleClick);
-  }, [buttonPI, handleClick]);
+    buttonPI.setOnPointerClick(onPointerClickHandler);
+  }, [buttonPI, onPointerClickHandler]);
 
   useLayoutEffect(() => {
     buttonPI.setDisabled(disabled);
@@ -51,8 +50,8 @@ const IconButton = ({
       data-value={value}
       data-is-toggle={value !== null}
       data-state={buttonPI.getState()}
-      data-style={style}
-      tabIndex={0}
+      data-type={type}
+      tabIndex={disabled ? -1 : 0}
     >
       <div className={cx('icon-button__shape', 'icon-button-shape')} />
       <div className={cx('icon-button__state', 'icon-button-state')} />

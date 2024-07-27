@@ -27,17 +27,17 @@ const Slider = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const rootDom = useRef(null);
-  const trackDom = useRef(null);
-  const handleDom = useRef(null);
+  const rootDomRef = useRef(null);
+  const trackDomRef = useRef(null);
+  const handleDomRef = useRef(null);
 
   const pointerOffset = useRef(null);
 
   const getNewValue = useCallback(
     (e) => {
       const offset = pointerOffset.current;
-      const handleRect = handleDom.current.getBoundingClientRect();
-      const trackRect = trackDom.current.getBoundingClientRect();
+      const handleRect = handleDomRef.current.getBoundingClientRect();
+      const trackRect = trackDomRef.current.getBoundingClientRect();
 
       let newHandlePos;
       let normalizedPos;
@@ -91,7 +91,7 @@ const Slider = ({
   );
   const onPointerDownTrackHandler = useCallback(
     (e) => {
-      const thumbRect = handleDom.current.getBoundingClientRect();
+      const thumbRect = handleDomRef.current.getBoundingClientRect();
       const offset = {
         x: 0.5 * thumbRect.width,
         y: 0.5 * thumbRect.height,
@@ -100,10 +100,9 @@ const Slider = ({
     },
     [onPointerDown]
   );
-
   const onPointerDownHandleHandler = useCallback(
     (e) => {
-      const thumbRect = handleDom.current.getBoundingClientRect();
+      const thumbRect = handleDomRef.current.getBoundingClientRect();
       const offset = {
         x: e.clientX - thumbRect.left,
         y: e.clientY - thumbRect.top,
@@ -115,7 +114,7 @@ const Slider = ({
 
   const trackPI = usePointerInteraction();
   useEffect(() => {
-    trackPI.setTargetRef(trackDom.current);
+    trackPI.setTargetRef(trackDomRef.current);
     trackPI.setOnPointerDown(trackClickable ? onPointerDownTrackHandler : null);
     trackPI.setOnPointerDrag(trackClickable ? onPointerDragHandler : null);
     trackPI.setOnPointerUp(trackClickable ? onPointerUpHandler : null);
@@ -128,7 +127,7 @@ const Slider = ({
   ]);
   const handlePI = usePointerInteraction();
   useEffect(() => {
-    handlePI.setTargetRef(handleDom.current);
+    handlePI.setTargetRef(handleDomRef.current);
     handlePI.setOnPointerDown(onPointerDownHandleHandler);
     handlePI.setOnPointerDrag(onPointerDragHandler);
     handlePI.setOnPointerUp(onPointerUpHandler);
@@ -143,16 +142,15 @@ const Slider = ({
     trackPI.setDisabled(disabled);
     handlePI.setDisabled(disabled);
   }, [trackPI, handlePI, disabled]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const normalizedPos = (value - min) / (max - min);
-    rootDom.current.style.setProperty(`--pos`, normalizedPos);
+    rootDomRef.current.style.setProperty(`--pos`, normalizedPos);
   }, [value, min, max, step, vertical]);
 
   return (
     <div
       className={`${cx('slider')} ${className || ''}`}
-      ref={rootDom}
+      ref={rootDomRef}
       data-theme={theme}
       data-orientation={vertical ? 'vertical' : 'horizontal'}
       data-state={
@@ -160,7 +158,7 @@ const Slider = ({
       }
       data-is-track-clickable={trackClickable}
     >
-      <div className={cx('slider__track', 'slider-track')} ref={trackDom}>
+      <div className={cx('slider__track', 'slider-track')} ref={trackDomRef}>
         <div className={cx('slider__track__shape', 'slider-track-shape')}>
           <div
             className={cx(
@@ -179,8 +177,8 @@ const Slider = ({
         </div>
         <div
           className={cx('slider__handle', 'slider-handle')}
-          ref={handleDom}
-          tabIndex={0}
+          ref={handleDomRef}
+          tabIndex={disabled ? -1 : 0}
         >
           <div className={cx('slider__handle__state', 'slider-handle-state')} />
           <div className={cx('slider__handle__shape', 'slider-handle-shape')} />

@@ -1,17 +1,16 @@
 $min-width: 12.5rem;
-$height: 1.75rem;
 $track-height: 1rem;
+$handle-shape-height: 1.75rem;
 $handle-size: 3rem;
 $handle-state-width: 1rem;
 $handle-state-height: 2.5rem;
 $handle-shape-px: 0.375rem;
 $handle-shape-width-idle: 0.25rem;
 $handle-shape-width-pressed: 0.125rem;
-$handle-shape-height: $height;
 $handle-shape-rad: 0.25rem;
 $handle-state-rad: 0.25rem;
-$track-shape-rad: 0.125rem;
-$rad: 0.25rem;
+$track-shape-indicator-rad: 0.125rem;
+$track-shape-rad: 0.25rem;
 $duration: 150ms;
 $easing: ease-in;
 

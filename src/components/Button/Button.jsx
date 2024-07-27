@@ -7,14 +7,14 @@ import {
 } from 'react';
 import usePointerInteraction from '../../hooks/usePointerInteraction.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
-import s from './_Button.module.scss';
+import st from './_Button.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
 const Button = ({
   onChange = null,
-  style = 'text',
+  style: type = 'text',
   materialIcon = '',
   label = '',
   disabled = false,
@@ -24,15 +24,15 @@ const Button = ({
 
   const buttonRef = useRef(null);
 
-  const handleClick = useCallback(() => {
+  const onPointerClickHandler = useCallback(() => {
     onChange?.();
   }, [onChange]);
 
   const buttonPI = usePointerInteraction();
   useEffect(() => {
     buttonPI.setTargetRef(buttonRef.current);
-    buttonPI.setOnPointerClick(handleClick);
-  }, [buttonPI, handleClick]);
+    buttonPI.setOnPointerClick(onPointerClickHandler);
+  }, [buttonPI, onPointerClickHandler]);
 
   useLayoutEffect(() => {
     buttonPI.setDisabled(disabled);
@@ -43,10 +43,10 @@ const Button = ({
       className={`${cx('button')} ${className || ''}`}
       ref={buttonRef}
       data-theme={theme}
-      data-state={buttonPI.getState()}
-      data-style={style}
       data-has-icon={materialIcon !== ''}
-      tabIndex={0}
+      data-state={buttonPI.getState()}
+      data-type={type}
+      tabIndex={disabled ? -1 : 0}
     >
       <div className={cx('button__shape', 'button-shape')} />
       <div className={cx('button__state', 'button-state')} />
