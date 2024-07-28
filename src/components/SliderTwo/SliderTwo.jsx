@@ -32,18 +32,52 @@ const SliderTwo = ({
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
 
-  const onChangeEndHandler = useCallback(
-    (newValue) => {
-      // onChangeEnd?.(newValue);
+  const valueToPosition = useCallback(() => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    return {
+      x:
+        ((value.x - minValue.x) / (maxValue.x - minValue.x)) * trackRect.width -
+        0.5 * thumbRect.width,
+      y:
+        ((value.y - minValue.y) / (maxValue.y - minValue.y)) *
+          trackRect.height -
+        0.5 * thumbRect.height,
+    };
+  }, [minValue, maxValue, value]);
+
+  const positionToValue = useCallback(
+    (position) => {
+      const trackRect = trackRef.current.getBoundingClientRect();
+      const thumbRect = thumbRef.current.getBoundingClientRect();
+      return {
+        x:
+          ((position.x + 0.5 * thumbRect.width) / trackRect.width) *
+            (maxValue.x - minValue.x) +
+          minValue.x,
+        y:
+          ((position.y + 0.5 * thumbRect.height) / trackRect.height) *
+            (maxValue.y - minValue.y) +
+          minValue.y,
+      };
     },
-    [onChangeEnd]
+    [minValue, maxValue]
+  );
+
+  const onChangeEndHandler = useCallback(
+    (position) => {
+      const value = positionToValue(position);
+      onChangeEnd?.(value);
+    },
+    [onChangeEnd, positionToValue]
   );
 
   const onChangeHandler = useCallback(
-    (newValue) => {
-      // onChange?.(newValue);
+    (position) => {
+      const value = positionToValue(position);
+      onChange?.(value);
     },
-    [onChange]
+    [onChange, positionToValue]
   );
 
   const { hoverProps: trackHoverProps, isHovered: trackIsHovered } = useHover({
@@ -106,13 +140,13 @@ const SliderTwo = ({
       newPosition.x += e.deltaX;
       newPosition.y += e.deltaY;
       positionRef.current = newPosition;
-      onChangeHandler();
+      onChangeHandler(newPosition);
     },
     onMoveEnd: () => {
       let newPosition = { ...positionRef.current };
       newPosition = clampPositionAlt(newPosition);
       positionRef.current = newPosition;
-      onChangeEndHandler();
+      onChangeEndHandler(newPosition);
       setDragging(false);
     },
   });
@@ -129,7 +163,13 @@ const SliderTwo = ({
     const clampedPosition = clampPositionAlt(position);
     thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
     thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
-  }, [positionRef, clampPositionAlt]);
+  }, [value, clampPositionAlt]);
+  useLayoutEffect(() => {
+    const position = valueToPosition();
+    positionRef.current = position;
+    thumbRef.current.style.setProperty('left', `${position.x}px`);
+    thumbRef.current.style.setProperty('top', `${position.y}px`);
+  }, []);
 
   return (
     <div className={cx('slidertwo')}>

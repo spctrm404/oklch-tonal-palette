@@ -73,9 +73,13 @@ function App() {
         disabled={false}
         onChange={setTest}
       />
+
       <Button label="button" />
       <Button label="button" disabled={true} />
       <SliderTwo value={twod} onChange={setTwod} />
+      <p>
+        {twod.x}, {twod.y}
+      </p>
       <Switch state={true} disabled={true} />
       <Switch state={false} disabled={true} />
       <p>{theme}</p>
