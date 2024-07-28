@@ -1,91 +1,137 @@
-import { useState } from 'react';
-import { useMove } from 'react-aria';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
+import { clamp } from '../../utils/numberUtils';
+import st from './_SliderTwo.module.scss';
+import classNames from 'classnames/bind';
+
+const cx = classNames.bind(st);
 
 const SliderTwo = () => {
-  const CONTAINER_SIZE = 200;
-  const BALL_SIZE = 30;
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [trackSize, setTrackSize] = useState({ x: 0, y: 0 });
+  const [thumbSize, setThumbSize] = useState({ x: 0, y: 0 });
+  const [isDragging, setDragging] = useState(false);
+  const [isFocused, setFocused] = useState(false);
 
-  let [events, setEvents] = useState([]);
-  let [color, setColor] = useState('black');
-  let [position, setPosition] = useState({
-    x: 0,
-    y: 0,
-  });
+  const trackRef = useRef(null);
+  const thumbRef = useRef(null);
 
-  let clamp = (pos) => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
-  let { moveProps } = useMove({
-    onMoveStart(e) {
-      setColor('red');
-      setEvents((events) => [
-        `move start with pointerType = ${e.pointerType}`,
-        ...events,
-      ]);
+  const clampPosition = useCallback(
+    (positionValue, key) => {
+      return clamp(
+        positionValue,
+        -0.5 * thumbSize[key],
+        trackSize[key] - 0.5 * thumbSize[key]
+      );
     },
-    onMove(e) {
-      setPosition(({ x, y }) => {
-        // Normally, we want to allow the user to continue
-        // dragging outside the box such that they need to
-        // drag back over the ball again before it moves.
-        // This is handled below by clamping during render.
-        // If using the keyboard, however, we need to clamp
-        // here so that dragging outside the container and
-        // then using the arrow keys works as expected.
-        if (e.pointerType === 'keyboard') {
-          x = clamp(x);
-          y = clamp(y);
-        }
+    [trackSize, thumbSize]
+  );
 
+  const { hoverProps: trackHoverProps, isHovered: trackIsHovered } = useHover({
+    onHoverStart: () => {},
+    onHoverEnd: () => {},
+    onHoverChange: () => {},
+  });
+  const { hoverProps: thumbHoverProps, isHovered: thumbIsHovered } = useHover({
+    onHoverStart: () => {},
+    onHoverEnd: () => {},
+    onHoverChange: () => {},
+  });
+  const { focusProps } = useFocus({
+    isDisabled: false,
+    onFocus: () => {
+      setFocused(true);
+    },
+    onBlur: () => {
+      setFocused(false);
+    },
+    onFocusChange: () => {},
+  });
+  const { pressProps } = usePress({
+    onPress: () => {},
+    onPressStart: () => {
+      setDragging(true);
+    },
+    onPressEnd: () => {},
+    onPressChange: () => {},
+    onPressUp: () => {},
+  });
+  const { moveProps } = useMove({
+    onMoveStart: () => {},
+    onMove: (e) => {
+      setPosition(({ x, y }) => {
+        if (e.pointerType === 'keyboard') {
+          x = clampPosition(x, 'x');
+          y = clampPosition(y, 'y');
+        }
         x += e.deltaX;
         y += e.deltaY;
         return { x, y };
       });
-
-      setEvents((events) => [
-        `move with pointerType = ${e.pointerType}, deltaX = ${e.deltaX}, deltaY = ${e.deltaY}`,
-        ...events,
-      ]);
     },
-    onMoveEnd(e) {
+    onMoveEnd: () => {
+      setDragging(false);
       setPosition(({ x, y }) => {
-        // Clamp position on mouse up
-        x = clamp(x);
-        y = clamp(y);
+        x = clampPosition(x, 'x');
+        y = clampPosition(y, 'y');
         return { x, y };
       });
-      setColor('black');
-      setEvents((events) => [
-        `move end with pointerType = ${e.pointerType}`,
-        ...events,
-      ]);
     },
   });
 
+  useEffect(() => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    setTrackSize({ x: trackRect.width, y: trackRect.height });
+    setThumbSize({ x: thumbRect.width, y: thumbRect.height });
+    // setPosition(({ x, y }) => {
+    //   x = clamp(
+    //     x,
+    //     -0.5 * thumbRect.width,
+    //     trackRect.width - 0.5 * thumbRect.width
+    //   );
+    //   y = clamp(
+    //     y,
+    //     -0.5 * thumbRect.height,
+    //     trackRect.height - 0.5 * thumbRect.height
+    //   );
+    //   return { x, y };
+    // });
+  }, []);
+
+  const thumbProps = mergeProps(
+    thumbHoverProps,
+    focusProps,
+    pressProps,
+    moveProps
+  );
+
   return (
-    <div
-      style={{
-        width: CONTAINER_SIZE,
-        height: CONTAINER_SIZE,
-        background: 'white',
-        border: '1px solid black',
-        position: 'relative',
-        touchAction: 'none',
-      }}
-    >
+    <div className={cx('slidertwo')}>
       <div
-        {...moveProps}
-        tabIndex={0}
-        style={{
-          width: BALL_SIZE,
-          height: BALL_SIZE,
-          borderRadius: '100%',
-          position: 'absolute',
-          left: clamp(position.x),
-          top: clamp(position.y),
-          background: color,
-        }}
-      />
+        {...trackHoverProps}
+        {...(trackIsHovered && { 'data-hovered': 'true' })}
+        className={cx('slidertwo__track')}
+        style={{ position: 'relative', touchAction: 'none' }}
+        ref={trackRef}
+      >
+        <div
+          className={cx('slidertwo__thumb')}
+          {...thumbProps}
+          {...(thumbIsHovered && { 'data-hovered': 'true' })}
+          {...(isDragging && { 'data-dragging': 'true' })}
+          {...(isFocused && { 'data-focused': 'true' })}
+          tabIndex={0}
+          style={{
+            position: 'absolute',
+            left: clampPosition(position.x, 'x'),
+            top: clampPosition(position.y, 'y'),
+            touchAction: 'none',
+          }}
+          ref={thumbRef}
+        />
+      </div>
     </div>
   );
 };
-
 export default SliderTwo;
