@@ -62,7 +62,7 @@ function App() {
 
   const [test, setTest] = useState(true);
 
-  const [twod, setTwod] = useState({ x: 0, y: 0 });
+  const [twod, setTwod] = useState({ x: 50, y: 50 });
 
   return (
     <>
@@ -75,10 +75,9 @@ function App() {
       />
       <Button label="button" />
       <Button label="button" disabled={true} />
-      <SliderTwo></SliderTwo>
+      <SliderTwo value={twod} onChange={setTwod} />
       <Switch state={true} disabled={true} />
       <Switch state={false} disabled={true} />
-      <Slider2D value={twod} onChange={setTwod} />
       <p>{theme}</p>
       <Switch state={theme === 'light'} onChange={updateTheme} />
       <button type="button" onPointerDown={addAPalette}>
