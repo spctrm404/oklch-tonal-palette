@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
 import { clamp } from '../../utils/numberUtils';
 import st from './_SliderTwo.module.scss';
@@ -17,9 +23,12 @@ const SliderTwo = ({
   onChange = null,
   className = '',
 }) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [trackSize, setTrackSize] = useState({ x: 0, y: 0 });
-  const [thumbSize, setThumbSize] = useState({ x: 0, y: 0 });
+  // const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setDragging] = useState(false);
+  const [isFocused, setFocused] = useState(false);
+
+  const positionRef = useRef({ x: 0, y: 0 });
+
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
 
@@ -51,58 +60,60 @@ const SliderTwo = ({
 
   const { focusProps } = useFocus({
     isDisabled: false,
-    onFocus: () => {},
-    onBlur: () => {},
+    onFocus: () => {
+      setFocused(true);
+    },
+    onBlur: () => {
+      setFocused(false);
+    },
     onFocusChange: () => {},
   });
 
   const { pressProps } = usePress({
     onPress: () => {},
-    onPressStart: () => {},
+    onPressStart: () => {
+      setDragging(true);
+    },
     onPressEnd: () => {},
     onPressChange: () => {},
     onPressUp: () => {},
   });
 
-  const clampPosition = useCallback(
-    (position) => {
-      return {
-        x: clamp(
-          position.x,
-          -0.5 * thumbSize.x,
-          trackSize.x - 0.5 * thumbSize.x
-        ),
-        y: clamp(
-          position.y,
-          -0.5 * thumbSize.y,
-          trackSize.y - 0.5 * thumbSize.y
-        ),
-      };
-    },
-    [trackSize, thumbSize]
-  );
+  const clampPositionAlt = useCallback((position) => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    return {
+      x: clamp(
+        position.x,
+        -0.5 * thumbRect.width,
+        trackRect.width - 0.5 * thumbRect.width
+      ),
+      y: clamp(
+        position.y,
+        -0.5 * thumbRect.height,
+        trackRect.height - 0.5 * thumbRect.height
+      ),
+    };
+  }, []);
 
   const { moveProps } = useMove({
     onMoveStart: () => {},
     onMove: (e) => {
-      setPosition((prevPosition) => {
-        let newPosition = { ...prevPosition };
-        if (e.pointerType === 'keyboard') {
-          newPosition = clampPosition(newPosition);
-        }
-        newPosition.x += e.deltaX;
-        newPosition.y += e.deltaY;
-        return newPosition;
-      });
+      let newPosition = { ...positionRef.current };
+      if (e.pointerType === 'keyboard') {
+        newPosition = clampPositionAlt(newPosition);
+      }
+      newPosition.x += e.deltaX;
+      newPosition.y += e.deltaY;
+      positionRef.current = newPosition;
       onChangeHandler();
     },
     onMoveEnd: () => {
-      setPosition((prevPosition) => {
-        let newPosition = { ...prevPosition };
-        newPosition = clampPosition(newPosition);
-        return newPosition;
-      });
+      let newPosition = { ...positionRef.current };
+      newPosition = clampPositionAlt(newPosition);
+      positionRef.current = newPosition;
       onChangeEndHandler();
+      setDragging(false);
     },
   });
 
@@ -113,13 +124,12 @@ const SliderTwo = ({
     moveProps
   );
 
-  useEffect(() => {
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-
-    setTrackSize({ x: trackRect.width, y: trackRect.height });
-    setThumbSize({ x: thumbRect.width, y: thumbRect.height });
-  }, []);
+  useLayoutEffect(() => {
+    const position = positionRef.current;
+    const clampedPosition = clampPositionAlt(position);
+    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
+    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
+  }, [positionRef, clampPositionAlt]);
 
   return (
     <div className={cx('slidertwo')}>
@@ -135,12 +145,13 @@ const SliderTwo = ({
           className={cx('slidertwo__thumb')}
           {...thumbProps}
           {...(thumbIsHovered && { 'data-hovered': 'true' })}
+          {...(isDragging && { 'data-dragging': 'true' })}
+          {...(isFocused && { 'data-focused': 'true' })}
+          {...(isDisable && { 'data-disabled': 'true' })}
           tabIndex={0}
           style={{
             position: 'absolute',
             touchAction: 'none',
-            left: clampPosition(position).x,
-            top: clampPosition(position).y,
           }}
           ref={thumbRef}
         />
