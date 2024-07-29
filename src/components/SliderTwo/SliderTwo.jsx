@@ -1,4 +1,4 @@
-// toDo: step, snap, shift key
+// toDo: change function return new, snap, shift key
 
 import {
   useCallback,
@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
-import { clamp } from '../../utils/numberUtils';
+import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_SliderTwo.module.scss';
 import classNames from 'classnames/bind';
@@ -94,21 +94,32 @@ const SliderTwo = ({
     },
     [minValue, maxValue]
   );
+  const setValueMultipleOfStep = useCallback(
+    (value) => {
+      return Object.keys(value).reduce((acc, key) => {
+        acc[key] = setMultipleOfStep(value[key], step[key]);
+        return acc;
+      }, {});
+    },
+    [step]
+  );
 
   const onChangeEndHandler = useCallback(
     (newPosition) => {
       const value = positionToValue(newPosition);
-      onChangeEnd?.(value);
+      const steppedValue = setValueMultipleOfStep(value);
+      onChangeEnd?.(steppedValue);
     },
-    [onChangeEnd, positionToValue]
+    [onChangeEnd, positionToValue, setValueMultipleOfStep]
   );
   const onChangeHandler = useCallback(
     (newPosition) => {
       const value = positionToValue(newPosition);
       const clampedValue = clampValue(value);
-      onChange?.(clampedValue);
+      const steppedValue = setValueMultipleOfStep(clampedValue);
+      onChange?.(steppedValue);
     },
-    [onChange, positionToValue, clampValue]
+    [onChange, positionToValue, clampValue, setValueMultipleOfStep]
   );
 
   const { hoverProps: trackHoverProps, isHovered: trackIsHovered } = useHover({
