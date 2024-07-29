@@ -33,7 +33,6 @@ const Slider = ({
     },
     [onChangeEnd]
   );
-
   const onChangeHandler = useCallback(
     (newValue) => {
       onChange?.(newValue);
