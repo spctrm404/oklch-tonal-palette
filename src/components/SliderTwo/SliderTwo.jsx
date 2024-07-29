@@ -1,4 +1,4 @@
-// toDo: change function return new, snap, shift key
+// toDo: track click, snap, shift key
 
 import {
   useCallback,
@@ -38,38 +38,43 @@ const SliderTwo = ({
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
 
-  const valueToPosition = useCallback(() => {
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
+  const getPositionFromValue = useCallback(
+    (value) => {
+      const trackRect = trackRef.current.getBoundingClientRect();
+      const thumbRect = thumbRef.current.getBoundingClientRect();
 
-    const nomalizedValue = Object.keys(value).reduce((acc, key) => {
-      acc[key] = (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
-      return acc;
-    }, {});
-    return {
-      x: nomalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
-      y: nomalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
-    };
-  }, [minValue, maxValue, value]);
-  const positionToValue = useCallback(
+      const nomalizedValue = Object.keys(value).reduce((acc, key) => {
+        acc[key] =
+          (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
+        return acc;
+      }, {});
+      return {
+        x: nomalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
+        y: nomalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
+      };
+    },
+    [minValue, maxValue]
+  );
+  const getValueFromPosition = useCallback(
     (position) => {
       const trackRect = trackRef.current.getBoundingClientRect();
       const thumbRect = thumbRef.current.getBoundingClientRect();
 
-      const normalizedPos = {
+      const normalizedPosition = {
         x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
         y: (position.y + 0.5 * thumbRect.height) / trackRect.height,
       };
-      return Object.keys(normalizedPos).reduce((acc, key) => {
+      return Object.keys(normalizedPosition).reduce((acc, key) => {
         acc[key] =
-          normalizedPos[key] * (maxValue[key] - minValue[key]) + minValue[key];
+          normalizedPosition[key] * (maxValue[key] - minValue[key]) +
+          minValue[key];
         return acc;
       }, {});
     },
     [minValue, maxValue]
   );
 
-  const clampPosition = useCallback((position) => {
+  const getClampedPosition = useCallback((position) => {
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
     return {
@@ -85,7 +90,7 @@ const SliderTwo = ({
       ),
     };
   }, []);
-  const clampValue = useCallback(
+  const getClampedValue = useCallback(
     (value) => {
       return Object.keys(value).reduce((acc, key) => {
         acc[key] = clamp(value[key], minValue[key], maxValue[key]);
@@ -94,7 +99,7 @@ const SliderTwo = ({
     },
     [minValue, maxValue]
   );
-  const setValueMultipleOfStep = useCallback(
+  const getQuantizedValue = useCallback(
     (value) => {
       return Object.keys(value).reduce((acc, key) => {
         acc[key] = setMultipleOfStep(value[key], step[key]);
@@ -106,20 +111,20 @@ const SliderTwo = ({
 
   const onChangeEndHandler = useCallback(
     (newPosition) => {
-      const value = positionToValue(newPosition);
-      const steppedValue = setValueMultipleOfStep(value);
-      onChangeEnd?.(steppedValue);
+      const valueFromPosition = getValueFromPosition(newPosition);
+      const quantizedValue = getQuantizedValue(valueFromPosition);
+      onChangeEnd?.(quantizedValue);
     },
-    [onChangeEnd, positionToValue, setValueMultipleOfStep]
+    [onChangeEnd, getValueFromPosition, getQuantizedValue]
   );
   const onChangeHandler = useCallback(
     (newPosition) => {
-      const value = positionToValue(newPosition);
-      const clampedValue = clampValue(value);
-      const steppedValue = setValueMultipleOfStep(clampedValue);
-      onChange?.(steppedValue);
+      const valueFromPosition = getValueFromPosition(newPosition);
+      const clampedValue = getClampedValue(valueFromPosition);
+      const quantizedValue = getQuantizedValue(clampedValue);
+      onChange?.(quantizedValue);
     },
-    [onChange, positionToValue, clampValue, setValueMultipleOfStep]
+    [onChange, getValueFromPosition, getClampedValue, getQuantizedValue]
   );
 
   const { hoverProps: trackHoverProps, isHovered: trackIsHovered } = useHover({
@@ -178,6 +183,7 @@ const SliderTwo = ({
       }
     },
     onPressEnd: () => {
+      console.log('pressEnd');
       if (!isDisable) {
       }
     },
@@ -187,6 +193,7 @@ const SliderTwo = ({
     },
     onPressUp: () => {
       if (!isDisable) {
+        setDragging(false);
       }
     },
   });
@@ -197,10 +204,10 @@ const SliderTwo = ({
     },
     onMove: (e) => {
       if (!isDisable) {
-        let newPosition = { ...positionRef.current };
-        if (e.pointerType === 'keyboard') {
-          newPosition = clampPosition(newPosition);
-        }
+        const newPosition =
+          e.pointerType === 'keyboard'
+            ? getClampedPosition(positionRef.current)
+            : { ...positionRef.current };
         newPosition.x += e.deltaX;
         newPosition.y += e.deltaY;
         positionRef.current = newPosition;
@@ -208,12 +215,12 @@ const SliderTwo = ({
       }
     },
     onMoveEnd: () => {
+      console.log('moveEnd');
       if (!isDisable) {
-        let newPosition = { ...positionRef.current };
-        newPosition = clampPosition(newPosition);
+        const newPosition = getClampedPosition(positionRef.current);
         positionRef.current = newPosition;
         onChangeEndHandler(newPosition);
-        setDragging(false);
+        // setDragging(false);
       }
     },
   });
@@ -226,32 +233,36 @@ const SliderTwo = ({
   );
 
   useLayoutEffect(() => {
-    const position = positionRef.current;
-    const clampedPosition = clampPosition(position);
+    const clampedPosition = getClampedPosition(positionRef.current);
     thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
     thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
-  }, [value, clampPosition]);
+  }, [value, getClampedPosition]);
   useLayoutEffect(() => {
-    // think: what if value is over or under limits?
-    const position = valueToPosition();
-    positionRef.current = position;
-    thumbRef.current.style.setProperty('left', `${position.x}px`);
-    thumbRef.current.style.setProperty('top', `${position.y}px`);
+    const initialPosition = getPositionFromValue(value);
+    positionRef.current = initialPosition;
+    const clampedPosition = getClampedPosition(positionRef.current);
+    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
+    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
   }, []);
 
   return (
-    <div className={cx('slidertwo')} id={id} aria-label={name} role={'group'}>
+    <div
+      id={id}
+      aria-label={name}
+      className={cx('xyslider', { className })}
+      data-theme={theme}
+      role={'group'}
+    >
       <div
+        className={cx('xyslider__track')}
         {...trackHoverProps}
         {...(!isDisable && trackIsHovered && { 'data-hovered': 'true' })}
         {...(isDisable && { 'data-disabled': 'true' })}
-        className={cx('slidertwo__track', { className })}
-        data-theme={theme}
         style={{ position: 'relative', touchAction: 'none' }}
         ref={trackRef}
       >
         <div
-          className={cx('slidertwo__thumb')}
+          className={cx('xyslider__thumb')}
           {...thumbProps}
           {...(!isDisable && thumbIsHovered && { 'data-hovered': 'true' })}
           {...(!isDisable && isDragging && { 'data-dragging': 'true' })}
@@ -263,7 +274,14 @@ const SliderTwo = ({
             touchAction: 'none',
           }}
           ref={thumbRef}
-        />
+        >
+          <div className={cx('xyslider__thumb__shape')}>
+            <div className={cx('xyslider__thumb__shape__indicator')} />
+            <div className={cx('xyslider__thumb__shape__indicator')} />
+            <div className={cx('xyslider__thumb__shape__indicator')} />
+            <div className={cx('xyslider__thumb__shape__indicator')} />
+          </div>
+        </div>
       </div>
     </div>
   );

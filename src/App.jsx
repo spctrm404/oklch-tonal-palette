@@ -64,6 +64,8 @@ function App() {
 
   const [twod, setTwod] = useState({ x: 50, y: 50 });
 
+  const [disable, setDisable] = useState(false);
+
   return (
     <>
       <IconButton
@@ -73,10 +75,16 @@ function App() {
         disabled={false}
         onChange={setTest}
       />
-
+      <IconButton
+        value={disable}
+        materialIcon="light_mode"
+        style="standard"
+        disabled={false}
+        onChange={setDisable}
+      />
       <Button label="button" />
       <Button label="button" disabled={true} />
-      <SliderTwo value={twod} onChange={setTwod} />
+      <SliderTwo value={twod} isDisable={disable} onChange={setTwod} />
       <p>
         {twod.x}, {twod.y}
       </p>
