@@ -1,4 +1,4 @@
-// toDo: track click, snap, shift key
+// toDo: drag after track click, snap, shift key
 
 import {
   useCallback,
@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
+import { useResizeEffect } from '../../hooks/useResizeEffect';
 import { clamp, setMultipleOfStep } from '../../utils/numberUtils';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_SliderTwo.module.scss';
@@ -141,6 +142,41 @@ const SliderTwo = ({
       }
     },
   });
+  const { pressProps: trackPressProps } = usePress({
+    onPress: () => {
+      console.log('onPress');
+      if (!isDisable) {
+      }
+    },
+    onPressStart: (e) => {
+      console.log('onPressStart');
+      console.log(e.x, e.y);
+      const thumbRect = thumbRef.current.getBoundingClientRect();
+      positionRef.current = {
+        x: e.x - 0.5 * thumbRect.width,
+        y: e.y - 0.5 * thumbRect.height,
+      };
+      onChange(positionRef.current);
+      if (!isDisable) {
+      }
+    },
+    onPressEnd: () => {
+      console.log('onPressEnd');
+      if (!isDisable) {
+      }
+    },
+    onPressChange: () => {
+      console.log('onPressChange');
+      if (!isDisable) {
+      }
+    },
+    onPressUp: () => {
+      console.log('onPressUp');
+      if (!isDisable) {
+      }
+    },
+  });
+
   const { hoverProps: thumbHoverProps, isHovered: thumbIsHovered } = useHover({
     onHoverStart: () => {
       if (!isDisable) {
@@ -172,7 +208,7 @@ const SliderTwo = ({
       }
     },
   });
-  const { pressProps } = usePress({
+  const { pressProps: thumbPressProps } = usePress({
     onPress: () => {
       if (!isDisable) {
       }
@@ -223,10 +259,11 @@ const SliderTwo = ({
     },
   });
 
+  const trackProps = mergeProps(trackHoverProps, trackPressProps);
   const thumbProps = mergeProps(
     thumbHoverProps,
     focusProps,
-    pressProps,
+    thumbPressProps,
     moveProps
   );
 
@@ -243,6 +280,17 @@ const SliderTwo = ({
     thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
   }, []);
 
+  const onResize = useCallback(() => {
+    const initialPosition = getPositionFromValue(value);
+    positionRef.current = initialPosition;
+    const clampedPosition = getClampedPosition(positionRef.current);
+    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
+    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
+  }, [value, getPositionFromValue, getClampedPosition]);
+  useResizeEffect({
+    layoutEffectCallback: onResize,
+  });
+
   return (
     <div
       id={id}
@@ -253,7 +301,7 @@ const SliderTwo = ({
     >
       <div
         className={cx('xyslider__track')}
-        {...trackHoverProps}
+        {...trackProps}
         {...(!isDisable && trackIsHovered && { 'data-hovered': 'true' })}
         {...(isDisable && { 'data-disabled': 'true' })}
         style={{ position: 'relative', touchAction: 'none' }}
