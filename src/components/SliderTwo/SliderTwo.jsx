@@ -183,7 +183,6 @@ const SliderTwo = ({
       }
     },
     onPressEnd: () => {
-      console.log('pressEnd');
       if (!isDisable) {
       }
     },
@@ -215,7 +214,6 @@ const SliderTwo = ({
       }
     },
     onMoveEnd: () => {
-      console.log('moveEnd');
       if (!isDisable) {
         const newPosition = getClampedPosition(positionRef.current);
         positionRef.current = newPosition;
