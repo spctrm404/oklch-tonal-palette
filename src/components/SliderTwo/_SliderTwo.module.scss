@@ -10,7 +10,8 @@ $thumb-shape-indicator-gap-pressed: 0.5rem;
 $thumb-shape-indicator-width: 0.25rem;
 $thumb-shape-indicator-width-pressed: 0.125rem;
 $thumb-shape-indicator-rad: 0.125rem;
-$guide-thickness: 2px;
+$guide-thickness: 0.0625rem;
+$guide-rad: 512rem;
 $duration: 150ms;
 $easing: ease-in;
 
@@ -53,19 +54,27 @@ $easing: ease-in;
     $parent-selector: &;
 
     position: absolute;
-    background-color: var(--outline-variant-light);
+    background-color: var(--outline-light);
+    transition: transform $duration $easing;
+    transform: scale(0%, 0%);
+    @at-root #{$root-selector}[data-theme='dark'] #{&} {
+      background-color: var(--outline-dark);
+    }
+
+    @at-root #{$root-selector}__track[data-hovered] #{&} {
+      transform: scale(100%, 100%);
+    }
 
     &--part {
       &-top {
         top: 0;
-        bottom: calc(
-          100% - var(--pos-y) * 1px - 0.5 * $thumb-size + 0.5 *
-            $thumb-shape-size-pressed
-        );
+        bottom: calc(100% - var(--pos-y) * 1px);
         left: calc(
           var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
         );
         width: $guide-thickness;
+        border-radius: 0 0 $guide-rad $guide-rad;
+        transform-origin: top center;
       }
 
       &-bottom {
@@ -75,6 +84,8 @@ $easing: ease-in;
           var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
         );
         width: $guide-thickness;
+        border-radius: $guide-rad $guide-rad 0 0;
+        transform-origin: bottom center;
       }
 
       &-left {
@@ -84,6 +95,8 @@ $easing: ease-in;
         right: calc(100% - var(--pos-x) * 1px);
         left: 0;
         height: $guide-thickness;
+        border-radius: 0 $guide-rad $guide-rad 0;
+        transform-origin: center left;
       }
 
       &-right {
@@ -93,6 +106,8 @@ $easing: ease-in;
         right: 0;
         left: calc(var(--pos-x) * 1px + $thumb-size);
         height: $guide-thickness;
+        border-radius: $guide-rad 0 0 $guide-rad;
+        transform-origin: center right;
       }
     }
   }

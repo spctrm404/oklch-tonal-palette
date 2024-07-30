@@ -11,5 +11,5 @@ export const CHROMA_MAX = 0.4;
 export const P3_CHROMA_MAX_OFFSET = 0.05;
 export const LIGHTNESS_OF_CHROMA_MAX = 0.5;
 export const SECONDARY_CHROMA_RATIO = 0.25;
-export const NEUTRAL_VARIANT_CHROMA_MAX = 0.05;
-export const NEUTRAL_CHROMA_MAX = 0.025;
+export const NEUTRAL_VARIANT_CHROMA_MAX = 0.01;
+export const NEUTRAL_CHROMA_MAX = 0.005;

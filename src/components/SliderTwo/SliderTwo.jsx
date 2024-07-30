@@ -1,4 +1,4 @@
-// toDo: guide, snap, shift key
+// toDo: guide to dotted, snap, shift key
 
 import {
   useCallback,
