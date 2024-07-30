@@ -36,35 +36,54 @@ const SliderTwo = ({
 
   const positionRef = useRef({ x: 0, y: 0 });
 
+  const rootRef = useRef(null);
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
+
+  const getNormalizedPosition = useCallback((position) => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+
+    return {
+      x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
+      y: (position.y + 0.5 * thumbRect.height) / trackRect.height,
+    };
+  }, []);
+  const getNormalizedValue = useCallback(
+    (value) => {
+      return Object.keys(value).reduce((acc, key) => {
+        acc[key] =
+          (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
+        return acc;
+      }, {});
+    },
+    [maxValue, minValue]
+  );
+  const normalizedValue = useCallback(() => {
+    return Object.keys(value).reduce((acc, key) => {
+      acc[key] = (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
+      return acc;
+    }, {});
+  }, [maxValue, minValue, value]);
 
   const getPositionFromValue = useCallback(
     (value) => {
       const trackRect = trackRef.current.getBoundingClientRect();
       const thumbRect = thumbRef.current.getBoundingClientRect();
 
-      const nomalizedValue = Object.keys(value).reduce((acc, key) => {
-        acc[key] =
-          (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
-        return acc;
-      }, {});
       return {
-        x: nomalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
-        y: nomalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
+        x:
+          getNormalizedValue(value).x * trackRect.width - 0.5 * thumbRect.width,
+        y:
+          getNormalizedValue(value).y * trackRect.height -
+          0.5 * thumbRect.height,
       };
     },
-    [minValue, maxValue]
+    [getNormalizedValue]
   );
   const getValueFromPosition = useCallback(
     (position) => {
-      const trackRect = trackRef.current.getBoundingClientRect();
-      const thumbRect = thumbRef.current.getBoundingClientRect();
-
-      const normalizedPosition = {
-        x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
-        y: (position.y + 0.5 * thumbRect.height) / trackRect.height,
-      };
+      const normalizedPosition = getNormalizedPosition(position);
       return Object.keys(normalizedPosition).reduce((acc, key) => {
         acc[key] =
           normalizedPosition[key] * (maxValue[key] - minValue[key]) +
@@ -72,7 +91,7 @@ const SliderTwo = ({
         return acc;
       }, {});
     },
-    [minValue, maxValue]
+    [minValue, maxValue, getNormalizedPosition]
   );
 
   const getClampedPosition = useCallback((position) => {
@@ -313,26 +332,33 @@ const SliderTwo = ({
     thumbMoveProp
   );
 
+  const applyPosition = useCallback(
+    (position) => {
+      const clampedPosition = getClampedPosition(position);
+      thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
+      thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
+    },
+    [getClampedPosition]
+  );
+  const setPositionByValue = useCallback(
+    (value) => {
+      const newPosition = getPositionFromValue(value);
+      positionRef.current = newPosition;
+      applyPosition(positionRef.current);
+    },
+    [getPositionFromValue, applyPosition]
+  );
+
   useLayoutEffect(() => {
-    const clampedPosition = getClampedPosition(positionRef.current);
-    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
-    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
-  }, [value, getClampedPosition]);
-  useLayoutEffect(() => {
-    const initialPosition = getPositionFromValue(value);
-    positionRef.current = initialPosition;
-    const clampedPosition = getClampedPosition(positionRef.current);
-    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
-    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
+    setPositionByValue(value);
   }, []);
+  useLayoutEffect(() => {
+    applyPosition(positionRef.current);
+  }, [value, applyPosition]);
 
   const onResize = useCallback(() => {
-    const initialPosition = getPositionFromValue(value);
-    positionRef.current = initialPosition;
-    const clampedPosition = getClampedPosition(positionRef.current);
-    thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
-    thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
-  }, [value, getPositionFromValue, getClampedPosition]);
+    setPositionByValue(value);
+  }, [value, setPositionByValue]);
   useResizeEffect({
     layoutEffectCallback: onResize,
   });
@@ -344,13 +370,19 @@ const SliderTwo = ({
       className={cx('xyslider', { className })}
       data-theme={theme}
       role={'group'}
+      ref={rootRef}
     >
       <div
         className={cx('xyslider__track')}
         {...trackProps}
         {...(!isDisable && trackIsHovered && { 'data-hovered': 'true' })}
         {...(isDisable && { 'data-disabled': 'true' })}
-        style={{ position: 'relative', touchAction: 'none' }}
+        style={{
+          position: 'relative',
+          touchAction: 'none',
+          '--normalized-x': normalizedValue().x,
+          '--normalized-y': normalizedValue().y,
+        }}
         ref={trackRef}
       >
         <div
