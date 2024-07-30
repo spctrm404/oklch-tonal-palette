@@ -176,7 +176,7 @@ const SliderTwo = ({
     onPressUp: () => {
       if (!isDisable) {
         // console.log('trackOnPressUp');
-        // setDragging(false);
+        setDragging(false);
       }
     },
   });
