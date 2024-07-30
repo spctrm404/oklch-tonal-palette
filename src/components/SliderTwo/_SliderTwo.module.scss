@@ -10,6 +10,7 @@ $thumb-shape-indicator-gap-pressed: 0.5rem;
 $thumb-shape-indicator-width: 0.25rem;
 $thumb-shape-indicator-width-pressed: 0.125rem;
 $thumb-shape-indicator-rad: 0.125rem;
+$guide-thickness: 2px;
 $duration: 150ms;
 $easing: ease-in;
 
@@ -44,6 +45,54 @@ $easing: ease-in;
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
           background-color: var(--on-surface-dark);
         }
+      }
+    }
+  }
+
+  &__guide {
+    $parent-selector: &;
+
+    position: absolute;
+    background-color: var(--outline-variant-light);
+
+    &--part {
+      &-top {
+        top: 0;
+        bottom: calc(
+          100% - var(--pos-y) * 1px - 0.5 * $thumb-size + 0.5 *
+            $thumb-shape-size-pressed
+        );
+        left: calc(
+          var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+        );
+        width: $guide-thickness;
+      }
+
+      &-bottom {
+        top: calc(var(--pos-y) * 1px + $thumb-size);
+        bottom: 0;
+        left: calc(
+          var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+        );
+        width: $guide-thickness;
+      }
+
+      &-left {
+        top: calc(
+          var(--pos-y) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+        );
+        right: calc(100% - var(--pos-x) * 1px);
+        left: 0;
+        height: $guide-thickness;
+      }
+
+      &-right {
+        top: calc(
+          var(--pos-y) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+        );
+        right: 0;
+        left: calc(var(--pos-x) * 1px + $thumb-size);
+        height: $guide-thickness;
       }
     }
   }
