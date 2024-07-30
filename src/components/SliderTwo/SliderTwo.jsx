@@ -1,4 +1,4 @@
-// toDo: refactor, snap, shift key
+// toDo: refactor,guide,nomalvalasvar, snap, shift key
 
 import {
   useCallback,
