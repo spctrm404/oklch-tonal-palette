@@ -1,4 +1,4 @@
-// toDo: drag after track click, snap, shift key
+// toDo: refactor, snap, shift key
 
 import {
   useCallback,
@@ -144,38 +144,76 @@ const SliderTwo = ({
   });
   const { pressProps: trackPressProps } = usePress({
     onPress: () => {
-      console.log('onPress');
       if (!isDisable) {
+        // console.log('trackOnPress');
       }
     },
     onPressStart: (e) => {
-      console.log('onPressStart');
-      console.log(e.x, e.y);
-      const thumbRect = thumbRef.current.getBoundingClientRect();
-      positionRef.current = {
-        x: e.x - 0.5 * thumbRect.width,
-        y: e.y - 0.5 * thumbRect.height,
-      };
-      onChange(positionRef.current);
       if (!isDisable) {
+        console.log('trackOnPressStart');
+        const thumb = thumbRef.current;
+        thumb.focus();
+        setFocused(true);
+        setDragging(true);
+        const thumbRect = thumb.getBoundingClientRect();
+        positionRef.current = {
+          x: e.x - 0.5 * thumbRect.width,
+          y: e.y - 0.5 * thumbRect.height,
+        };
+        onChange(positionRef.current);
       }
     },
     onPressEnd: () => {
-      console.log('onPressEnd');
       if (!isDisable) {
+        // console.log('trackOnPressEnd');
       }
     },
     onPressChange: () => {
-      console.log('onPressChange');
       if (!isDisable) {
+        // console.log('trackOnPressChange');
       }
     },
     onPressUp: () => {
-      console.log('onPressUp');
       if (!isDisable) {
+        // console.log('trackOnPressUp');
+        // setDragging(false);
       }
     },
   });
+  const { moveProps: trackMoveProps } = useMove({
+    onMoveStart: () => {
+      if (!isDisable) {
+        // console.log('trackOnMoveStart');
+      }
+    },
+    onMove: (e) => {
+      if (!isDisable) {
+        // console.log('trackOnMove');
+        const newPosition =
+          e.pointerType === 'keyboard'
+            ? getClampedPosition(positionRef.current)
+            : { ...positionRef.current };
+        newPosition.x += e.deltaX;
+        newPosition.y += e.deltaY;
+        positionRef.current = newPosition;
+        onChangeHandler(newPosition);
+      }
+    },
+    onMoveEnd: () => {
+      if (!isDisable) {
+        console.log('trackOnMoveEnd');
+        const newPosition = getClampedPosition(positionRef.current);
+        positionRef.current = newPosition;
+        onChangeEndHandler(newPosition);
+        setDragging(false);
+      }
+    },
+  });
+  const trackProps = mergeProps(
+    trackHoverProps,
+    trackPressProps,
+    trackMoveProps
+  );
 
   const { hoverProps: thumbHoverProps, isHovered: thumbIsHovered } = useHover({
     onHoverStart: () => {
@@ -191,19 +229,22 @@ const SliderTwo = ({
       }
     },
   });
-  const { focusProps } = useFocus({
+  const { focusProps: thumbFocusProps } = useFocus({
     isDisabled: false,
     onFocus: () => {
       if (!isDisable) {
+        console.log('thumbOnFocus');
         setFocused(true);
       }
     },
     onBlur: () => {
       if (!isDisable) {
+        console.log('thumbOnBlur');
         setFocused(false);
       }
     },
     onFocusChange: () => {
+      console.log('thumbOnFocusChange');
       if (!isDisable) {
       }
     },
@@ -211,34 +252,40 @@ const SliderTwo = ({
   const { pressProps: thumbPressProps } = usePress({
     onPress: () => {
       if (!isDisable) {
+        // console.log('thumbOnPress');
       }
     },
     onPressStart: () => {
       if (!isDisable) {
+        console.log('thumbOnPressStart');
         setDragging(true);
       }
     },
     onPressEnd: () => {
       if (!isDisable) {
+        // console.log('thumbOnPressEnd');
       }
     },
     onPressChange: () => {
       if (!isDisable) {
+        // console.log('thumbOnPressChange');
       }
     },
     onPressUp: () => {
       if (!isDisable) {
-        setDragging(false);
+        // console.log('thumbOnPressUp');
       }
     },
   });
-  const { moveProps } = useMove({
+  const { moveProps: thumbMoveProp } = useMove({
     onMoveStart: () => {
       if (!isDisable) {
+        // console.log('thumbOnMoveStart');
       }
     },
     onMove: (e) => {
       if (!isDisable) {
+        // console.log('thumbOnMove');
         const newPosition =
           e.pointerType === 'keyboard'
             ? getClampedPosition(positionRef.current)
@@ -251,20 +298,19 @@ const SliderTwo = ({
     },
     onMoveEnd: () => {
       if (!isDisable) {
+        console.log('thumbOnMoveEnd');
         const newPosition = getClampedPosition(positionRef.current);
         positionRef.current = newPosition;
+        setDragging(false);
         onChangeEndHandler(newPosition);
-        // setDragging(false);
       }
     },
   });
-
-  const trackProps = mergeProps(trackHoverProps, trackPressProps);
   const thumbProps = mergeProps(
     thumbHoverProps,
-    focusProps,
+    thumbFocusProps,
     thumbPressProps,
-    moveProps
+    thumbMoveProp
   );
 
   useLayoutEffect(() => {

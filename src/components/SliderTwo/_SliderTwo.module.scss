@@ -19,6 +19,7 @@ $easing: ease-in;
   display: grid;
   place-items: stretch stretch;
   min-width: $min-size;
+  max-width: 25rem;
   min-height: $min-size;
 
   &__track {
