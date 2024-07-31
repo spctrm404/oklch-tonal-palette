@@ -1,5 +1,4 @@
 import Switch from '../Switch/Switch.jsx';
-import NumberBox from '../NumberBox/NumberBox.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
@@ -66,7 +65,7 @@ const PaletteController = ({
   return (
     <>
       <Switch state={isRange} onChange={updateIsRange} />
-      <NumberBox
+      {/* <NumberBox
         value={totalChips}
         min={2}
         max={100}
@@ -75,7 +74,7 @@ const PaletteController = ({
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'chipNum');
         }}
-      />
+      /> */}
       <XYSlider
         value={{ x: lInflect, y: cMax }}
         minValue={{ x: 0, y: 0 }}
@@ -85,7 +84,7 @@ const PaletteController = ({
           handleChangeXYSlider({ x, y }, 'lInflect', 'cMax');
         }}
       />
-      <NumberBox
+      {/* <NumberBox
         value={lInflect}
         min={0}
         max={1}
@@ -104,7 +103,7 @@ const PaletteController = ({
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'cMax');
         }}
-      />
+      /> */}
       <Slider
         ariaLabel="Hue From"
         value={hFrom}
@@ -117,7 +116,7 @@ const PaletteController = ({
         orientation={'vertical'}
         step={HUE_STEP}
       />
-      <NumberBox
+      {/* <NumberBox
         value={hFrom}
         min={0}
         max={360}
@@ -127,7 +126,7 @@ const PaletteController = ({
           handleChangeNumbox(numboxProps, 'hueFrom');
           if (!isRange) handleChangeSlider(numboxProps, 'hueTo');
         }}
-      />
+      /> */}
       <Slider
         ariaLabel="Hue To"
         value={hTo}
@@ -138,7 +137,7 @@ const PaletteController = ({
         maxValue={360}
         step={HUE_STEP}
       />
-      <NumberBox
+      {/* <NumberBox
         value={hTo}
         min={0}
         max={360}
@@ -147,7 +146,7 @@ const PaletteController = ({
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'hueTo');
         }}
-      />
+      /> */}
     </>
   );
 };

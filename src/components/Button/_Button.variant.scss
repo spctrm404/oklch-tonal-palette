@@ -21,64 +21,64 @@ $easing: ease-in;
     @at-root #{$parent-selector}[data-theme='dark']#{&} {
       box-shadow: var(--shadow-1-dark);
     }
-    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+    @at-root #{$parent-selector}[data-hovered]#{&} {
       box-shadow: var(--shadow-2-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         box-shadow: var(--shadow-2-dark);
       }
     }
-    @at-root #{$parent-selector}[data-state='focused']#{&} {
+    @at-root #{$parent-selector}[data-focused]#{&} {
       box-shadow: var(--shadow-1-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         box-shadow: var(--shadow-1-dark);
       }
     }
-    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+    @at-root #{$parent-selector}[data-pressed]#{&} {
       box-shadow: var(--shadow-1-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         box-shadow: var(--shadow-1-dark);
       }
     }
-    @at-root #{$parent-selector}[data-state='disabled']#{&} {
+    @at-root #{$parent-selector}[data-disabled]#{&} {
       box-shadow: var(--shadow-0);
     }
   }
 
   @at-root #{$parent-selector}[data-type='filled']#{&} {
     box-shadow: var(--shadow-0);
-    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+    @at-root #{$parent-selector}[data-hovered]#{&} {
       box-shadow: var(--shadow-1-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         box-shadow: var(--shadow-1-dark);
       }
     }
-    @at-root #{$parent-selector}[data-state='focused']#{&} {
+    @at-root #{$parent-selector}[data-focused]#{&} {
       box-shadow: var(--shadow-0);
     }
-    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+    @at-root #{$parent-selector}[data-pressed]#{&} {
       box-shadow: var(--shadow-0);
     }
   }
 
   @at-root #{$parent-selector}[data-type='tonal']#{&} {
     box-shadow: var(--shadow-0);
-    @at-root #{$parent-selector}[data-state='hovered']#{&} {
+    @at-root #{$parent-selector}[data-hovered]#{&} {
       box-shadow: var(--shadow-1-light);
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         box-shadow: var(--shadow-1-dark);
       }
     }
-    @at-root #{$parent-selector}[data-state='focused']#{&} {
+    @at-root #{$parent-selector}[data-focused]#{&} {
       box-shadow: var(--shadow-0);
     }
-    @at-root #{$parent-selector}[data-state='pressed']#{&} {
+    @at-root #{$parent-selector}[data-pressed]#{&} {
       box-shadow: var(--shadow-0);
     }
   }
 
   &__shape {
     opacity: 1;
-    @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+    @at-root #{$parent-selector}[data-disabled] #{&} {
       opacity: 0.12;
     }
 
@@ -87,7 +87,7 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--surface-container-low-dark);
       }
-      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+      @at-root #{$parent-selector}[data-disabled]#{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
@@ -100,7 +100,7 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--primary-dark);
       }
-      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+      @at-root #{$parent-selector}[data-disabled]#{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
@@ -113,7 +113,7 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         background-color: var(--secondary-container-dark);
       }
-      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+      @at-root #{$parent-selector}[data-disabled]#{&} {
         background-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           background-color: var(--on-surface-dark);
@@ -128,13 +128,13 @@ $easing: ease-in;
       @at-root #{$parent-selector}[data-theme='dark']#{&} {
         border-color: var(--outline-dark);
       }
-      @at-root #{$parent-selector}[data-state='focused']#{&} {
+      @at-root #{$parent-selector}[data-focused]#{&} {
         border-color: var(--primary-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           border-color: var(--primary-dark);
         }
       }
-      @at-root #{$parent-selector}[data-state='disabled']#{&} {
+      @at-root #{$parent-selector}[data-disabled]#{&} {
         border-color: var(--on-surface-light);
         @at-root #{$parent-selector}[data-theme='dark']#{&} {
           border-color: var(--on-surface-dark);
@@ -145,13 +145,13 @@ $easing: ease-in;
 
   &__state {
     opacity: 0;
-    @at-root #{$parent-selector}[data-state='hovered'] #{&} {
+    @at-root #{$parent-selector}[data-hovered] #{&} {
       opacity: 0.08;
     }
-    @at-root #{$parent-selector}[data-state='focused'] #{&} {
+    @at-root #{$parent-selector}[data-focused] #{&} {
       opacity: 0.12;
     }
-    @at-root #{$parent-selector}[data-state='pressed'] #{&} {
+    @at-root #{$parent-selector}[data-pressed] #{&} {
       opacity: 0.12;
     }
 
@@ -242,7 +242,7 @@ $easing: ease-in;
       }
     }
 
-    @at-root #{$parent-selector}[data-state='disabled'] #{&} {
+    @at-root #{$parent-selector}[data-disabled] #{&} {
       color: var(--on-surface-light);
       opacity: 0.38;
       @at-root #{$parent-selector}[data-theme='dark']#{&} {

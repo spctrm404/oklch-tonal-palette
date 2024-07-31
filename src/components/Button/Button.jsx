@@ -1,11 +1,5 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
-import usePointerInteraction from '../../hooks/usePointerInteraction.js';
+import { useCallback, useContext } from 'react';
+import { Button as AriaButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_Button.module.scss';
 import classNames from 'classnames/bind';
@@ -13,40 +7,28 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Button = ({
-  onChange = null,
-  style: type = 'text',
-  materialIcon = '',
+  name = '',
+  buttontype = 'text',
+  materialIcon = 'add',
   label = '',
-  disabled = false,
-  className = null,
+  isDisable = false,
+  onPress = () => {},
+  className = '',
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const buttonRef = useRef(null);
-
-  const onPointerClickHandler = useCallback(() => {
-    onChange?.();
-  }, [onChange]);
-
-  const buttonPI = usePointerInteraction();
-  useEffect(() => {
-    buttonPI.setTargetRef(buttonRef.current);
-    buttonPI.setOnPointerClick(onPointerClickHandler);
-  }, [buttonPI, onPointerClickHandler]);
-
-  useLayoutEffect(() => {
-    buttonPI.setDisabled(disabled);
-  }, [buttonPI, disabled]);
+  const onPressHandler = useCallback(() => {
+    onPress?.();
+  }, [onPress]);
 
   return (
-    <div
+    <AriaButton
+      name={name}
       className={`${cx('button')} ${className || ''}`}
-      ref={buttonRef}
       data-theme={theme}
       data-has-icon={materialIcon !== ''}
-      data-state={buttonPI.getState()}
-      data-type={type}
-      tabIndex={disabled ? -1 : 0}
+      data-type={buttontype}
+      onPress={onPressHandler}
     >
       <div className={cx('button__shape', 'button-shape')} />
       <div className={cx('button__state', 'button-state')} />
@@ -66,7 +48,7 @@ const Button = ({
           {label}
         </div>
       </div>
-    </div>
+    </AriaButton>
   );
 };
 

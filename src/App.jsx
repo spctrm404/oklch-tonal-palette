@@ -1,5 +1,3 @@
-import XYSlider from './components/XYSlider/XYSlider.jsx';
-import IconButton from './components/IconButton/IconButton.jsx';
 import Button from './components/Button/Button.jsx';
 import Switch from './components/Switch/Switch.jsx';
 import PaletteController from './components/PaletteController/PaletteController.jsx';
@@ -59,41 +57,15 @@ function App() {
 
   const { theme, updateTheme } = useContext(ThemeContext);
 
-  const [test, setTest] = useState(true);
-
-  const [twod, setTwod] = useState({ x: 50, y: 50 });
-
-  const [disable, setDisable] = useState(false);
-
   return (
     <>
-      <IconButton
-        value={test}
-        materialIcon="settings"
-        style="standard"
-        disabled={false}
-        onChange={setTest}
-      />
-      <IconButton
-        value={disable}
-        materialIcon="light_mode"
-        style="standard"
-        disabled={false}
-        onChange={setDisable}
-      />
-      <Button label="button" />
-      <Button label="button" disabled={true} />
-      <XYSlider value={twod} isDisable={disable} onChange={setTwod} />
-      <p>
-        {twod.x}, {twod.y}
-      </p>
-      <Switch state={true} disabled={true} />
-      <Switch state={false} disabled={true} />
       <p>{theme}</p>
       <Switch state={theme === 'light'} onChange={updateTheme} />
-      <button type="button" onPointerDown={addAPalette}>
-        ADD
-      </button>
+      <Button
+        buttontype={'filled'}
+        label="Create a Palette"
+        onPress={addAPalette}
+      />
       <div className="control">
         <PaletteController
           totalChips={palettes[selectedPalette.idx].chipNum}

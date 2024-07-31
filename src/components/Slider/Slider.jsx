@@ -21,8 +21,8 @@ const Slider = ({
   value = 50,
   orientation = 'horizontal',
   isDisable = false,
-  onChangeEnd = null,
-  onChange = null,
+  onChangeEnd = () => {},
+  onChange = () => {},
   className = '',
 }) => {
   const { theme } = useContext(ThemeContext);
