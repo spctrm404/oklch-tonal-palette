@@ -50,9 +50,9 @@ const PaletteController = ({
   );
 
   const handleChangeXYSlider = useCallback(
-    ({ value }, keyX, keyY) => {
-      onChange(keyX, Number(value.x));
-      onChange(keyY, Number(value.y));
+    ({ x, y }, keyX, keyY) => {
+      onChange(keyX, x);
+      onChange(keyY, y);
     },
     [onChange]
   );
@@ -78,12 +78,11 @@ const PaletteController = ({
       />
       <XYSlider
         value={{ x: lInflect, y: cMax }}
-        min={{ x: 0, y: 0 }}
-        max={{ x: 1, y: CHROMA_MAX }}
+        minValue={{ x: 0, y: 0 }}
+        maxValue={{ x: 1, y: CHROMA_MAX }}
         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-        trackClickable={false}
-        onChange={(sliderProps) => {
-          handleChangeXYSlider(sliderProps, 'lInflect', 'cMax');
+        onChange={({ x, y }) => {
+          handleChangeXYSlider({ x, y }, 'lInflect', 'cMax');
         }}
       />
       <NumberBox

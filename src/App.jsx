@@ -1,5 +1,4 @@
-import SliderTwo from './components/SliderTwo/SliderTwo.jsx';
-import Slider2D from './components/Slider2D/Slider2D.jsx';
+import XYSlider from './components/XYSlider/XYSlider.jsx';
 import IconButton from './components/IconButton/IconButton.jsx';
 import Button from './components/Button/Button.jsx';
 import Switch from './components/Switch/Switch.jsx';
@@ -84,7 +83,7 @@ function App() {
       />
       <Button label="button" />
       <Button label="button" disabled={true} />
-      <SliderTwo value={twod} isDisable={disable} onChange={setTwod} />
+      <XYSlider value={twod} isDisable={disable} onChange={setTwod} />
       <p>
         {twod.x}, {twod.y}
       </p>
