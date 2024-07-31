@@ -1,4 +1,4 @@
-// toDo: guide to dotted, snap, shift key
+// toDo: snap, shift pressed
 
 import {
   useCallback,
@@ -242,8 +242,6 @@ const SliderTwo = ({
   );
   const applyPosition = useCallback(
     (position) => {
-      const trackRect = trackRef.current.getBoundingClientRect();
-      const thumbRect = thumbRef.current.getBoundingClientRect();
       const clampedPosition = getClampedPosition(position);
       thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
       thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
@@ -319,12 +317,34 @@ const SliderTwo = ({
         }}
         ref={trackRef}
       >
-        <div className={cx('xyslider__guide', 'xyslider__guide--part-top')} />
-        <div className={cx('xyslider__guide', 'xyslider__guide--part-right')} />
         <div
-          className={cx('xyslider__guide', 'xyslider__guide--part-bottom')}
+          className={cx(
+            'xyslider__guide',
+            'xyslider__guide--part-top',
+            'xyslider__guide--part-vertical'
+          )}
         />
-        <div className={cx('xyslider__guide', 'xyslider__guide--part-left')} />
+        <div
+          className={cx(
+            'xyslider__guide',
+            'xyslider__guide--part-right',
+            'xyslider__guide--part-horizontal'
+          )}
+        />
+        <div
+          className={cx(
+            'xyslider__guide',
+            'xyslider__guide--part-bottom',
+            'xyslider__guide--part-vertical'
+          )}
+        />
+        <div
+          className={cx(
+            'xyslider__guide',
+            'xyslider__guide--part-left',
+            'xyslider__guide--part-horizontal'
+          )}
+        />
         <div
           className={cx('xyslider__thumb')}
           {...thumbProps}

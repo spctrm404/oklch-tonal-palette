@@ -12,8 +12,46 @@ $thumb-shape-indicator-width-pressed: 0.125rem;
 $thumb-shape-indicator-rad: 0.125rem;
 $guide-thickness: 0.0625rem;
 $guide-rad: 512rem;
+$guide-dash: 0.625rem;
+$guide-gap: 0.125rem;
 $duration: 150ms;
 $easing: ease-in;
+
+@mixin dashed-line($dash, $gap, $direction, $color) {
+  @if $direction == 'top' {
+    background: linear-gradient(
+      0deg,
+      $color calc($dash / ($dash + $gap) * 100%),
+      transparent calc($dash / ($dash + $gap) * 100%)
+    );
+    background-position: center bottom;
+    background-size: 0.0625rem calc($dash + $gap);
+  } @else if $direction == 'bottom' {
+    background: linear-gradient(
+      180deg,
+      $color calc($dash / ($dash + $gap) * 100%),
+      transparent calc($dash / ($dash + $gap) * 100%)
+    );
+    background-position: center top;
+    background-size: 0.0625rem calc($dash + $gap);
+  } @else if $direction == 'left' {
+    background: linear-gradient(
+      270deg,
+      $color calc($dash / ($dash + $gap) * 100%),
+      transparent calc($dash / ($dash + $gap) * 100%)
+    );
+    background-position: right center;
+    background-size: calc($dash + $gap) 0.0625rem;
+  } @else if $direction == 'right' {
+    background: linear-gradient(
+      90deg,
+      $color calc($dash / ($dash + $gap) * 100%),
+      transparent calc($dash / ($dash + $gap) * 100%)
+    );
+    background-position: left center;
+    background-size: calc($dash + $gap) 0.0625rem;
+  }
+}
 
 .xyslider {
   $root-selector: &;
@@ -21,7 +59,6 @@ $easing: ease-in;
   display: grid;
   place-items: stretch stretch;
   min-width: $min-size;
-  max-width: 25rem;
   min-height: $min-size;
 
   &__track {
@@ -54,27 +91,51 @@ $easing: ease-in;
     $parent-selector: &;
 
     position: absolute;
-    background-color: var(--outline-light);
     transition: transform $duration $easing;
     transform: scale(0%, 0%);
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      background-color: var(--outline-dark);
-    }
 
     @at-root #{$root-selector}__track[data-hovered] #{&} {
       transform: scale(100%, 100%);
     }
+    @at-root #{$root-selector}__track:has(
+          #{$root-selector}__thumb[data-dragging]
+        )
+        #{&} {
+      transform: scale(100%, 100%);
+    }
 
     &--part {
+      &-vertical {
+        width: $guide-thickness;
+      }
+
+      &-horizontal {
+        height: $guide-thickness;
+      }
+
       &-top {
         top: 0;
         bottom: calc(100% - var(--pos-y) * 1px);
         left: calc(
           var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
         );
-        width: $guide-thickness;
+        background-color: black;
         border-radius: 0 0 $guide-rad $guide-rad;
-        transform-origin: top center;
+        transform-origin: bottom center;
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          top,
+          var(--outline-light)
+        );
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            top,
+            var(--outline-dark)
+          );
+        }
       }
 
       &-bottom {
@@ -83,9 +144,22 @@ $easing: ease-in;
         left: calc(
           var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
         );
-        width: $guide-thickness;
         border-radius: $guide-rad $guide-rad 0 0;
-        transform-origin: bottom center;
+        transform-origin: top center;
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          bottom,
+          var(--outline-light)
+        );
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            bottom,
+            var(--outline-dark)
+          );
+        }
       }
 
       &-left {
@@ -94,9 +168,22 @@ $easing: ease-in;
         );
         right: calc(100% - var(--pos-x) * 1px);
         left: 0;
-        height: $guide-thickness;
         border-radius: 0 $guide-rad $guide-rad 0;
-        transform-origin: center left;
+        transform-origin: center right;
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          left,
+          var(--outline-light)
+        );
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            left,
+            var(--outline-dark)
+          );
+        }
       }
 
       &-right {
@@ -105,9 +192,22 @@ $easing: ease-in;
         );
         right: 0;
         left: calc(var(--pos-x) * 1px + $thumb-size);
-        height: $guide-thickness;
         border-radius: $guide-rad 0 0 $guide-rad;
-        transform-origin: center right;
+        transform-origin: center left;
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          right,
+          var(--outline-light)
+        );
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            right,
+            var(--outline-dark)
+          );
+        }
       }
     }
   }
