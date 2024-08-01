@@ -10,6 +10,8 @@ $font-size: 0.875rem;
 $font-weight: 500;
 $line-height: 1.25rem;
 $icon-size: 1.125rem;
+$duration: 150ms;
+$easing: ease-in;
 
 .button {
   $root-selector: &;
@@ -23,17 +25,172 @@ $icon-size: 1.125rem;
   background-color: transparent;
   border: none;
 
+  &:focus {
+    outline: none;
+  }
+
   &__root {
     position: relative;
     display: grid;
     grid-template-rows: 1fr min-content 1fr;
     place-items: stretch stretch;
     height: $height;
+    overflow: hidden;
+    border-radius: $rad;
+
+    &[data-button-type='text'] {
+      &[data-theme='dark'] {
+      }
+
+      &[data-hovered] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-focused] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[focus-visible] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-pressed] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-disabled] {
+        &[data-theme='dark'] {
+        }
+      }
+    }
+
+    &[data-button-type='outlined'] {
+      &[data-theme='dark'] {
+      }
+
+      &[data-hovered] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-focused] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[focus-visible] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-pressed] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-disabled] {
+        &[data-theme='dark'] {
+        }
+      }
+    }
+
+    &[data-button-type='elevated'] {
+      &[data-theme='dark'] {
+      }
+
+      &[data-hovered] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-focused] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[focus-visible] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-pressed] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-disabled] {
+        &[data-theme='dark'] {
+        }
+      }
+    }
+
+    &[data-button-type='tonal'] {
+      &[data-theme='dark'] {
+      }
+
+      &[data-hovered] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-focused] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[focus-visible] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-pressed] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-disabled] {
+        &[data-theme='dark'] {
+        }
+      }
+    }
+
+    &[data-button-type='filled'] {
+      &[data-theme='dark'] {
+      }
+
+      &[data-hovered] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-focused] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[focus-visible] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-pressed] {
+        &[data-theme='dark'] {
+        }
+      }
+
+      &[data-disabled] {
+        &[data-theme='dark'] {
+        }
+      }
+    }
 
     &__shape {
       grid-row: 1 / -1;
       grid-column: 1 / -1;
-      border-radius: $rad;
 
       @at-root #{$root-selector}[data-button-type='text'] #{&} {
         @at-root #{$root-selector}[data-theme='dark']#{&} {
@@ -71,6 +228,63 @@ $icon-size: 1.125rem;
   &__state {
     grid-row: 1 / -1;
     grid-column: 1 / -1;
+    background-color: aqua;
+    opacity: 0;
+    transition: background-color $duration $easing, opacity $duration $easing,
+      transform $duration $easing;
+    transform: scale(0%, 0%);
+
+    @at-root #{$root-selector}[data-button-type='text'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='elevated'] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
+      background-color: var(--on-secondary-container-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-secondary-container-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='filled'] #{&} {
+      background-color: var(--on-primary-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-primary-dark);
+      }
+    }
+
+    @at-root #{$root-selector}[data-hovered] #{&} {
+      opacity: 0.08;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-focused] #{&} {
+      opacity: 0.12;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[focus-visible] #{&} {
+      opacity: 0.12;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-pressed] #{&} {
+      opacity: 0.12;
+      transform: scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-disabled] #{&} {
+      opacity: 0;
+      transform: scale(0%, 0%);
+    }
   }
 
   &__content {

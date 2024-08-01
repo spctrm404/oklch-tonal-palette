@@ -131,9 +131,10 @@ $easing: ease-in;
 
       &-top {
         top: 0;
-        bottom: calc(100% - var(--pos-y) * 1px);
+        bottom: calc(100% - var(--normalized-y) * 100% + 0.5 * $thumb-size);
         left: calc(
-          var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+          var(--normalized-x) * 100% + $thumb-shape-size - 0.5 *
+            $guide-thickness - 0.5 * $thumb-size
         );
         border-radius: 0 0 $guide-rad $guide-rad;
         transform-origin: bottom center;
@@ -144,10 +145,11 @@ $easing: ease-in;
       }
 
       &-bottom {
-        top: calc(var(--pos-y) * 1px + $thumb-size);
+        top: calc(var(--normalized-y) * 100% + $thumb-size - 0.5 * $thumb-size);
         bottom: 0;
         left: calc(
-          var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+          var(--normalized-x) * 100% + $thumb-shape-size - 0.5 *
+            $guide-thickness - 0.5 * $thumb-size
         );
         border-radius: $guide-rad $guide-rad 0 0;
         transform-origin: top center;
@@ -159,9 +161,10 @@ $easing: ease-in;
 
       &-left {
         top: calc(
-          var(--pos-y) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+          var(--normalized-y) * 100% + $thumb-shape-size - 0.5 *
+            $guide-thickness - 0.5 * $thumb-size
         );
-        right: calc(100% - var(--pos-x) * 1px);
+        right: calc(100% - var(--normalized-x) * 100% + 0.5 * $thumb-size);
         left: 0;
         border-radius: 0 $guide-rad $guide-rad 0;
         transform-origin: center right;
@@ -173,10 +176,13 @@ $easing: ease-in;
 
       &-right {
         top: calc(
-          var(--pos-y) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
+          var(--normalized-y) * 100% + $thumb-shape-size - 0.5 *
+            $guide-thickness - 0.5 * $thumb-size
         );
         right: 0;
-        left: calc(var(--pos-x) * 1px + $thumb-size);
+        left: calc(
+          var(--normalized-x) * 100% + $thumb-size - 0.5 * $thumb-size
+        );
         border-radius: $guide-rad 0 0 $guide-rad;
         transform-origin: center left;
         @include dashed-line($guide-dash, $guide-gap, right, $line-light);

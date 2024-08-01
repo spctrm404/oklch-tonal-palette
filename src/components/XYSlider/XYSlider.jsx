@@ -3,7 +3,6 @@
 import {
   useCallback,
   useContext,
-  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -46,19 +45,22 @@ const XYSlider = ({
   const getNormalizedPosition = useCallback((position) => {
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
-
-    return {
+    const normalizedPosition = {
       x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
       y: (position.y + 0.5 * thumbRect.height) / trackRect.height,
     };
+    normalizedPosition.y = 1 - normalizedPosition.y;
+    return normalizedPosition;
   }, []);
   const getNormalizedValue = useCallback(
     (value) => {
-      return Object.keys(value).reduce((acc, key) => {
+      const normalizedValue = Object.keys(value).reduce((acc, key) => {
         acc[key] =
           (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
         return acc;
       }, {});
+      normalizedValue.y = 1 - normalizedValue.y;
+      return normalizedValue;
     },
     [maxValue, minValue]
   );
@@ -67,12 +69,11 @@ const XYSlider = ({
     (value) => {
       const trackRect = trackRef.current.getBoundingClientRect();
       const thumbRect = thumbRef.current.getBoundingClientRect();
-
       return {
         x:
           getNormalizedValue(value).x * trackRect.width - 0.5 * thumbRect.width,
         y:
-          (1 - getNormalizedValue(value).y) * trackRect.height -
+          getNormalizedValue(value).y * trackRect.height -
           0.5 * thumbRect.height,
       };
     },
@@ -81,7 +82,6 @@ const XYSlider = ({
   const getValueFromPosition = useCallback(
     (position) => {
       const normalizedPosition = getNormalizedPosition(position);
-      normalizedPosition.y = 1 - normalizedPosition.y;
       return Object.keys(normalizedPosition).reduce((acc, key) => {
         acc[key] =
           normalizedPosition[key] * (maxValue[key] - minValue[key]) +
@@ -253,34 +253,17 @@ const XYSlider = ({
     [getClampedPosition]
   );
   const normalizedValue = useCallback(() => {
-    return Object.keys(value).reduce((acc, key) => {
+    const normalizedValue = Object.keys(value).reduce((acc, key) => {
       acc[key] = (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
       return acc;
     }, {});
+    normalizedValue.y = 1 - normalizedValue.y;
+    return normalizedValue;
   }, [maxValue, minValue, value]);
-  const clampedPosition = useCallback(() => {
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-    const position = positionRef.current;
-    return {
-      x: clamp(
-        position.x,
-        -0.5 * thumbRect.width,
-        trackRect.width - 0.5 * thumbRect.width
-      ),
-      y: clamp(
-        position.y,
-        -0.5 * thumbRect.height,
-        trackRect.height - 0.5 * thumbRect.height
-      ),
-    };
-  }, []);
   const applyPositionAsProperty = useCallback(() => {
     rootRef.current.style.setProperty('--normalized-x', normalizedValue().x);
     rootRef.current.style.setProperty('--normalized-y', normalizedValue().y);
-    rootRef.current.style.setProperty('--pos-x', clampedPosition().x);
-    rootRef.current.style.setProperty('--pos-y', clampedPosition().y);
-  }, [normalizedValue, clampedPosition]);
+  }, [normalizedValue]);
 
   useLayoutEffect(() => {
     setPositionByValue(value);
