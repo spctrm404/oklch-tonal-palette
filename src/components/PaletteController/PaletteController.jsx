@@ -1,3 +1,4 @@
+import Button from '../Button/Button.jsx';
 import Switch from '../Switch/Switch.jsx';
 import Slider from '../Slider/Slider.jsx';
 import XYSlider from '../XYSlider/XYSlider.jsx';
@@ -62,8 +63,51 @@ const PaletteController = ({
     // updateHue('to', hTo);
   }, [updateHue, hFrom, hTo]);
 
+  const [isDisable, setDisable] = useState(false);
   return (
     <>
+      <Switch state={isDisable} onChange={setDisable} />
+      <p></p>
+      <Button
+        buttontype={'text'}
+        materialIcon={'add'}
+        label={'button'}
+        isDisable={isDisable}
+      />
+      <Button buttontype={'text'} label={'button'} isDisable={isDisable} />
+      <p></p>
+      <Button
+        buttontype={'outlined'}
+        materialIcon={'add'}
+        label={'button'}
+        isDisable={isDisable}
+      />
+      <Button buttontype={'outlined'} label={'button'} isDisable={isDisable} />
+      <p></p>
+      <Button
+        buttontype={'elevated'}
+        materialIcon={'add'}
+        label={'button'}
+        isDisable={isDisable}
+      />
+      <Button buttontype={'elevated'} label={'button'} isDisable={isDisable} />
+      <p></p>
+      <Button
+        buttontype={'tonal'}
+        materialIcon={'add'}
+        label={'button'}
+        isDisable={isDisable}
+      />
+      <Button buttontype={'tonal'} label={'button'} isDisable={isDisable} />
+      <p></p>
+      <Button
+        buttontype={'filled'}
+        materialIcon={'add'}
+        label={'button'}
+        isDisable={isDisable}
+      />
+      <Button buttontype={'filled'} label={'button'} isDisable={isDisable} />
+      <p></p>
       <Switch state={isRange} onChange={updateIsRange} />
       {/* <NumberBox
         value={totalChips}

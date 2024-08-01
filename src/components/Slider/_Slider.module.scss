@@ -24,12 +24,14 @@ $easing: ease-in;
 
     &[data-orientation='horizontal'] {
       grid-template-rows: 1fr $track-height 1fr;
+      grid-template-columns: 1fr;
       min-width: $min-width + $thumb-size;
       height: max($track-height, $thumb-size);
       padding-inline: 0.5 * $thumb-size;
     }
 
     &[data-orientation='vertical'] {
+      grid-template-rows: 1fr;
       grid-template-columns: 1fr $track-height 1fr;
       width: max($track-height, $thumb-size);
       min-height: $min-width + $thumb-size;
