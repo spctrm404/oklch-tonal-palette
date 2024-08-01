@@ -136,6 +136,7 @@ const PaletteController = ({
         minValue={0}
         maxValue={360}
         step={HUE_STEP}
+        isDisable={!isRange}
       />
       {/* <NumberBox
         value={hTo}

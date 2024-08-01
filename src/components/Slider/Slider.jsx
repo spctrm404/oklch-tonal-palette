@@ -14,7 +14,12 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Slider = ({
-  ariaLabel: name = '',
+  slot = null,
+  id = '',
+  ariaLabel = '',
+  ariaLabelledby = '',
+  ariaDescribedby = '',
+  ariaDetails = '',
   minValue = 0,
   maxValue = 100,
   step = 1,
@@ -47,7 +52,13 @@ const Slider = ({
 
   return (
     <AriaSlider
-      aria-label={name}
+      className={cx('slider', 'slider__root', { className })}
+      {...(slot && { slot: slot })}
+      {...(id && { id: id })}
+      {...(ariaLabel && { 'aria-label': ariaLabel })}
+      {...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby })}
+      {...(ariaDescribedby && { 'aria-describedby': ariaLabelledby })}
+      {...(ariaDetails && { 'aria-details': ariaLabelledby })}
       minValue={minValue}
       maxValue={maxValue}
       step={step}
@@ -56,12 +67,26 @@ const Slider = ({
       isDisabled={isDisable}
       onChangeEnd={onChangeEndHandler}
       onChange={onChangeHandler}
-      className={cx('slider', { className })}
       data-theme={theme}
       style={{ '--normalized-value': normalizedValue() }}
     >
       <AriaSliderTrack className={cx('slider__track')}>
-        <AriaSliderThumb className={cx('slider__thumb')} />
+        <div
+          className={cx(
+            'slider__track__shape',
+            'slider__track__shape--part-active'
+          )}
+        />
+        <div
+          className={cx(
+            'slider__track__shape',
+            'slider__track__shape--part-inactive'
+          )}
+        />
+        <AriaSliderThumb className={cx('slider__thumb')}>
+          <div className={cx('slider__state')} />
+          <div className={cx('slider__thumb__shape')} />
+        </AriaSliderThumb>
       </AriaSliderTrack>
     </AriaSlider>
   );

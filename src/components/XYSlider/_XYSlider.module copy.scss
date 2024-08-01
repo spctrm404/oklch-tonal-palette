@@ -56,61 +56,50 @@ $easing: ease-in;
 .xyslider {
   $root-selector: &;
 
-  &__root {
-    display: grid;
-    place-items: stretch stretch;
-    min-width: $min-size + $thumb-size;
-    min-height: $min-size + $thumb-size;
-    padding: 0.5 * $thumb-size;
-  }
+  display: grid;
+  place-items: stretch stretch;
+  min-width: $min-size;
+  min-height: $min-size;
 
   &__track {
     $parent-selector: &;
 
-    &__shape {
+    &::before {
       position: absolute;
       inset: 0;
+      display: block;
+      content: '';
       background-color: var(--secondary-container-light);
       border-radius: $track-rad;
-      transition: background-color $duration $easing;
+      opacity: 1;
+      transition: background-color $duration $easing, opacity $duration $easing;
       @at-root #{$root-selector}[data-theme='dark'] #{&} {
         background-color: var(--secondary-container-dark);
       }
 
-      @at-root #{$root-selector}[data-disabled] #{&} {
-        background-color: color-mix(
-          in oklch,
-          var(--on-surface-light) 12%,
-          transparent
-        );
-        @at-root #{$root-selector}[data-theme='dark']#{&} {
-          background-color: color-mix(
-            in oklch,
-            var(--on-surface-dark) 12%,
-            transparent
-          );
+      @at-root #{$parent-selector}[data-disabled]#{&} {
+        background-color: var(--on-surface-light);
+        opacity: 0.12;
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          background-color: var(--on-surface-dark);
         }
       }
     }
   }
 
   &__guide {
-    $parent-selector: '.xyslider__track';
-    $line-light: color-mix(in oklch, var(--primary-light) 16%, transparent);
-    $line-dark: color-mix(in oklch, var(--primary-dark) 16%, transparent);
+    $parent-selector: &;
 
     position: absolute;
     transition: transform $duration $easing;
     transform: scale(0%, 0%);
 
-    @at-root #{$parent-selector}[data-hovered] #{&} {
+    @at-root #{$root-selector}__track[data-hovered] #{&} {
       transform: scale(100%, 100%);
     }
-    @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-focused])
-        #{&} {
-      transform: scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-dragging])
+    @at-root #{$root-selector}__track:has(
+          #{$root-selector}__thumb[data-dragging]
+        )
         #{&} {
       transform: scale(100%, 100%);
     }
@@ -130,11 +119,22 @@ $easing: ease-in;
         left: calc(
           var(--pos-x) * 1px + $thumb-shape-size - 0.5 * $guide-thickness
         );
+        background-color: black;
         border-radius: 0 0 $guide-rad $guide-rad;
         transform-origin: bottom center;
-        @include dashed-line($guide-dash, $guide-gap, top, $line-light);
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          top,
+          var(--outline-light)
+        );
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, top, $line-dark);
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            top,
+            var(--outline-dark)
+          );
         }
       }
 
@@ -146,9 +146,19 @@ $easing: ease-in;
         );
         border-radius: $guide-rad $guide-rad 0 0;
         transform-origin: top center;
-        @include dashed-line($guide-dash, $guide-gap, bottom, $line-light);
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          bottom,
+          var(--outline-light)
+        );
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, bottom, $line-dark);
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            bottom,
+            var(--outline-dark)
+          );
         }
       }
 
@@ -160,9 +170,19 @@ $easing: ease-in;
         left: 0;
         border-radius: 0 $guide-rad $guide-rad 0;
         transform-origin: center right;
-        @include dashed-line($guide-dash, $guide-gap, left, $line-light);
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          left,
+          var(--outline-light)
+        );
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, left, $line-dark);
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            left,
+            var(--outline-dark)
+          );
         }
       }
 
@@ -174,9 +194,19 @@ $easing: ease-in;
         left: calc(var(--pos-x) * 1px + $thumb-size);
         border-radius: $guide-rad 0 0 $guide-rad;
         transform-origin: center left;
-        @include dashed-line($guide-dash, $guide-gap, right, $line-light);
+        @include dashed-line(
+          $guide-dash,
+          $guide-gap,
+          right,
+          var(--outline-light)
+        );
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, right, $line-dark);
+          @include dashed-line(
+            $guide-dash,
+            $guide-gap,
+            right,
+            var(--outline-dark)
+          );
         }
       }
     }
@@ -192,14 +222,55 @@ $easing: ease-in;
       outline: none;
     }
 
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: block;
+      width: $state-size;
+      height: $state-size;
+      content: '';
+      background-color: var(--primary-light);
+      border-radius: $state-rad;
+      opacity: 0;
+      transition: opacity $duration $easing, transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-hovered]#{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-focused]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[focus-visible]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-dragging]#{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-disabled]#{&} {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+      }
+    }
+
     &__shape {
       position: absolute;
       top: 50%;
       left: 50%;
       width: $thumb-shape-size;
       height: $thumb-shape-size;
+      opacity: 1;
       transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing;
+        background-color $duration $easing, opacity $duration $easing;
       transform: translate(-50%, -50%);
 
       @at-root #{$parent-selector}[data-dragging] #{&} {
@@ -211,23 +282,17 @@ $easing: ease-in;
         position: absolute;
         background-color: var(--primary-light);
         border-radius: $thumb-shape-indicator-rad;
-        transition: inset $duration $easing, background-color $duration $easing;
+        transition: inset $duration $easing, background-color $duration $easing,
+          opacity $duration $easing;
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
           background-color: var(--primary-dark);
         }
 
-        @at-root #{$root-selector}[data-disabled] #{&} {
-          background-color: color-mix(
-            in oklch,
-            var(--on-surface-light) 38%,
-            transparent
-          );
-          @at-root #{$root-selector}[data-theme='dark']#{&} {
-            background-color: color-mix(
-              in oklch,
-              var(--on-surface-dark) 38%,
-              transparent
-            );
+        @at-root #{$parent-selector}[data-disabled] #{&} {
+          background-color: var(--on-surface-light);
+          opacity: 0.38;
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            background-color: var(--on-surface-dark);
           }
         }
 
@@ -273,46 +338,6 @@ $easing: ease-in;
           }
         }
       }
-    }
-  }
-
-  &__state {
-    $parent-selector: '.xyslider__thumb';
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: $state-size;
-    height: $state-size;
-    background-color: var(--primary-light);
-    border-radius: $state-rad;
-    opacity: 0;
-    transition: opacity $duration $easing, transform $duration $easing;
-    transform: translate(-50%, -50%) scale(0%, 0%);
-
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      background-color: var(--primary-dark);
-    }
-
-    @at-root #{$parent-selector}[data-hovered] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-focused] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[focus-visible] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-dragging] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-disabled] #{&} {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0%, 0%);
     }
   }
 }

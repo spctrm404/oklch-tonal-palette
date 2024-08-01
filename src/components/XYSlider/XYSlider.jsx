@@ -18,7 +18,11 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const XYSlider = ({
-  name = '',
+  id = '',
+  ariaLabel = '',
+  ariaLabelledby = '',
+  ariaDescribedby = '',
+  ariaDetails = '',
   minValue = { x: 0, y: 0 },
   maxValue = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
@@ -28,7 +32,6 @@ const XYSlider = ({
   onChange = () => {},
   className = '',
 }) => {
-  const id = useId();
   const { theme } = useContext(ThemeContext);
 
   const [isDragging, setDragging] = useState(false);
@@ -300,11 +303,14 @@ const XYSlider = ({
 
   return (
     <div
-      id={id}
-      aria-label={name}
-      className={cx('xyslider', { className })}
+      className={cx('xyslider', 'xyslider__root', { className })}
+      {...(id && { id: id })}
+      {...(ariaLabel && { 'aria-label': ariaLabel })}
+      {...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby })}
+      {...(ariaDescribedby && { 'aria-describedby': ariaLabelledby })}
+      {...(ariaDetails && { 'aria-details': ariaLabelledby })}
+      {...(isDisable && { 'data-disabled': 'true' })}
       data-theme={theme}
-      role={'group'}
       ref={rootRef}
     >
       <div
@@ -318,6 +324,7 @@ const XYSlider = ({
         }}
         ref={trackRef}
       >
+        <div className={cx('xyslider__track__shape')} />
         <div
           className={cx(
             'xyslider__guide',
@@ -360,6 +367,7 @@ const XYSlider = ({
           }}
           ref={thumbRef}
         >
+          <div className={cx('xyslider__state')} />
           <div className={cx('xyslider__thumb__shape')}>
             <div
               className={cx(
