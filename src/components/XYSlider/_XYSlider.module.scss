@@ -14,8 +14,8 @@ $guide-thickness: 0.0625rem;
 $guide-rad: 512rem;
 $guide-dash: 0.5rem;
 $guide-gap: 0.25rem;
-$duration: 150ms;
-$easing: ease-in;
+$duration: 200ms;
+$easing: cubic-bezier(0.2, 0, 0, 1);
 
 @mixin dashed-line($dash, $gap, $direction, $color) {
   @if $direction == 'top' {
@@ -106,7 +106,6 @@ $easing: ease-in;
 
     position: absolute;
     transition: transform $duration $easing;
-    transform: scale(0%, 0%);
 
     @at-root #{$parent-selector}[data-hovered] #{&} {
       transform: scale(100%, 100%);
@@ -123,10 +122,12 @@ $easing: ease-in;
     &--part {
       &-vertical {
         width: $guide-thickness;
+        transform: scale(100%, 0%);
       }
 
       &-horizontal {
         height: $guide-thickness;
+        transform: scale(0%, 100%);
       }
 
       &-top {

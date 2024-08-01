@@ -12,8 +12,8 @@ $thumb-shape-rad: 0.125rem;
 $state-width: 2.5rem;
 $state-height: $state-width;
 $state-rad: 0.25rem;
-$duration: 150ms;
-$easing: ease-in;
+$duration: 200ms;
+$easing: cubic-bezier(0.2, 0, 0, 1);
 
 .slider {
   $root-selector: &;
