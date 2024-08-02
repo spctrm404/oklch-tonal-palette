@@ -101,18 +101,20 @@ const NumberField = ({
             'number-field__button',
             'number-field__button--part-decrease'
           )}
-          materialIcon="remove"
+          buttontype={'outlined'}
+          materialIcon={'remove'}
           onPress={onPressHandler}
-          slot="decrement"
+          slot={'decrement'}
         />
         <IconButton
           className={cx(
             'number-field__button',
             'number-field__button--part-increase'
           )}
-          materialIcon="add"
+          buttontype={'outlined'}
+          materialIcon={'add'}
           onPress={onPressHandler}
-          slot="increment"
+          slot={'increment'}
         />
       </AriaGroup>
     </AriaNumberField>

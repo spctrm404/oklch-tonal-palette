@@ -7,7 +7,7 @@ $input-px: 1rem;
 
   &__root {
     display: grid;
-    grid-template-rows: 1fr;
+    grid-template-rows: 3rem;
     grid-template-columns: 3rem calc(var(--min-ch) * 1ch + 2 * $input-px) 3rem;
     place-items: center stretch;
     width: fit-content;
@@ -31,8 +31,9 @@ $input-px: 1rem;
     padding-block: 0;
     padding-inline: $input-px;
     font: inherit;
+    color: var(--on-secondary-container-light);
     text-align: right;
-    background-color: transparent;
+    background-color: var(--secondary-container-light);
     border: 0;
 
     &:focus {
