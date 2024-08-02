@@ -21,9 +21,9 @@ const XYSlider = ({
   maxValue = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
   value = { x: 50, y: 50 },
-  isDisabled = false,
   onChangeEnd = () => {},
   onChange = () => {},
+  isDisabled = false,
   className = '',
   ...props
 }) => {

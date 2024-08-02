@@ -18,10 +18,25 @@ const Slider = ({
   maxValue = 100,
   step = 1,
   value = 50,
+  onChangeEnd = () => {},
+  onChange = () => {},
   className = '',
   ...props
 }) => {
   const { theme } = useContext(ThemeContext);
+
+  const onChangeEndHandler = useCallback(
+    (newValue) => {
+      onChangeEnd?.(newValue);
+    },
+    [onChangeEnd]
+  );
+  const onChangeHandler = useCallback(
+    (newValue) => {
+      onChange?.(newValue);
+    },
+    [onChange]
+  );
 
   const normalizedValue = useCallback(() => {
     const nomalizedValue = (value - minValue) / (maxValue - minValue);
@@ -35,6 +50,8 @@ const Slider = ({
       maxValue={maxValue}
       step={step}
       value={value}
+      onChangeEnd={onChangeEndHandler}
+      onChange={onChangeHandler}
       data-theme={theme}
       style={{ '--normalized-value': normalizedValue() }}
       {...props}

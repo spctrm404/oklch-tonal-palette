@@ -1,0 +1,56 @@
+$font-size: 1rem;
+$line-height: 1.5rem;
+$input-px: 1rem;
+
+.number-field {
+  $root-selector: &;
+
+  &__root {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 3rem calc(var(--min-ch) * 1ch + 2 * $input-px) 3rem;
+    place-items: center stretch;
+    width: fit-content;
+    font-size: $font-size;
+    font-style: normal;
+    font-weight: 400;
+    line-height: $line-height;
+  }
+
+  &__group {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-template-columns: subgrid;
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+  }
+
+  &__input {
+    grid-row: 1 / span 1;
+    grid-column: 2 / span 1;
+    padding-block: 0;
+    padding-inline: $input-px;
+    font: inherit;
+    text-align: right;
+    background-color: transparent;
+    border: 0;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__button {
+    grid-row: 1 / span 1;
+
+    &--part {
+      &-decrease {
+        grid-column: 1 / span 1;
+      }
+
+      &-increase {
+        grid-column: 3 / span 1;
+      }
+    }
+  }
+}

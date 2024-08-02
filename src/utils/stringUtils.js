@@ -16,3 +16,8 @@ export const camelToKebab = (camelStr) => {
   const kebabStr = camelStr.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
   return kebabStr;
 };
+
+export const disassembleDigits = (num) => {
+  const [intPart, decimalPart] = num.toString().split('.');
+  return [intPart, decimalPart];
+};

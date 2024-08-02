@@ -71,7 +71,15 @@ const PaletteController = ({
     <>
       <Switch state={isDisable} onChange={setDisable} />
       <p></p>
-      <NumberField aria-label="test" value={cnt} step={0.1} onChange={setCnt} />
+      <NumberField
+        aria-label="test"
+        value={cnt}
+        step={0.1}
+        onChange={(newVal) => {
+          console.log(newVal);
+          setCnt(newVal);
+        }}
+      />
       <p></p>
       <ToggleButton
         aria-label="test"
