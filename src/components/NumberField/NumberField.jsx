@@ -58,7 +58,7 @@ const NumberField = ({
     >
       <AriaGroup className={cx('numberfield__group')}>
         <AriaInput className={cx('numberfield__input')} />
-        <AriaButton
+        {/* <AriaButton
           className={cx(
             'numberfield__button',
             'numberfield__button--part-decrease'
@@ -75,7 +75,23 @@ const NumberField = ({
           slot="increment"
         >
           +
-        </AriaButton>
+        </AriaButton> */}
+        <IconButton
+          className={cx(
+            'numberfield__button',
+            'numberfield__button--part-decrease'
+          )}
+          materialIcon="remove"
+          slot="decrement"
+        />
+        <IconButton
+          className={cx(
+            'numberfield__button',
+            'numberfield__button--part-increase'
+          )}
+          materialIcon="add"
+          slot="increment"
+        />
       </AriaGroup>
     </AriaNumberField>
   );
