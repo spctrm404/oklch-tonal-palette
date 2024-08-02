@@ -1,5 +1,5 @@
 // todo: add ripple on press, arrange z-index
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_Button.module.scss';
@@ -23,9 +23,17 @@ const Button = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const onPressHandler = useCallback(() => {
-    onPress?.();
-  }, [onPress]);
+  const rootRef = useRef(null);
+
+  const onPressHandler = useCallback(
+    (e) => {
+      if (e.pointerType === 'mouse') {
+        rootRef.current.blur();
+      }
+      onPress?.();
+    },
+    [onPress]
+  );
 
   return (
     <AriaButton
@@ -40,7 +48,17 @@ const Button = ({
       {...(materialIcon && { 'data-has-icon': materialIcon })}
       isDisabled={isDisable}
       onPress={onPressHandler}
+      onPressStart={() => {
+        console.log('onPressStart');
+      }}
+      onPressEnd={() => {
+        console.log('onPressEnd');
+      }}
+      onPressUp={() => {
+        console.log('onPressUp');
+      }}
       data-theme={theme}
+      ref={rootRef}
     >
       <div className={cx('button__root__shape')} />
       <div className={cx('button__state')} />

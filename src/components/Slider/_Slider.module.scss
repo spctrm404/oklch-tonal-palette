@@ -55,6 +55,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
       &--part {
         &-active {
+          z-index: 1;
           background-color: var(--primary-light);
           @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
             inset: 0
@@ -94,6 +95,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         }
 
         &-inactive {
+          z-index: 1;
           background-color: var(--secondary-container-light);
           @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
             inset: 0 0 0
@@ -131,6 +133,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   &__thumb {
     $parent-selector: &;
 
+    z-index: 2;
     width: $thumb-size;
     height: $thumb-size;
     @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
@@ -146,6 +149,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       position: absolute;
       top: 50%;
       left: 50%;
+      z-index: 2;
       background-color: var(--primary-light);
       border-radius: $thumb-shape-rad;
       transition: width $duration $easing, height $duration $easing,
@@ -196,6 +200,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     position: absolute;
     top: 50%;
     left: 50%;
+    z-index: 1;
     background-color: var(--primary-light);
     border-radius: $state-rad;
     opacity: 0;
@@ -218,11 +223,11 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[data-focused] #{&} {
-      opacity: 0.12;
+      opacity: 0.8;
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[focus-visible] #{&} {
-      opacity: 0.12;
+      opacity: 0.8;
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[data-dragging] #{&} {
