@@ -1,4 +1,3 @@
-// todo: add ripple on press, arrange z-index
 import { useCallback, useContext, useRef } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';

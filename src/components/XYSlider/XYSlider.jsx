@@ -1,4 +1,4 @@
-// toDo: snap, shift pressed
+// toDo: change style on keypressed, snap, shift pressed
 
 import {
   useCallback,

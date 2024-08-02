@@ -1,9 +1,9 @@
+// todo: change style on keypressed
+
 import { useCallback, useContext } from 'react';
 
 import {
-  Label as AriaLabel,
   Slider as AriaSlider,
-  SliderOutput as AriaSliderOutput,
   SliderThumb as AriaSliderThumb,
   SliderTrack as AriaSliderTrack,
 } from 'react-aria-components';
