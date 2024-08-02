@@ -1,3 +1,4 @@
+import NumberField from '../NumberField/NumberField.jsx';
 import ToggleButton from '../ToggleButton/ToggleButton.jsx';
 import Switch from '../Switch/Switch.jsx';
 import Slider from '../Slider/Slider.jsx';
@@ -65,11 +66,15 @@ const PaletteController = ({
 
   const [isDisable, setDisable] = useState(false);
   const [sel, setSel] = useState(false);
+  const [cnt, setCnt] = useState(0);
   return (
     <>
       <Switch state={isDisable} onChange={setDisable} />
       <p></p>
+      <NumberField ariaLabel="test" value={cnt} step={0.1} onChange={setCnt} />
+      <p></p>
       <ToggleButton
+        ariaLabel="test"
         buttontype={'standard'}
         isSelected={sel}
         onChange={setSel}
@@ -78,6 +83,7 @@ const PaletteController = ({
       />
       <p></p>
       <ToggleButton
+        ariaLabel="test"
         buttontype={'outlined'}
         isSelected={sel}
         onChange={setSel}
@@ -86,6 +92,7 @@ const PaletteController = ({
       />
       <p></p>
       <ToggleButton
+        ariaLabel="test"
         buttontype={'tonal'}
         isSelected={sel}
         onChange={setSel}
@@ -94,6 +101,7 @@ const PaletteController = ({
       />
       <p></p>
       <ToggleButton
+        ariaLabel="test"
         buttontype={'filled'}
         isSelected={sel}
         onChange={setSel}
@@ -113,6 +121,7 @@ const PaletteController = ({
         }}
       /> */}
       <XYSlider
+        ariaLabel="test"
         value={{ x: lInflect, y: cMax }}
         minValue={{ x: 0, y: 0 }}
         maxValue={{ x: 1, y: CHROMA_MAX }}

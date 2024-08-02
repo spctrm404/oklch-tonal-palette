@@ -1,32 +1,81 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useRef } from 'react';
 import {
   NumberField as AriaNumberField,
-  Label as AriaLabel,
   Group as AriaGroup,
   Input as AriaInput,
   Button as AriaButton,
 } from 'react-aria-components';
+import IconButton from '../IconButton/IconButton.jsx';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_NumberField.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(st);
 
-const NumberField = ({ isDisable = false, className = '' }) => {
+const NumberField = ({
+  slot = null,
+  id = '',
+  ariaLabel = '',
+  ariaLabelledby = '',
+  ariaDescribedby = '',
+  ariaDetails = '',
+  minValue = 0,
+  maxValue = 100,
+  step = 1,
+  value = 50,
+  isWheelDisable = true,
+  isDisable = false,
+  onChange = () => {},
+  className = '',
+}) => {
   const { theme } = useContext(ThemeContext);
+
+  const onChangeHandler = useCallback(
+    (newValue) => {
+      console.log(newValue);
+      onChange?.(newValue);
+    },
+    [onChange]
+  );
 
   return (
     <AriaNumberField
-      defaultValue={1024}
-      minValue={0}
-      className={`${cx('button')} ${className || ''}`}
+      className={cx('numberfield', 'numberfield__root', { className })}
+      {...(slot && { slot: slot })}
+      {...(id && { id: id })}
+      {...(ariaLabel && { 'aria-label': ariaLabel })}
+      {...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby })}
+      {...(ariaDescribedby && { 'aria-describedby': ariaLabelledby })}
+      {...(ariaDetails && { 'aria-details': ariaLabelledby })}
+      minValue={minValue}
+      maxValue={maxValue}
+      step={step}
+      value={value}
+      isWheelDisabled={isWheelDisable}
+      isDisabled={isDisable}
+      onChange={onChangeHandler}
       data-theme={theme}
     >
-      <AriaLabel>Width</AriaLabel>
-      <AriaGroup>
-        <AriaButton slot="decrement">-</AriaButton>
-        <AriaInput />
-        <AriaButton slot="increment">+</AriaButton>
+      <AriaGroup className={cx('numberfield__group')}>
+        <AriaInput className={cx('numberfield__input')} />
+        <AriaButton
+          className={cx(
+            'numberfield__button',
+            'numberfield__button--part-decrease'
+          )}
+          slot="decrement"
+        >
+          -
+        </AriaButton>
+        <AriaButton
+          className={cx(
+            'numberfield__button',
+            'numberfield__button--part-increase'
+          )}
+          slot="increment"
+        >
+          +
+        </AriaButton>
       </AriaGroup>
     </AriaNumberField>
   );
