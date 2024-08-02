@@ -223,11 +223,11 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[data-focused] #{&} {
-      opacity: 0.8;
+      opacity: 0.08;
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[focus-visible] #{&} {
-      opacity: 0.8;
+      opacity: 0.08;
       transform: translate(-50%, -50%) scale(100%, 100%);
     }
     @at-root #{$parent-selector}[data-dragging] #{&} {
