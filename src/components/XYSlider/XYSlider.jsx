@@ -17,19 +17,15 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const XYSlider = ({
-  id = '',
-  ariaLabel = '',
-  ariaLabelledby = '',
-  ariaDescribedby = '',
-  ariaDetails = '',
   minValue = { x: 0, y: 0 },
   maxValue = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
   value = { x: 50, y: 50 },
-  isDisable = false,
+  isDisabled = false,
   onChangeEnd = () => {},
   onChange = () => {},
   className = '',
+  ...props
 }) => {
   const { theme } = useContext(ThemeContext);
 
@@ -185,18 +181,18 @@ const XYSlider = ({
   );
   const { pressProps: trackPressProps } = usePress({
     onPressStart: (e) => {
-      if (!isDisable) onPressStart(e);
+      if (!isDisabled) onPressStart(e);
     },
     onPressUp: () => {
-      if (!isDisable) setDragging(false);
+      if (!isDisabled) setDragging(false);
     },
   });
   const { moveProps: trackMoveProps } = useMove({
     onMove: (e) => {
-      if (!isDisable) onMove(e);
+      if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      if (!isDisable) onMoveEnd();
+      if (!isDisabled) onMoveEnd();
     },
   });
   const trackProps = mergeProps(
@@ -211,23 +207,23 @@ const XYSlider = ({
   const { focusProps: thumbFocusProps } = useFocus({
     isDisabled: false,
     onFocus: () => {
-      if (!isDisable) setFocused(true);
+      if (!isDisabled) setFocused(true);
     },
     onBlur: () => {
-      if (!isDisable) setFocused(false);
+      if (!isDisabled) setFocused(false);
     },
   });
   const { pressProps: thumbPressProps } = usePress({
     onPressStart: () => {
-      if (!isDisable) setDragging(true);
+      if (!isDisabled) setDragging(true);
     },
   });
   const { moveProps: thumbMoveProp } = useMove({
     onMove: (e) => {
-      if (!isDisable) onMove(e);
+      if (!isDisabled) onMove(e);
     },
     onMoveEnd: () => {
-      if (!isDisable) onMoveEnd();
+      if (!isDisabled) onMoveEnd();
     },
   });
   const thumbProps = mergeProps(
@@ -287,20 +283,16 @@ const XYSlider = ({
   return (
     <div
       className={cx('xyslider', 'xyslider__root', { className })}
-      {...(id && { id: id })}
-      {...(ariaLabel && { 'aria-label': ariaLabel })}
-      {...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby })}
-      {...(ariaDescribedby && { 'aria-describedby': ariaLabelledby })}
-      {...(ariaDetails && { 'aria-details': ariaLabelledby })}
-      {...(isDisable && { 'data-disabled': 'true' })}
+      {...(isDisabled && { 'data-disabled': 'true' })}
       data-theme={theme}
       ref={rootRef}
+      {...props}
     >
       <div
         className={cx('xyslider__track')}
         {...trackProps}
-        {...(!isDisable && trackIsHovered && { 'data-hovered': 'true' })}
-        {...(isDisable && { 'data-disabled': 'true' })}
+        {...(!isDisabled && trackIsHovered && { 'data-hovered': 'true' })}
+        {...(isDisabled && { 'data-disabled': 'true' })}
         style={{
           position: 'relative',
           touchAction: 'none',
@@ -339,10 +331,10 @@ const XYSlider = ({
         <div
           className={cx('xyslider__thumb')}
           {...thumbProps}
-          {...(!isDisable && thumbIsHovered && { 'data-hovered': 'true' })}
-          {...(!isDisable && isDragging && { 'data-dragging': 'true' })}
-          {...(!isDisable && isFocused && { 'data-focused': 'true' })}
-          {...(isDisable && { 'data-disabled': 'true' })}
+          {...(!isDisabled && thumbIsHovered && { 'data-hovered': 'true' })}
+          {...(!isDisabled && isDragging && { 'data-dragging': 'true' })}
+          {...(!isDisabled && isFocused && { 'data-focused': 'true' })}
+          {...(isDisabled && { 'data-disabled': 'true' })}
           tabIndex={0}
           style={{
             position: 'absolute',

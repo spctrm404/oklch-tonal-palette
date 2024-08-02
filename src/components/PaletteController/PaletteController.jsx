@@ -71,42 +71,42 @@ const PaletteController = ({
     <>
       <Switch state={isDisable} onChange={setDisable} />
       <p></p>
-      <NumberField ariaLabel="test" value={cnt} step={0.1} onChange={setCnt} />
+      <NumberField aria-label="test" value={cnt} step={0.1} onChange={setCnt} />
       <p></p>
       <ToggleButton
-        ariaLabel="test"
+        aria-label="test"
         buttontype={'standard'}
         isSelected={sel}
         onChange={setSel}
         materialIconA={'settings'}
-        isDisable={isDisable}
+        isDisabled={isDisable}
       />
       <p></p>
       <ToggleButton
-        ariaLabel="test"
+        aria-label="test"
         buttontype={'outlined'}
         isSelected={sel}
         onChange={setSel}
         materialIconA={'settings'}
-        isDisable={isDisable}
+        isDisabled={isDisable}
       />
       <p></p>
       <ToggleButton
-        ariaLabel="test"
+        aria-label="test"
         buttontype={'tonal'}
         isSelected={sel}
         onChange={setSel}
         materialIconA={'settings'}
-        isDisable={isDisable}
+        isDisabled={isDisable}
       />
       <p></p>
       <ToggleButton
-        ariaLabel="test"
+        aria-label="test"
         buttontype={'filled'}
         isSelected={sel}
         onChange={setSel}
         materialIconA={'settings'}
-        isDisable={isDisable}
+        isDisabled={isDisable}
       />
       <p></p>
       <Switch state={isRange} onChange={updateIsRange} />
@@ -121,7 +121,7 @@ const PaletteController = ({
         }}
       /> */}
       <XYSlider
-        ariaLabel="test"
+        aria-label="test"
         value={{ x: lInflect, y: cMax }}
         minValue={{ x: 0, y: 0 }}
         maxValue={{ x: 1, y: CHROMA_MAX }}
@@ -151,7 +151,7 @@ const PaletteController = ({
         }}
       /> */}
       <Slider
-        ariaLabel="Hue From"
+        aria-label="Hue From"
         value={hFrom}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueFrom');
@@ -174,7 +174,7 @@ const PaletteController = ({
         }}
       /> */}
       <Slider
-        ariaLabel="Hue To"
+        aria-label="Hue To"
         value={hTo}
         onChange={(sliderProps) => {
           handleChangeSlider(sliderProps, 'hueTo');
@@ -182,7 +182,7 @@ const PaletteController = ({
         minValue={0}
         maxValue={360}
         step={HUE_STEP}
-        isDisable={!isRange}
+        isDisabled={!isRange}
       />
       {/* <NumberBox
         value={hTo}
