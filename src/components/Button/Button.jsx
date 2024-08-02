@@ -24,15 +24,9 @@ const Button = ({
 
   const rootRef = useRef(null);
 
-  const onPressHandler = useCallback(
-    (e) => {
-      if (e.pointerType === 'mouse') {
-        rootRef.current.blur();
-      }
-      onPress?.();
-    },
-    [onPress]
-  );
+  const onPressHandler = useCallback(() => {
+    onPress?.();
+  }, [onPress]);
 
   return (
     <AriaButton
@@ -47,19 +41,15 @@ const Button = ({
       {...(materialIcon && { 'data-has-icon': materialIcon })}
       isDisabled={isDisable}
       onPress={onPressHandler}
-      onPressStart={() => {
-        console.log('onPressStart');
-      }}
-      onPressEnd={() => {
-        console.log('onPressEnd');
-      }}
-      onPressUp={() => {
-        console.log('onPressUp');
-      }}
       data-theme={theme}
       ref={rootRef}
     >
-      <div className={cx('button__root__shape')} />
+      <div
+        className={cx(
+          'button__root__shape',
+          'button__root__shape--part-background'
+        )}
+      />
       <div className={cx('button__state')} />
       <div className={cx('button__content')}>
         {materialIcon && (
@@ -70,6 +60,12 @@ const Button = ({
           </div>
         )}
         <div className={cx('button__content__label')}>{label}</div>
+        <div
+          className={cx(
+            'button__root__shape',
+            'button__root__shape--part-foreground'
+          )}
+        />
       </div>
     </AriaButton>
   );

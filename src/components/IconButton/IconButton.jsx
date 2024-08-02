@@ -1,11 +1,5 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
-import usePointerInteraction from '../../hooks/usePointerInteraction.js';
+import { useCallback, useContext, useRef } from 'react';
+import { Button as AriaButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_IconButton.module.scss';
 import classNames from 'classnames/bind';
@@ -13,60 +7,65 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const IconButton = ({
-  value = null,
-  onChange = null,
-  style: type = 'standard',
+  slot = null,
+  id = '',
+  ariaLabel = '',
+  ariaLabelledby = '',
+  ariaDescribedby = '',
+  ariaDetails = '',
+  buttontype = 'standard',
   materialIcon = '',
-  disabled = false,
-  className = null,
+  isDisable = false,
+  onPress = () => {},
+  className = '',
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const buttonRef = useRef(null);
+  const rootRef = useRef(null);
 
-  const onPointerClickHandler = useCallback(() => {
-    if (value !== null) {
-      onChange?.(!value);
-    } else {
-      onChange?.();
-    }
-  }, [value, onChange]);
-
-  const buttonPI = usePointerInteraction();
-  useEffect(() => {
-    buttonPI.setTargetRef(buttonRef.current);
-    buttonPI.setOnPointerClick(onPointerClickHandler);
-  }, [buttonPI, onPointerClickHandler]);
-
-  useLayoutEffect(() => {
-    buttonPI.setDisabled(disabled);
-  }, [buttonPI, disabled]);
+  const onPressHandler = useCallback(() => {
+    onPress?.();
+  }, [onPress]);
 
   return (
-    <div
-      className={`${cx('icon-button')} ${className || ''}`}
-      ref={buttonRef}
+    <AriaButton
+      className={cx('icon-button', 'icon-button__root', { className })}
+      {...(slot && { slot: slot })}
+      {...(id && { id: id })}
+      {...(ariaLabel && { 'aria-label': ariaLabel })}
+      {...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby })}
+      {...(ariaDescribedby && { 'aria-describedby': ariaLabelledby })}
+      {...(ariaDetails && { 'aria-details': ariaLabelledby })}
+      data-button-type={buttontype}
+      isDisabled={isDisable}
+      onPress={onPressHandler}
       data-theme={theme}
-      data-value={value}
-      data-is-toggle={value !== null}
-      data-state={buttonPI.getState()}
-      data-type={type}
-      tabIndex={disabled ? -1 : 0}
+      ref={rootRef}
     >
-      <div className={cx('icon-button__shape', 'icon-button-shape')} />
-      <div className={cx('icon-button__state', 'icon-button-state')} />
-      <div className={cx('icon-button__content', 'icon-button-content')}>
+      <div
+        className={cx(
+          'icon-button__root__shape',
+          'icon-button__root__shape--part-background'
+        )}
+      />
+      <div className={cx('icon-button__state')} />
+      <div className={cx('icon-button__content')}>
         <div
           className={cx(
             'icon-button__content__icon',
-            'icon-button-content-icon',
             'material-symbols-outlined'
           )}
         >
           {materialIcon}
         </div>
       </div>
-    </div>
+      <div
+        className={cx(
+          'icon-button__root__shape',
+          'icon-button__root__shape--part-foreground'
+        )}
+      />
+    </AriaButton>
   );
 };
 
