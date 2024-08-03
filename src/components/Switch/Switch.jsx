@@ -9,7 +9,7 @@ const cx = classNames.bind(st);
 const Switch = ({
   materialIconA = '',
   materialIconB = '',
-  value = false,
+  isSelected = false,
   onChange = () => {},
   className = '',
   ...props
@@ -28,7 +28,7 @@ const Switch = ({
   return (
     <AriaSwitch
       className={cx('switch', 'switch__root', className)}
-      value={value}
+      isSelected={isSelected}
       onChange={onChangeHandler}
       data-theme={theme}
       ref={rootRef}

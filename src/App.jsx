@@ -63,7 +63,7 @@ function App() {
       <Switch
         materialIconA={'light_mode'}
         materialIconB={'dark_mode'}
-        value={theme === 'light'}
+        isSelected={theme === 'light'}
         onChange={updateTheme}
       />
       <Button
