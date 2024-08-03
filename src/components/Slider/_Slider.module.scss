@@ -204,7 +204,8 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     background-color: var(--primary-light);
     border-radius: $state-rad;
     opacity: 0;
-    transition: opacity $duration $easing, transform $duration $easing;
+    transition: background-color $duration $easing, opacity $duration $easing,
+      transform $duration $easing;
     transform: translate(-50%, -50%) scale(0%, 0%);
     @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
       width: $state-width;

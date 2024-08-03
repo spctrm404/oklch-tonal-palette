@@ -24,7 +24,7 @@ const Button = ({
 
   return (
     <AriaButton
-      className={cx('button', 'button__root', { className })}
+      className={cx('button', 'button__root', className)}
       data-button-type={buttontype}
       {...(materialIcon && { 'data-has-icon': materialIcon })}
       onPress={onPressHandler}

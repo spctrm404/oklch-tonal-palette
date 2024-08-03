@@ -23,7 +23,7 @@ const IconButton = ({
 
   return (
     <AriaButton
-      className={cx('icon-button', 'icon-button__root', { className })}
+      className={cx('icon-button', 'icon-button__root', className)}
       data-button-type={buttontype}
       onPress={onPressHandler}
       data-theme={theme}

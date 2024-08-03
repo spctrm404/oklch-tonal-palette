@@ -28,7 +28,7 @@ const ToggleButton = ({
 
   return (
     <AriaToggleButton
-      className={cx('toggle-button', 'toggle-button__root', { className })}
+      className={cx('toggle-button', 'toggle-button__root', className)}
       data-button-type={buttontype}
       isSelected={isSelected}
       onChange={onChangeHandler}

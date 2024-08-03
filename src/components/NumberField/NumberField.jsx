@@ -26,40 +26,46 @@ const NumberField = ({
 
   const rootRef = useRef(null);
   const inputRef = useRef(null);
+
+  const isChagedRef = useRef(false);
   const innerValueRef = useRef(0);
 
-  const setInnerValueByValue = useCallback(() => {
+  const syncInnerValueToValue = useCallback(() => {
     console.log('setInnerVal');
     innerValueRef.current = value;
+    isChagedRef.current = false;
   }, [value]);
 
   const onChangeHandler = useCallback((newValue) => {
     console.log('onChange');
+    const prevInnerValue = innerValueRef.current;
     innerValueRef.current = newValue;
+    isChagedRef.current = prevInnerValue !== innerValueRef.current;
   }, []);
   const onKeyDownHandler = useCallback(
     (e) => {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'Enter') {
-        onChange?.(innerValueRef.current);
-        if (e.key === 'Enter') {
-          inputRef.current.blur();
-        }
-      }
+      console.log('onKeyDown');
+      console.log(inputRef.current);
+      if (isChagedRef.current) onChange?.(innerValueRef.current);
+      if (e.key === 'Enter') inputRef.current.blur();
     },
     [onChange]
   );
+  const onFocusHandler = useCallback(() => {
+    console.log('onFocus');
+  }, []);
   const onBlurHandler = useCallback(() => {
     console.log('onBlur');
-    onChange?.(innerValueRef.current);
+    if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
     console.log('onPress');
-    onChange?.(innerValueRef.current);
+    if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
 
   useLayoutEffect(() => {
-    setInnerValueByValue();
-  }, [setInnerValueByValue]);
+    syncInnerValueToValue();
+  }, [syncInnerValueToValue]);
 
   const countDigits = useCallback(() => {
     const [minIntPart, minDecimalPart] = disassembleDigits(minValue);
@@ -80,13 +86,14 @@ const NumberField = ({
 
   return (
     <AriaNumberField
-      className={cx('number-field', 'number-field__root', { className })}
+      className={cx('number-field', 'number-field__root', className)}
       minValue={minValue}
       maxValue={maxValue}
       step={step}
       value={innerValueRef.current}
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
+      onFocus={onFocusHandler}
       onBlur={onBlurHandler}
       isWheelDisabled={isWheelDisabled}
       data-theme={theme}
@@ -96,12 +103,14 @@ const NumberField = ({
     >
       <AriaGroup className={cx('number-field__group')}>
         <AriaInput className={cx('number-field__input')} ref={inputRef} />
+        <div className={cx('number-field__input__shape')} />
+        <div className={cx('number-field__input__state')} />
         <IconButton
           className={cx(
             'number-field__button',
             'number-field__button--part-decrease'
           )}
-          buttontype={'outlined'}
+          buttontype={'tonal'}
           materialIcon={'remove'}
           onPress={onPressHandler}
           slot={'decrement'}
@@ -111,7 +120,7 @@ const NumberField = ({
             'number-field__button',
             'number-field__button--part-increase'
           )}
-          buttontype={'outlined'}
+          buttontype={'tonal'}
           materialIcon={'add'}
           onPress={onPressHandler}
           slot={'increment'}

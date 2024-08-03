@@ -75,6 +75,7 @@ const PaletteController = ({
         aria-label="test"
         value={cnt}
         step={0.1}
+        isDisabled={isDisable}
         onChange={(newVal) => {
           console.log(newVal);
           setCnt(newVal);

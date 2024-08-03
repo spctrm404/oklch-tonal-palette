@@ -282,7 +282,7 @@ const XYSlider = ({
 
   return (
     <div
-      className={cx('xyslider', 'xyslider__root', { className })}
+      className={cx('xyslider', 'xyslider__root', className)}
       {...(isDisabled && { 'data-disabled': 'true' })}
       data-theme={theme}
       ref={rootRef}

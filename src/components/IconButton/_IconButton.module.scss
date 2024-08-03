@@ -87,8 +87,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
             border-color: var(--outline-light);
             border-style: solid;
             border-width: $border-thickness;
-            transition: border-color $duration $easing,
-              box-shadow $duration $easing;
+            transition: border-color $duration $easing;
             @at-root #{$root-selector}[data-theme='dark']#{&} {
               border-color: var(--outline-dark);
             }
@@ -131,6 +130,12 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       }
     }
     @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+      background-color: var(--on-surface-variant-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--on-surface-variant-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='outlined-child'] #{&} {
       background-color: var(--on-surface-variant-light);
       @at-root #{$root-selector}[data-theme='dark']#{&} {
         background-color: var(--on-surface-variant-dark);
@@ -189,6 +194,12 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       }
     }
     @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+      color: var(--on-surface-variant-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        color: var(--on-surface-variant-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-button-type='outlined-child'] #{&} {
       color: var(--on-surface-variant-light);
       @at-root #{$root-selector}[data-theme='dark']#{&} {
         color: var(--on-surface-variant-dark);

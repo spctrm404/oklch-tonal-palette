@@ -45,7 +45,7 @@ const Slider = ({
 
   return (
     <AriaSlider
-      className={cx('slider', 'slider__root', { className })}
+      className={cx('slider', 'slider__root', className)}
       minValue={minValue}
       maxValue={maxValue}
       step={step}
