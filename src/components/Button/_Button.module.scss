@@ -36,6 +36,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     font-style: normal;
     font-weight: $font-weight;
     line-height: $line-height;
+    cursor: pointer;
     border-radius: $rad;
 
     &[data-button-type='elevated'] {
@@ -79,6 +80,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       }
 
       &[data-disabled] {
+        cursor: auto;
         box-shadow: var(--shadow-0);
       }
     }

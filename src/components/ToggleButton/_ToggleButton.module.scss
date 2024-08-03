@@ -24,6 +24,11 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     place-items: stretch stretch;
     width: $size;
     height: $size;
+    cursor: pointer;
+
+    &[data-disabled] #{&} {
+      cursor: auto;
+    }
 
     &__shape {
       position: relative;

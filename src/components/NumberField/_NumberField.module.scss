@@ -51,12 +51,20 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     background-color: transparent;
     border: 0;
     border-radius: $rad;
+    transition: color $duration $easing;
     @at-root #{$root-selector}[data-theme='dark'] #{&} {
       color: var(--on-secondary-container-dark);
     }
 
     &:focus {
       outline: none;
+    }
+
+    &[data-disabled] {
+      color: color-mix(in oklch, var(--on-surface-light) 38%, transparent);
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        color: color-mix(in oklch, var(--on-surface-dark) 38%, transparent);
+      }
     }
 
     &__shape {
@@ -67,20 +75,18 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       margin-block: 0.5 * ($button-size - $button-visible-size);
       background-color: var(--secondary-container-light);
       border-radius: $rad;
-      transition: color $duration $easing, background-color $duration $easing;
+      transition: background-color $duration $easing;
       @at-root #{$root-selector}[data-theme='dark'] #{&} {
         background-color: var(--secondary-container-dark);
       }
 
       @at-root #{$parent-selector}[data-disabled] ~ #{&} {
-        color: color-mix(in oklch, var(--on-surface-light) 38%, transparent);
         background-color: color-mix(
           in oklch,
           var(--on-surface-light) 12%,
           transparent
         );
         @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          color: color-mix(in oklch, var(--on-surface-dark) 38%, transparent);
           background-color: color-mix(
             in oklch,
             var(--on-surface-dark) 12%,

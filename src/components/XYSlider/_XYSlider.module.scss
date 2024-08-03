@@ -67,10 +67,10 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   }
 
   &__track {
+    $parent-selector: &;
+
     grid-row: 1 / -1;
     grid-column: 1 / -1;
-
-    $parent-selector: &;
 
     &__shape {
       position: absolute;
@@ -202,9 +202,14 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     z-index: 3;
     width: $thumb-size;
     height: $thumb-size;
+    cursor: pointer;
 
     &:focus {
       outline: none;
+    }
+
+    @at-root #{$root-selector}[data-disabled] #{&} {
+      cursor: auto;
     }
 
     &__shape {
