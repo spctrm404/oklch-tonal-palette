@@ -69,7 +69,7 @@ const PaletteController = ({
   const [cnt, setCnt] = useState(0);
   return (
     <>
-      <Switch state={isDisable} onChange={setDisable} />
+      <Switch value={isDisable} onChange={setDisable} />
       <p></p>
       <NumberField
         aria-label="test"
@@ -118,7 +118,7 @@ const PaletteController = ({
         isDisabled={isDisable}
       />
       <p></p>
-      <Switch state={isRange} onChange={updateIsRange} />
+      <Switch value={isRange} onChange={updateIsRange} />
       {/* <NumberBox
         value={totalChips}
         min={2}

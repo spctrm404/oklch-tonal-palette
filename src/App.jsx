@@ -60,7 +60,12 @@ function App() {
   return (
     <>
       <p>{theme}</p>
-      <Switch state={theme === 'light'} onChange={updateTheme} />
+      <Switch
+        materialIconA={'light_mode'}
+        materialIconB={'dark_mode'}
+        value={theme === 'light'}
+        onChange={updateTheme}
+      />
       <Button
         buttontype={'filled'}
         label="Create a Palette"

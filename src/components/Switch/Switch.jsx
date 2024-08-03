@@ -7,7 +7,9 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Switch = ({
-  state: value = false,
+  materialIconA = '',
+  materialIconB = '',
+  value = false,
   onChange = () => {},
   className = '',
   ...props
@@ -32,11 +34,34 @@ const Switch = ({
       ref={rootRef}
       {...props}
     >
-      <div className={cx('switch__track', className)}>
-        <div className={cx('switch__track__shape', className)} />
-        <div className={cx('switch__thumb', className)}>
-          <div className={cx('switch__state', className)} />
-          <div className={cx('switch__thumb__shape', className)} />
+      <div className={cx('switch__track')}>
+        <div className={cx('switch__track__shape')} />
+        <div className={cx('switch__thumb')}>
+          <div className={cx('switch__state')} />
+          <div className={cx('switch__thumb__shape')}>
+            {materialIconA && materialIconB && (
+              <>
+                <div
+                  className={cx(
+                    'switch__icon',
+                    'switch__icon--part-a',
+                    'material-symbols-outlined'
+                  )}
+                >
+                  {materialIconA}
+                </div>
+                <div
+                  className={cx(
+                    'switch__icon',
+                    'switch__icon--part-b',
+                    'material-symbols-outlined'
+                  )}
+                >
+                  {materialIconB}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </AriaSwitch>
