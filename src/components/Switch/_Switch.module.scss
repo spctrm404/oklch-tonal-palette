@@ -1,53 +1,227 @@
-@import 'Switch.variant';
+$width: 3.25rem;
+$height: 2rem;
+$border-thickness: 0.125rem;
+$thumb-size: 3rem;
+$thumb-shape-size: 1rem;
+$thumb-shape-size-pressed: 1.75rem;
+$thumb-shape-size-true: 1.5rem;
+$thumb-state-size: 2.5rem;
+$thumb-rad: 0.125rem;
+$state-rad: 0.25rem;
+$track-rad: 0.25rem;
+$duration: 200ms;
+$easing: cubic-bezier(0.2, 0, 0, 1);
 
 .switch {
-  position: relative;
+  $root-selector: &;
+
+  display: block;
   width: $width;
   height: $height;
+  cursor: pointer;
 
-  &__shape {
-    position: absolute;
-    inset: 0;
-    cursor: pointer;
-    border-style: solid;
-    border-width: $border-width;
-    border-radius: $rad;
-    transition: background-color $duration $easing,
-      border-color $duration $easing, opacity $duration $easing;
+  &[data-disabled] {
+    cursor: auto;
   }
 
-  &__handle {
+  &__track {
+    position: relative;
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    place-items: stretch stretch;
+    width: 100%;
+    height: 100%;
+
+    &__shape {
+      background-color: var(--surface-container-highest-light);
+      border-color: var(--outline-light);
+      border-style: solid;
+      border-width: $border-thickness;
+      border-radius: $track-rad;
+      transition: border-width $duration $easing,
+        background-color $duration $easing;
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--surface-container-highest-dark);
+        border-color: var(--outline-dark);
+      }
+
+      @at-root #{$root-selector}[data-selected] #{&} {
+        background-color: var(--primary-light);
+        border-width: 0;
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--primary-dark);
+          border-color: var(--primary-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-disabled] #{&} {
+        background-color: color-mix(
+          in oklch,
+          var(--on-surface-light) 38%,
+          transparent
+        );
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: color-mix(
+            in oklch,
+            var(--on-surface-dark) 38%,
+            transparent
+          );
+        }
+      }
+    }
+  }
+
+  &__thumb {
     position: absolute;
     top: 50%;
     left: 0.5 * $height;
-    width: $handle-size;
-    height: $handle-size;
-    cursor: pointer;
+    width: $thumb-size;
+    height: $thumb-size;
     transition: transform $duration $easing;
+    transform: translate(-50%, -50%);
 
-    &:focus {
-      outline: none;
-    }
-
-    &__state {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: $handle-state-size;
-      height: $handle-state-size;
-      border-radius: $handle-state-rad;
-      transition: background-color $duration $easing, opacity $duration $easing,
-        transform $duration $easing;
+    @at-root #{$root-selector}[data-selected] #{&} {
+      transform: translate(calc(-50% + $width - $height), -50%);
     }
 
     &__shape {
       position: absolute;
       top: 50%;
       left: 50%;
-      border-radius: $handle-shape-rad;
+      width: $thumb-shape-size;
+      height: $thumb-shape-size;
+      background-color: var(--outline-light);
+      border-radius: $thumb-rad;
       transition: width $duration $easing, height $duration $easing,
-        background-color $duration $easing, opacity $duration $easing;
+        background-color $duration $easing;
       transform: translate(-50%, -50%);
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--outline-dark);
+      }
+
+      @at-root #{$root-selector}[data-selected] #{&} {
+        width: $thumb-shape-size-true;
+        height: $thumb-shape-size-true;
+        background-color: var(--on-primary-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-primary-dark);
+        }
+
+        @at-root #{$root-selector}[data-hovered]#{&} {
+          background-color: var(--primary-container-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-container-dark);
+          }
+        }
+        @at-root #{$root-selector}[data-focused]#{&} {
+          background-color: var(--primary-container-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-container-dark);
+          }
+        }
+        @at-root #{$root-selector}[data-focus-visible]#{&} {
+          background-color: var(--primary-container-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-container-dark);
+          }
+        }
+        @at-root #{$root-selector}[data-pressed]#{&} {
+          background-color: var(--primary-container-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-container-dark);
+          }
+        }
+      }
+      @at-root #{$root-selector}[data-hovered] #{&} {
+        background-color: var(--on-surface-variant-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-variant-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-focused] #{&} {
+        background-color: var(--on-surface-variant-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-variant-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-focus-visible] #{&} {
+        background-color: var(--on-surface-variant-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-variant-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-pressed] #{&} {
+        width: $thumb-shape-size-pressed;
+        height: $thumb-shape-size-pressed;
+        background-color: var(--on-surface-variant-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--on-surface-variant-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-disabled] #{&} {
+        background-color: color-mix(
+          in oklch,
+          var(--on-surface-light) 38%,
+          transparent
+        );
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: color-mix(
+            in oklch,
+            var(--on-surface-dark) 38%,
+            transparent
+          );
+        }
+
+        @at-root #{$root-selector}[data-selected]#{&} {
+          background-color: var(--surface-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--surface-dark);
+          }
+        }
+      }
+    }
+  }
+
+  &__state {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: $thumb-state-size;
+    height: $thumb-state-size;
+    background-color: var(--on-surface-variant-light);
+    border-radius: $state-rad;
+    opacity: 0;
+    transition: opacity $duration $easing, transform $duration $easing;
+    transform: translate(-50%, -50%) scale(0%, 0%);
+    @at-root #{$root-selector}[data-theme='dark'] #{&} {
+      background-color: var(--on-surface-variant-dark);
+    }
+
+    @at-root #{$root-selector}[data-selected] #{&} {
+      background-color: var(--primary-light);
+      @at-root #{$root-selector}[data-theme='dark']#{&} {
+        background-color: var(--primary-dark);
+      }
+    }
+    @at-root #{$root-selector}[data-hovered] #{&} {
+      opacity: 0.08;
+      transform: translate(-50%, -50%) scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-focused] #{&} {
+      opacity: 0.08;
+      transform: translate(-50%, -50%) scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-focus-visible] #{&} {
+      opacity: 0.08;
+      transform: translate(-50%, -50%) scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-pressed] #{&} {
+      opacity: 0.12;
+      transform: translate(-50%, -50%) scale(100%, 100%);
+    }
+    @at-root #{$root-selector}[data-disabled] #{&} {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0%, 0%);
     }
   }
 }

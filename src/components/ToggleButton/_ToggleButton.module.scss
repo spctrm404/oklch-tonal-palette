@@ -329,15 +329,42 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     }
 
     &__icon {
+      $parent-selector: &;
+
       grid-row: 1 / span 1;
       grid-column: 1 / span 1;
       font-size: $icon-size;
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
       line-height: $icon-size;
-      transition: font-variation-settings $duration $easing;
+      transition: opacity $duration $easing,
+        font-variation-settings $duration $easing;
 
       @at-root #{$root-selector}[data-selected] #{&} {
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      }
+
+      &--part {
+        &-a {
+          &:has(+ #{$parent-selector}--part-b) {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            opacity: 1;
+            @at-root #{$root-selector}[data-selected] #{&} {
+              font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+              opacity: 0;
+            }
+          }
+        }
+
+        &-b {
+          @at-root #{$parent-selector}--part-a + #{&} {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+            opacity: 0;
+            @at-root #{$root-selector}[data-selected] #{&} {
+              font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+              opacity: 1;
+            }
+          }
+        }
       }
     }
   }

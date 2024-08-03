@@ -117,11 +117,11 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-focused] ~ #{&} {
-        opacity: 0.12;
+        opacity: 0.08;
         transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-focus-visible] ~ #{&} {
-        opacity: 0.12;
+        opacity: 0.08;
         transform: scale(100%, 100%);
       }
       @at-root #{$parent-selector}[data-disabled] ~ #{&} {
