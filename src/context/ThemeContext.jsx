@@ -1,4 +1,10 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
@@ -64,7 +70,7 @@ const ThemeProvider = ({ children }) => {
     [hue]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const vivids = {
       name: {
         light: 0.4,
