@@ -1,35 +1,30 @@
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { createContext, useCallback, useLayoutEffect, useState } from 'react';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
   HUE_STEP,
-  LIGHTNESS_OF_CHROMA_MAX,
+  P3_MAX_CHROMA_OFFSET,
+  LIGHTNESS_OF_PEAK_CHROMA,
   SECONDARY_CHROMA_RATIO,
-  NEUTRAL_VARIANT_CHROMA_MAX,
-  NEUTRAL_CHROMA_MAX,
+  NEUTRAL_VARIANT_PEAK_CHROMA,
+  NEUTRAL_PEAK_CHROMA,
 } from '../utils/constants';
 import {
-  getMaxChromaOfLightness,
-  getChromaOfLightness,
-  getHueOfLightness,
+  maxChromaOfLightness,
+  chromaOfLightness,
+  hueOfLightness,
 } from '../utils/colourUtils';
-import { setMultipleOfStep } from '../utils/numberUtils';
-import { camelToKebab } from '../utils/stringUtils';
+import { closestQuantized } from '../utils/numberUtils';
+import { camelToKebab, replaceCamelCaseWord } from '../utils/stringUtils';
 
 export const ThemeContext = createContext();
 
 const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('light');
-  const [hue, setHue] = useState({ from: 0, to: 0 });
+  const [hues, setHues] = useState({ from: 0, to: 0 });
 
-  const updateTheme = useCallback((bool) => {
-    setTheme(bool ? 'light' : 'dark');
+  const updateTheme = useCallback((newBoolean) => {
+    setTheme(newBoolean ? 'light' : 'dark');
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -38,36 +33,43 @@ const ThemeProvider = ({ children }) => {
     });
   }, []);
 
-  const updateHue = useCallback((key, value) => {
-    setHue((prevHue) => {
-      return { ...prevHue, [key]: value };
+  const updateHues = useCallback((key, value) => {
+    setHues((prevHues) => {
+      return { ...prevHues, [key]: value };
     });
   }, []);
 
-  const updateCssVariables = useCallback(
-    (lightnessData, name, cMax, chromaRatio, dom) => {
-      Object.entries(lightnessData).forEach(([tokenName, lightnessPairObj]) => {
-        Object.entries(lightnessPairObj).forEach(([themeName, l]) => {
-          let c =
-            getChromaOfLightness(l, LIGHTNESS_OF_CHROMA_MAX, cMax) *
-            chromaRatio;
-          c = setMultipleOfStep(c, CHROMA_STEP);
-          let h = getHueOfLightness(l, hue.from, hue.to);
-          h = setMultipleOfStep(h, HUE_STEP);
+  const applyCssProperties = useCallback(
+    (lightnessTable, name, peakChroma, chromaMultiplier, targetDom) => {
+      Object.entries(lightnessTable).forEach(
+        ([roleName, lightnessOfThemes]) => {
+          Object.entries(lightnessOfThemes).forEach(
+            ([themeName, lightness]) => {
+              let chroma =
+                chromaOfLightness(
+                  lightness,
+                  LIGHTNESS_OF_PEAK_CHROMA,
+                  peakChroma
+                ) * chromaMultiplier;
+              chroma = closestQuantized(chroma, CHROMA_STEP);
 
-          let variableName = camelToKebab(tokenName);
-          variableName = variableName.replace('Name', name);
-          variableName = variableName.replace('name', name.toLowerCase());
-          variableName = `--${variableName}-${themeName}`;
-          const primaryValue = `oklch(${setMultipleOfStep(
-            l,
-            LIGHTNESS_STEP
-          )} ${c} ${h})`;
-          dom.style.setProperty(variableName, primaryValue);
-        });
-      });
+              let hue = hueOfLightness(lightness, hues.from, hues.to);
+              hue = closestQuantized(hue, HUE_STEP);
+
+              let propertyName = replaceCamelCaseWord(roleName, 'name', name);
+              propertyName = camelToKebab(propertyName);
+              propertyName = `--${propertyName}-${themeName}`;
+              const propertyValue = `oklch(${closestQuantized(
+                lightness,
+                LIGHTNESS_STEP
+              )} ${chroma} ${hue})`;
+              targetDom.style.setProperty(propertyName, propertyValue);
+            }
+          );
+        }
+      );
     },
-    [hue]
+    [hues]
   );
 
   useLayoutEffect(() => {
@@ -80,7 +82,7 @@ const ThemeProvider = ({ children }) => {
         light: 1,
         dark: 0.2,
       },
-      NameContainer: {
+      nameContainer: {
         light: 0.9,
         dark: 0.3,
       },
@@ -88,7 +90,7 @@ const ThemeProvider = ({ children }) => {
         light: 0.1,
         dark: 0.9,
       },
-      NameFixed: {
+      nameFixed: {
         light: 0.9,
         dark: 0.9,
       },
@@ -96,7 +98,7 @@ const ThemeProvider = ({ children }) => {
         light: 0.1,
         dark: 0.1,
       },
-      NameFixedDim: {
+      nameFixedDim: {
         light: 0.8,
         dark: 0.8,
       },
@@ -198,16 +200,26 @@ const ThemeProvider = ({ children }) => {
 
     const root = document.documentElement;
 
-    const cMax = getMaxChromaOfLightness(
-      LIGHTNESS_OF_CHROMA_MAX,
-      hue.from,
-      hue.to
-    );
+    const peakChroma =
+      maxChromaOfLightness(LIGHTNESS_OF_PEAK_CHROMA, hues.from, hues.to) -
+      P3_MAX_CHROMA_OFFSET;
 
-    updateCssVariables(vivids, 'Primary', cMax, 1, root);
-    updateCssVariables(vivids, 'Secondary', cMax, SECONDARY_CHROMA_RATIO, root);
-    updateCssVariables(neutralVariant, '', NEUTRAL_VARIANT_CHROMA_MAX, 1, root);
-    updateCssVariables(neutral, '', NEUTRAL_CHROMA_MAX, 1, root);
+    applyCssProperties(vivids, 'primary', peakChroma, 1, root);
+    applyCssProperties(
+      vivids,
+      'secondary',
+      peakChroma,
+      SECONDARY_CHROMA_RATIO,
+      root
+    );
+    applyCssProperties(
+      neutralVariant,
+      '',
+      NEUTRAL_VARIANT_PEAK_CHROMA,
+      1,
+      root
+    );
+    applyCssProperties(neutral, '', NEUTRAL_PEAK_CHROMA, 1, root);
 
     root.style.setProperty(
       '--shadow-0',
@@ -256,11 +268,19 @@ const ThemeProvider = ({ children }) => {
 
     const body = document.body;
     body.dataset.theme = theme;
-  }, [theme, hue, updateCssVariables]);
+  }, [theme, hues, applyCssProperties]);
 
   return (
     <ThemeContext.Provider
-      value={{ theme, updateTheme, toggleTheme, hue, updateHue }}
+      value={{
+        theme,
+        setTheme,
+        updateTheme,
+        toggleTheme,
+        hues,
+        setHues,
+        updateHues,
+      }}
     >
       {children}
     </ThemeContext.Provider>

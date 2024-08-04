@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import {
-  HUE_INT_LEN,
-  LIGHTNESS_DECIMAL_LEN,
-  CHROMA_DECIMAL_LEN,
-  HUE_DECIMAL_LEN,
+  HUE_INTEGER_LENGTH,
+  LIGHTNESS_DECIMAL_LENGTH,
+  CHROMA_DECIMAL_LENGTH,
+  HUE_DECIMAL_LENGTH,
 } from '../../utils/constants';
 import { formatNumLength } from '../../utils/stringUtils';
-import { getApcaTxtColour } from '../../utils/colourUtils';
+import { findApcaCompliantColor } from '../../utils/colourUtils';
 import s from './Chip.module.scss';
 import classNames from 'classnames/bind';
 
@@ -23,7 +23,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     chip.style.setProperty(`--bg-c`, c);
     chip.style.setProperty(`--bg-h`, h);
 
-    const txtColourStrong = getApcaTxtColour(
+    const txtColourStrong = findApcaCompliantColor(
       l,
       c,
       h,
@@ -34,7 +34,7 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
     chip.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
     chip.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
 
-    const txtColourWeek = getApcaTxtColour(
+    const txtColourWeek = findApcaCompliantColor(
       l,
       c,
       h,
@@ -66,15 +66,15 @@ const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
       <div className={`${cx('chip__info')}`}>
         <div className={`${cx('chip__label', 'chip__label--for-l')}`}>L</div>
         <div className={`${cx('chip__value', 'chip__value--for-l')}`}>
-          {formatNumLength(l, 0, LIGHTNESS_DECIMAL_LEN)}
+          {formatNumLength(l, 0, LIGHTNESS_DECIMAL_LENGTH)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-c')}`}>C</div>
         <div className={`${cx('chip__value', 'chip__value--for-c')}`}>
-          {formatNumLength(c, 0, CHROMA_DECIMAL_LEN)}
+          {formatNumLength(c, 0, CHROMA_DECIMAL_LENGTH)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-h')}`}>H</div>
         <div className={`${cx('chip__value', 'chip__value--for-h')}`}>
-          {formatNumLength(h, HUE_INT_LEN, HUE_DECIMAL_LEN)}
+          {formatNumLength(h, HUE_INTEGER_LENGTH, HUE_DECIMAL_LENGTH)}
         </div>
       </div>
       <div className={`${cx('chip__name')}`}>

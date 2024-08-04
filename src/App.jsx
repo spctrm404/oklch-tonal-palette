@@ -4,13 +4,13 @@ import PaletteController from './components/PaletteController/PaletteController.
 import Palette from './components/Palette/Palette.jsx';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import { HUE_STEP } from './utils/constants';
-import { setMultipleOfStep } from './utils/numberUtils';
+import { closestQuantized } from './utils/numberUtils';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import './App.scss';
 
 function App() {
   const createARandomPalette = useCallback(() => {
-    const randomHue = setMultipleOfStep(Math.random() * 360, HUE_STEP);
+    const randomHue = closestQuantized(Math.random() * 360, HUE_STEP);
     const newPalette = {
       id: crypto.randomUUID(),
       chipNum: 10,
@@ -55,16 +55,16 @@ function App() {
   };
   useEffect(() => {}, []);
 
-  const { theme, updateTheme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
     <>
       <p>{theme}</p>
       <Switch
-        materialIconA={'light_mode'}
-        materialIconB={'dark_mode'}
+        materialIconA={'dark_mode'}
+        materialIconB={'light_mode'}
         isSelected={theme === 'light'}
-        onChange={updateTheme}
+        onChange={toggleTheme}
       />
       <Button
         buttontype={'filled'}

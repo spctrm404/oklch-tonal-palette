@@ -1,20 +1,38 @@
-export const formatNumLength = (num, intLen, decimalLen) => {
-  const fixed = num.toFixed(decimalLen);
-  const [intPart, decimalPart] = fixed.split('.');
-  const paddedInt = intPart.padStart(intLen, '0');
-  return `${intLen > 0 ? paddedInt : intLen < 0 ? intPart : ``}${
-    decimalLen > 0 ? `.${decimalPart}` : ``
-  }`;
+export const formatNumLength = (num, integerLength, decimalLength) => {
+  const [integerPart, decimalPart] = num.toFixed(decimalLength).split('.');
+  const paddedInteger = integerPart.padStart(integerLength, '0');
+  return `${
+    integerLength > 0 ? paddedInteger : integerLength < 0 ? integerPart : ``
+  }${decimalLength > 0 ? `.${decimalPart}` : ``}`;
 };
 
-export const formatNumLengthToStep = (num, step) => {
+export const formatNumLengthToStepPrecision = (num, step) => {
   const decimalLen = (step.toString().split('.')[1] || '').length;
   return formatNumLength(num, -1, decimalLen);
 };
 
-export const camelToKebab = (camelStr) => {
-  const kebabStr = camelStr.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-  return kebabStr;
+export const camelToKebab = (camelString) => {
+  const trimmedString = camelString.trim();
+  const kebabString = trimmedString
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-zA-Z])(\d)/g, '$1-$2')
+    .replace(/(\d)([a-zA-Z])/g, '$1-$2')
+    .toLowerCase();
+  return kebabString;
+};
+
+export const replaceCamelCaseWord = (
+  camelString,
+  targetWord,
+  replacementWord
+) => {
+  const trimmed = camelString.trim();
+  return trimmed.replace(new RegExp(targetWord, 'gi'), () => {
+    return replacementWord
+      .toLowerCase()
+      .replace(/(?:^|\s)\S/g, (char) => char.toUpperCase());
+  });
 };
 
 export const disassembleDigits = (num) => {

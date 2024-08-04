@@ -8,13 +8,13 @@ import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
   HUE_STEP,
-  LIGHTNESS_INT_LEN,
-  CHROMA_INT_LEN,
-  HUE_INT_LEN,
-  LIGHTNESS_DECIMAL_LEN,
-  CHROMA_DECIMAL_LEN,
-  HUE_DECIMAL_LEN,
-  CHROMA_MAX,
+  LIGHTNESS_INTEGER_LENGTH,
+  CHROMA_INTEGER_LENGTH,
+  HUE_INTEGER_LENGTH,
+  LIGHTNESS_DECIMAL_LENGTH,
+  CHROMA_DECIMAL_LENGTH,
+  HUE_DECIMAL_LENGTH,
+  CHROMA_LIMIT,
 } from '../../utils/constants';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -57,12 +57,12 @@ const PaletteController = ({
     },
     [onChange]
   );
-  const { updateHue } = useContext(ThemeContext);
+  const { updateHues } = useContext(ThemeContext);
 
   useEffect(() => {
     // updateHue('from', hFrom);
     // updateHue('to', hTo);
-  }, [updateHue, hFrom, hTo]);
+  }, [updateHues, hFrom, hTo]);
 
   const [isDisable, setDisable] = useState(false);
   const [sel, setSel] = useState(false);
@@ -133,7 +133,7 @@ const PaletteController = ({
         aria-label="test"
         value={{ x: lInflect, y: cMax }}
         minValue={{ x: 0, y: 0 }}
-        maxValue={{ x: 1, y: CHROMA_MAX }}
+        maxValue={{ x: 1, y: CHROMA_LIMIT }}
         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
         onChange={({ x, y }) => {
           handleChangeXYSlider({ x, y }, 'lInflect', 'cMax');
@@ -144,7 +144,7 @@ const PaletteController = ({
         min={0}
         max={1}
         step={LIGHTNESS_STEP}
-        displayLength={LIGHTNESS_INT_LEN + LIGHTNESS_DECIMAL_LEN + 2}
+        displayLength={LIGHTNESS_INTEGER_LENGTH + LIGHTNESS_DECIMAL_LENGTH + 2}
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'lInflect');
         }}
@@ -152,9 +152,9 @@ const PaletteController = ({
       <NumberBox
         value={cMax}
         min={0}
-        max={CHROMA_MAX}
+        max={CHROMA_LIMIT}
         step={CHROMA_STEP}
-        displayLength={CHROMA_INT_LEN + CHROMA_DECIMAL_LEN + 2}
+        displayLength={CHROMA_INTEGER_LENGTH + CHROMA_DECIMAL_LENGTH + 2}
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'cMax');
         }}
@@ -176,7 +176,7 @@ const PaletteController = ({
         min={0}
         max={360}
         step={HUE_STEP}
-        displayLength={HUE_INT_LEN + HUE_DECIMAL_LEN + 2}
+        displayLength={HUE_INTEGER_LENGTH + HUE_DECIMAL_LENGTH + 2}
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'hueFrom');
           if (!isRange) handleChangeSlider(numboxProps, 'hueTo');
@@ -198,7 +198,7 @@ const PaletteController = ({
         min={0}
         max={360}
         step={HUE_STEP}
-        displayLength={HUE_INT_LEN + HUE_DECIMAL_LEN + 2}
+        displayLength={HUE_INTEGER_LENGTH + HUE_DECIMAL_LENGTH + 2}
         onChange={(numboxProps) => {
           handleChangeNumbox(numboxProps, 'hueTo');
         }}

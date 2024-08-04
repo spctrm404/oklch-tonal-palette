@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
 import { useResizeEffect } from '../../hooks/useResizeEffect.js';
-import { clamp, setMultipleOfStep } from '../../utils/numberUtils.js';
+import { clamp, closestQuantized } from '../../utils/numberUtils.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_XYSlider.module.scss';
 import classNames from 'classnames/bind';
@@ -116,7 +116,7 @@ const XYSlider = ({
   const getQuantizedValue = useCallback(
     (value) => {
       return Object.keys(value).reduce((acc, key) => {
-        acc[key] = setMultipleOfStep(value[key], step[key]);
+        acc[key] = closestQuantized(value[key], step[key]);
         return acc;
       }, {});
     },

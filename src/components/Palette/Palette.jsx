@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  HUE_INT_LEN,
-  LIGHTNESS_DECIMAL_LEN,
-  CHROMA_DECIMAL_LEN,
-  HUE_DECIMAL_LEN,
+  HUE_INTEGER_LENGTH,
+  LIGHTNESS_DECIMAL_LENGTH,
+  CHROMA_DECIMAL_LENGTH,
+  HUE_DECIMAL_LENGTH,
 } from '../../utils/constants';
 import { formatNumLength } from '../../utils/stringUtils';
-import { createChips } from '../../utils/colourUtils';
+import { createColours } from '../../utils/colourUtils';
 import Chip from '../Chip/Chip.jsx';
 import s from './Palette.module.scss';
 import classNames from 'classnames/bind';
@@ -26,12 +26,12 @@ const Palette = ({
   const paletteRef = useRef(null);
 
   const [chips, setChips] = useState(
-    createChips(totalChips, lInflect, cMax, hFrom, hTo)
+    createColours(totalChips, lInflect, cMax, hFrom, hTo)
   );
 
   useEffect(() => {
     setChips((prevChips) => {
-      const newChips = createChips(totalChips, lInflect, cMax, hFrom, hTo);
+      const newChips = createColours(totalChips, lInflect, cMax, hFrom, hTo);
       // console.log(newChips);
       return newChips.map((aNewChip, idx) => {
         const aPrevChip = prevChips[idx];
@@ -68,17 +68,17 @@ const Palette = ({
           <span className={`${cx('palette__info__value')}`}>
             {`${formatNumLength(
               hFrom,
-              HUE_INT_LEN,
-              HUE_DECIMAL_LEN
-            )}-${formatNumLength(hTo, HUE_INT_LEN, HUE_DECIMAL_LEN)}`}
+              HUE_INTEGER_LENGTH,
+              HUE_DECIMAL_LENGTH
+            )}-${formatNumLength(hTo, HUE_INTEGER_LENGTH, HUE_DECIMAL_LENGTH)}`}
           </span>{' '}
           <span className={`${cx('palette__info__label')}`}>{`Cm:`}</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${formatNumLength(cMax, 0, CHROMA_DECIMAL_LEN)}`}
+            {`${formatNumLength(cMax, 0, CHROMA_DECIMAL_LENGTH)}`}
           </span>{' '}
           <span className={`${cx('palette__info__label')}`}>{`Li:`}</span>
           <span className={`${cx('palette__info__value')}`}>
-            {`${formatNumLength(lInflect, 0, LIGHTNESS_DECIMAL_LEN)}`}
+            {`${formatNumLength(lInflect, 0, LIGHTNESS_DECIMAL_LENGTH)}`}
           </span>
         </div>
       </div>
