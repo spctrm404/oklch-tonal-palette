@@ -27,8 +27,8 @@ export const replaceCamelCaseWord = (
   targetWord,
   replacementWord
 ) => {
-  const trimmed = camelString.trim();
-  return trimmed.replace(new RegExp(targetWord, 'gi'), () => {
+  const trimmedString = camelString.trim();
+  return trimmedString.replace(new RegExp(targetWord, 'gi'), () => {
     return replacementWord
       .toLowerCase()
       .replace(/(?:^|\s)\S/g, (char) => char.toUpperCase());
