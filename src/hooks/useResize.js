@@ -1,7 +1,6 @@
-import { useState, useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
-const useWindowResize = ({ onResize = () => {}, onResizeEnd = () => {} }) => {
-  const [resizeState, setResizeState] = useState('');
+const useResize = ({ onResize, onResizeEnd }) => {
   const resizeTimeoutRef = useRef(null);
   const isResizingRef = useRef(false);
 
@@ -9,9 +8,9 @@ const useWindowResize = ({ onResize = () => {}, onResizeEnd = () => {} }) => {
     const handleResize = () => {
       if (!isResizingRef.current) {
         isResizingRef.current = true;
-        setResizeState('resizing');
-        console.log('resizing');
-        onResize?.();
+        if (onResize) {
+          onResize();
+        }
       }
 
       if (resizeTimeoutRef.current) {
@@ -20,9 +19,9 @@ const useWindowResize = ({ onResize = () => {}, onResizeEnd = () => {} }) => {
 
       resizeTimeoutRef.current = setTimeout(() => {
         isResizingRef.current = false;
-        setResizeState('resized');
-        console.log('resized');
-        onResizeEnd?.();
+        if (onResizeEnd) {
+          onResizeEnd();
+        }
       }, 100); // 변경 후 100ms 후에 'onResizeEnd' 콜백 실행
     };
 
@@ -35,8 +34,6 @@ const useWindowResize = ({ onResize = () => {}, onResizeEnd = () => {} }) => {
       }
     };
   }, [onResize, onResizeEnd]);
-
-  return resizeState;
 };
 
-export default useWindowResize;
+export default useResize;

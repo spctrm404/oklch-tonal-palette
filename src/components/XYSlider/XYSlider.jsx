@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
-import useWindowResize from '../../hooks/useWindowResize.js';
+import useResize from '../../hooks/useResize.js';
 import { clamp, closestQuantized } from '../../utils/numberUtils.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_XYSlider.module.scss';
@@ -38,10 +38,6 @@ const XYSlider = ({
   const thumbRef = useRef(null);
 
   const normalizedPosition = useCallback(() => {
-    if (!trackRef.current) return;
-    if (!thumbRef.current) return;
-    if (!positionRef.current) return;
-
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
     const position = positionRef.current;
@@ -61,9 +57,6 @@ const XYSlider = ({
   }, [maxValue, minValue, value]);
 
   const positionFromValue = useCallback(() => {
-    if (!trackRef.current) return;
-    if (!thumbRef.current) return;
-
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
     return {
@@ -79,29 +72,6 @@ const XYSlider = ({
       return acc;
     }, {});
   }, [minValue, maxValue, normalizedPosition]);
-  const relativePositionToTrack = useCallback(() => {
-    if (!trackRef.current) return;
-    if (!thumbRef.current) return;
-    if (!positionRef.current) return;
-
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-    const position = positionRef.current;
-    return {
-      x:
-        clamp(
-          position.x,
-          -0.5 * thumbRect.width,
-          trackRect.width - 0.5 * thumbRect.width
-        ) / trackRect.width,
-      y:
-        clamp(
-          position.y,
-          -0.5 * thumbRect.height,
-          trackRect.height - 0.5 * thumbRect.height
-        ) / trackRect.height,
-    };
-  }, []);
 
   const getClampedValue = useCallback(
     (value) => {
@@ -123,9 +93,6 @@ const XYSlider = ({
   );
 
   const clampPosition = useCallback(() => {
-    if (!trackRef.current) return;
-    if (!thumbRef.current) return;
-
     const trackRect = trackRef.current.getBoundingClientRect();
     const thumbRect = thumbRef.current.getBoundingClientRect();
     positionRef.current = {
@@ -156,8 +123,6 @@ const XYSlider = ({
 
   const onPressStart = useCallback(
     (e) => {
-      if (!thumbRef.current) return;
-
       const thumb = thumbRef.current;
       thumb.focus();
       setFocused(true);
@@ -246,35 +211,12 @@ const XYSlider = ({
   const setPositionByValue = useCallback(() => {
     positionRef.current = positionFromValue();
   }, [positionFromValue]);
-  const applyPosition = useCallback(() => {
-    if (!thumbRef.current) return;
 
-    thumbRef.current.style.setProperty(
-      'left',
-      `${100 * relativePositionToTrack().x}%`
-    );
-    thumbRef.current.style.setProperty(
-      'top',
-      `${100 * relativePositionToTrack().y}%`
-    );
-  }, [relativePositionToTrack]);
-  const a = useCallback(() => {
-    setPositionByValue();
-    applyPosition();
-  }, [setPositionByValue, applyPosition]);
-
-  // useWindowResize({
-  //   onResize: a(),
-  //   onResizeEnd: a(),
-  // });
+  useResize({ onResize: setPositionByValue, onResizeEnd: setPositionByValue });
 
   useLayoutEffect(() => {
     setPositionByValue();
-    applyPosition();
   }, []);
-  useLayoutEffect(() => {
-    applyPosition();
-  });
 
   return (
     <div
