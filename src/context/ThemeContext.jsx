@@ -8,6 +8,9 @@ import {
   SECONDARY_CHROMA_RATIO,
   NEUTRAL_VARIANT_PEAK_CHROMA,
   NEUTRAL_PEAK_CHROMA,
+  UTILITY_PEAK_CHROMA,
+  WARNING_HUE,
+  ERROR_HUE,
 } from '../utils/constants';
 import {
   maxChromaOfLightness,
@@ -39,7 +42,34 @@ const ThemeProvider = ({ children }) => {
     });
   }, []);
 
-  const applyCssProperties = useCallback(
+  const applyStaticHueCssProperties = useCallback(
+    (lightnessTable, name, peakChroma, hue, targetDom) => {
+      Object.entries(lightnessTable).forEach(
+        ([roleName, lightnessOfThemes]) => {
+          Object.entries(lightnessOfThemes).forEach(
+            ([themeName, lightness]) => {
+              let chroma = chromaOfLightness(
+                lightness,
+                LIGHTNESS_OF_PEAK_CHROMA,
+                peakChroma
+              );
+              chroma = closestQuantized(chroma, CHROMA_STEP);
+
+              let propertyName = replaceCamelCaseWord(roleName, 'name', name);
+              propertyName = camelToKebab(propertyName);
+              propertyName = `--${propertyName}-${themeName}`;
+              const propertyValue = `oklch(${closestQuantized(
+                lightness,
+                LIGHTNESS_STEP
+              )} ${chroma} ${closestQuantized(hue, HUE_STEP)}deg)`;
+              targetDom.style.setProperty(propertyName, propertyValue);
+            }
+          );
+        }
+      );
+    }
+  );
+  const applyDynamicHueCssProperties = useCallback(
     (lightnessTable, name, peakChroma, chromaMultiplier, targetDom) => {
       Object.entries(lightnessTable).forEach(
         ([roleName, lightnessOfThemes]) => {
@@ -62,7 +92,7 @@ const ThemeProvider = ({ children }) => {
               const propertyValue = `oklch(${closestQuantized(
                 lightness,
                 LIGHTNESS_STEP
-              )} ${chroma} ${hue})`;
+              )} ${chroma} ${hue}deg)`;
               targetDom.style.setProperty(propertyName, propertyValue);
             }
           );
@@ -204,22 +234,36 @@ const ThemeProvider = ({ children }) => {
       maxChromaOfLightness(LIGHTNESS_OF_PEAK_CHROMA, hues.from, hues.to) -
       P3_MAX_CHROMA_OFFSET;
 
-    applyCssProperties(vivids, 'primary', peakChroma, 1, root);
-    applyCssProperties(
+    applyDynamicHueCssProperties(vivids, 'primary', peakChroma, 1, root);
+    applyDynamicHueCssProperties(
       vivids,
       'secondary',
       peakChroma,
       SECONDARY_CHROMA_RATIO,
       root
     );
-    applyCssProperties(
+    applyStaticHueCssProperties(
+      vivids,
+      'warning',
+      UTILITY_PEAK_CHROMA,
+      WARNING_HUE,
+      root
+    );
+    applyStaticHueCssProperties(
+      vivids,
+      'error',
+      UTILITY_PEAK_CHROMA,
+      ERROR_HUE,
+      root
+    );
+    applyDynamicHueCssProperties(
       neutralVariant,
       '',
       NEUTRAL_VARIANT_PEAK_CHROMA,
       1,
       root
     );
-    applyCssProperties(neutral, '', NEUTRAL_PEAK_CHROMA, 1, root);
+    applyDynamicHueCssProperties(neutral, '', NEUTRAL_PEAK_CHROMA, 1, root);
 
     root.style.setProperty(
       '--shadow-0',
@@ -268,7 +312,7 @@ const ThemeProvider = ({ children }) => {
 
     const body = document.body;
     body.dataset.theme = theme;
-  }, [theme, hues, applyCssProperties]);
+  }, [theme, hues, applyDynamicHueCssProperties]);
 
   return (
     <ThemeContext.Provider

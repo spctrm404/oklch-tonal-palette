@@ -60,16 +60,14 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
           @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
             inset: 0
               calc(
-                100% * (1 - var(--normalized-value)) + 0.5 *
-                  $track-indicator-gap
+                100% * (1 - var(--normalized-val)) + 0.5 * $track-indicator-gap
               )
               0 0;
             border-radius: $track-rad-l $track-rad-s $track-rad-s $track-rad-l;
           }
           @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
             inset: calc(
-                100% * (1 - var(--normalized-value)) + 0.5 *
-                  $track-indicator-gap
+                100% * (1 - var(--normalized-val)) + 0.5 * $track-indicator-gap
               )
               0 0;
             border-radius: $track-rad-s $track-rad-s $track-rad-l $track-rad-l;
@@ -99,12 +97,12 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
           background-color: var(--secondary-container-light);
           @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
             inset: 0 0 0
-              calc(100% * var(--normalized-value) + 0.5 * $track-indicator-gap);
+              calc(100% * var(--normalized-val) + 0.5 * $track-indicator-gap);
             border-radius: $track-rad-s $track-rad-l $track-rad-l $track-rad-s;
           }
           @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
             inset: 0 0
-              calc(100% * var(--normalized-value) + 0.5 * $track-indicator-gap);
+              calc(100% * var(--normalized-val) + 0.5 * $track-indicator-gap);
             border-radius: $track-rad-l $track-rad-l $track-rad-s $track-rad-s;
           }
           @at-root #{$root-selector}[data-theme='dark'] #{&} {

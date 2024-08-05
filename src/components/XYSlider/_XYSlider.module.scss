@@ -205,6 +205,8 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   &__thumb {
     $parent-selector: &;
 
+    // top: calc(var(--normalized-val-y) * 100% - 0.5 * $thumb-size);
+    // left: calc(var(--normalized-val-x) * 100% - 0.5 * $thumb-size);
     z-index: 3;
     width: $thumb-size;
     height: $thumb-size;

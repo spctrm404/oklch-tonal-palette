@@ -1,84 +1,112 @@
-import { useEffect, useRef } from 'react';
+import { useContext, useLayoutEffect, useRef } from 'react';
 import {
-  HUE_INTEGER_LENGTH,
   LIGHTNESS_DECIMAL_LENGTH,
   CHROMA_DECIMAL_LENGTH,
+  HUE_INTEGER_LENGTH,
   HUE_DECIMAL_LENGTH,
 } from '../../utils/constants';
+import { useHover } from 'react-aria';
 import { formatNumLength } from '../../utils/stringUtils';
 import { findApcaCompliantColor } from '../../utils/colourUtils';
-import s from './Chip.module.scss';
+import { ThemeContext } from '../../context/ThemeContext.jsx';
+import st from './_Chip.module.scss';
 import classNames from 'classnames/bind';
 
-const cx = classNames.bind(s);
+const cx = classNames.bind(st);
 
-const Chip = ({ l, c, h, inP3, inSrgb, className }) => {
+const Chip = ({ l: lightness, c: chroma, h: hue, inP3, inSrgb, className }) => {
+  const { theme } = useContext(ThemeContext);
+
   const renderCnt = useRef(0);
-  const chipRef = useRef(null);
+  const rootRef = useRef(null);
 
-  useEffect(() => {
-    const chip = chipRef.current;
+  const { hoverProps, isHovered } = useHover({});
 
-    chip.style.setProperty(`--bg-l`, l);
-    chip.style.setProperty(`--bg-c`, c);
-    chip.style.setProperty(`--bg-h`, h);
+  useLayoutEffect(() => {
+    const root = rootRef.current;
 
-    const txtColourStrong = findApcaCompliantColor(
-      l,
-      c,
-      h,
+    root.style.setProperty(`--bg-l`, lightness);
+    root.style.setProperty(`--bg-c`, chroma);
+    root.style.setProperty(`--bg-h`, hue);
+
+    const textColourStrong = findApcaCompliantColor(
+      lightness,
+      chroma,
+      hue,
       100,
-      l > 0.5 ? 'darker' : 'lighter'
+      lightness > 0.5 ? 'darker' : 'lighter'
     );
-    chip.style.setProperty(`--txt-strong-l`, txtColourStrong.lightness);
-    chip.style.setProperty(`--txt-strong-c`, txtColourStrong.chroma);
-    chip.style.setProperty(`--txt-strong-h`, txtColourStrong.hue);
+    root.style.setProperty(`--txt-strong-l`, textColourStrong.lightness);
+    root.style.setProperty(`--txt-strong-c`, textColourStrong.chroma);
+    root.style.setProperty(`--txt-strong-h`, textColourStrong.hue);
 
-    const txtColourWeek = findApcaCompliantColor(
-      l,
-      c,
-      h,
+    const textColourWeek = findApcaCompliantColor(
+      lightness,
+      chroma,
+      hue,
       100,
-      l > 0.5 ? 'darker' : 'lighter'
+      lightness > 0.5 ? 'darker' : 'lighter'
     );
-    chip.style.setProperty(`--txt-week-l`, txtColourWeek.lightness);
-    chip.style.setProperty(`--txt-week-c`, txtColourWeek.chroma);
-    chip.style.setProperty(`--txt-week-h`, txtColourWeek.hue);
+    root.style.setProperty(`--txt-week-l`, textColourWeek.lightness);
+    root.style.setProperty(`--txt-week-c`, textColourWeek.chroma);
+    root.style.setProperty(`--txt-week-h`, textColourWeek.hue);
 
     renderCnt.current = renderCnt.current + 1;
     // console.log('chip', renderCnt.current);
-  }, [l, c, h, inP3, inSrgb]);
+  }, [lightness, chroma, hue, inP3, inSrgb]);
 
   return (
     <li
-      className={`${cx(
+      className={cx(
         'chip',
         {
           'chip--gamut-p3': !inSrgb && inP3,
         },
         {
           'chip--gamut-out': !inP3,
-        }
-      )} ${className || ''}`}
-      ref={chipRef}
+        },
+        className
+      )}
+      {...hoverProps}
+      {...(isHovered && { 'data-hovered': 'true' })}
+      data-theme={theme}
+      ref={rootRef}
     >
       <div className={`${cx('chip__sample')}`} />
       <div className={`${cx('chip__info')}`}>
         <div className={`${cx('chip__label', 'chip__label--for-l')}`}>L</div>
         <div className={`${cx('chip__value', 'chip__value--for-l')}`}>
-          {formatNumLength(l, 0, LIGHTNESS_DECIMAL_LENGTH)}
+          {formatNumLength(lightness, 0, LIGHTNESS_DECIMAL_LENGTH)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-c')}`}>C</div>
         <div className={`${cx('chip__value', 'chip__value--for-c')}`}>
-          {formatNumLength(c, 0, CHROMA_DECIMAL_LENGTH)}
+          {formatNumLength(chroma, 0, CHROMA_DECIMAL_LENGTH)}
         </div>
         <div className={`${cx('chip__label', 'chip__label--for-h')}`}>H</div>
         <div className={`${cx('chip__value', 'chip__value--for-h')}`}>
-          {formatNumLength(h, HUE_INTEGER_LENGTH, HUE_DECIMAL_LENGTH)}
+          {formatNumLength(hue, HUE_INTEGER_LENGTH, HUE_DECIMAL_LENGTH)}
         </div>
       </div>
       <div className={`${cx('chip__name')}`}>
-        {formatNumLength(l * 100, 3, 0)}
+        {formatNumLength(lightness * 100, 3, 0)}
+      </div>
+      <div
+        className={cx(
+          'chip__icon',
+          'chip__icon--part-warning',
+          'material-symbols-outlined'
+        )}
+      >
+        warning
+      </div>
+      <div
+        className={cx(
+          'chip__icon',
+          'chip__icon--part-error',
+          'material-symbols-outlined'
+        )}
+      >
+        error
       </div>
     </li>
   );

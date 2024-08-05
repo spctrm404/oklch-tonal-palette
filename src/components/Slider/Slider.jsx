@@ -53,7 +53,7 @@ const Slider = ({
       onChangeEnd={onChangeEndHandler}
       onChange={onChangeHandler}
       data-theme={theme}
-      style={{ '--normalized-value': normalizedValue() }}
+      style={{ '--normalized-val': normalizedValue() }}
       {...props}
     >
       <AriaSliderTrack className={cx('slider__track')}>
