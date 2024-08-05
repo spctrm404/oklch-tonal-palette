@@ -5,7 +5,6 @@ import {
   Input as AriaInput,
 } from 'react-aria-components';
 import IconButton from '../IconButton/IconButton.jsx';
-import { disassembleDigits } from '../../utils/stringUtils.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_NumberField.module.scss';
 import classNames from 'classnames/bind';
@@ -24,42 +23,38 @@ const NumberField = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const rootRef = useRef(null);
   const inputRef = useRef(null);
 
   const isChagedRef = useRef(false);
   const innerValueRef = useRef(0);
 
   const syncInnerValueToValue = useCallback(() => {
-    console.log('setInnerVal');
+    // console.log('setInnerVal');
     innerValueRef.current = value;
     isChagedRef.current = false;
   }, [value]);
 
   const onChangeHandler = useCallback((newValue) => {
-    console.log('onChange');
+    // console.log('onChange');
     const prevInnerValue = innerValueRef.current;
     innerValueRef.current = newValue;
     isChagedRef.current = prevInnerValue !== innerValueRef.current;
   }, []);
   const onKeyDownHandler = useCallback(
     (e) => {
-      console.log('onKeyDown');
-      console.log(inputRef.current);
+      // console.log('onKeyDown');
+      // console.log(inputRef.current);
       if (isChagedRef.current) onChange?.(innerValueRef.current);
       if (e.key === 'Enter') inputRef.current.blur();
     },
     [onChange]
   );
-  const onFocusHandler = useCallback(() => {
-    console.log('onFocus');
-  }, []);
   const onBlurHandler = useCallback(() => {
-    console.log('onBlur');
+    // console.log('onBlur');
     if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
-    console.log('onPress');
+    // console.log('onPress');
     if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
 
@@ -67,21 +62,21 @@ const NumberField = ({
     syncInnerValueToValue();
   }, [syncInnerValueToValue]);
 
-  const countDigits = useCallback(() => {
-    const [minIntPart, minDecimalPart] = disassembleDigits(minValue);
-    const [maxIntPart, maxDecimalPart] = disassembleDigits(maxValue);
-    const [stepIntPart, stepDecimalPart] = disassembleDigits(step);
-    const maxIntLength = Math.max(
-      minIntPart.length,
-      maxIntPart.length,
-      stepIntPart.length
+  const digitLength = useCallback(() => {
+    const [minIntegerPart, minDecimalPart] = minValue.toString().split('.');
+    const [maxIntegerPart, maxDecimalPart] = maxValue.toString().split('.');
+    const [stepIntegerPart, stepDecimalPart] = step.toString().split('.');
+    const maxIntegerLength = Math.max(
+      minIntegerPart.length,
+      maxIntegerPart.length,
+      stepIntegerPart.length
     );
     const maxDecimalLength = Math.max(
       minDecimalPart ? minDecimalPart.length + 1 : 0,
       maxDecimalPart ? maxDecimalPart.length + 1 : 0,
       stepDecimalPart ? stepDecimalPart.length + 1 : 0
     );
-    return maxIntLength + maxDecimalLength;
+    return maxIntegerLength + maxDecimalLength;
   }, [minValue, maxValue, step]);
 
   return (
@@ -93,12 +88,10 @@ const NumberField = ({
       value={innerValueRef.current}
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
-      onFocus={onFocusHandler}
       onBlur={onBlurHandler}
       isWheelDisabled={isWheelDisabled}
       data-theme={theme}
-      ref={rootRef}
-      style={{ '--min-ch': countDigits() }}
+      style={{ '--min-ch': digitLength() }}
       {...props}
     >
       <AriaGroup className={cx('number-field__group')}>

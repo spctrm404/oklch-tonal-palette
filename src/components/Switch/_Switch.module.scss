@@ -85,6 +85,49 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       transform: translate(calc(-50% + $width - $height), -50%);
     }
 
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: $thumb-state-size;
+      height: $thumb-state-size;
+      background-color: var(--on-surface-variant-light);
+      border-radius: $state-rad;
+      opacity: 0;
+      transition: opacity $duration $easing, transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$root-selector}[data-selected] #{&} {
+        background-color: var(--primary-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--primary-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-hovered] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-focused] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-focus-visible] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-pressed] #{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-disabled] #{&} {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+      }
+    }
+
     &__shape {
       position: absolute;
       top: 50%;
@@ -190,49 +233,6 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
           }
         }
       }
-    }
-  }
-
-  &__state {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: $thumb-state-size;
-    height: $thumb-state-size;
-    background-color: var(--on-surface-variant-light);
-    border-radius: $state-rad;
-    opacity: 0;
-    transition: opacity $duration $easing, transform $duration $easing;
-    transform: translate(-50%, -50%) scale(0%, 0%);
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      background-color: var(--on-surface-variant-dark);
-    }
-
-    @at-root #{$root-selector}[data-selected] #{&} {
-      background-color: var(--primary-light);
-      @at-root #{$root-selector}[data-theme='dark']#{&} {
-        background-color: var(--primary-dark);
-      }
-    }
-    @at-root #{$root-selector}[data-hovered] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-focused] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-focus-visible] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-pressed] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-disabled] #{&} {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0%, 0%);
     }
   }
 

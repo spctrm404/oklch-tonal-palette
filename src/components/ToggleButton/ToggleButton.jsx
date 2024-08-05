@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext } from 'react';
 import { ToggleButton as AriaToggleButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_ToggleButton.module.scss';
@@ -8,16 +8,14 @@ const cx = classNames.bind(st);
 
 const ToggleButton = ({
   buttontype = 'standard',
-  materialIconA = '',
-  materialIconB = '',
+  materialIconA: materialIcon = '',
+  materialIconB: materialIconAlt = '',
   isSelected = null,
   onChange = () => {},
   className = '',
   ...props
 }) => {
   const { theme } = useContext(ThemeContext);
-
-  const rootRef = useRef(null);
 
   const onChangeHandler = useCallback(
     (newValue) => {
@@ -33,13 +31,12 @@ const ToggleButton = ({
       isSelected={isSelected}
       onChange={onChangeHandler}
       data-theme={theme}
-      ref={rootRef}
       {...props}
     >
       <div
         className={cx(
-          'toggle-button__root__shape',
-          'toggle-button__root__shape--part-background'
+          'toggle-button__shape',
+          'toggle-button__shape--part-background'
         )}
       />
       <div className={cx('toggle-button__state')} />
@@ -51,9 +48,9 @@ const ToggleButton = ({
             'material-symbols-outlined'
           )}
         >
-          {materialIconA}
+          {materialIcon}
         </div>
-        {materialIconB && (
+        {materialIconAlt && (
           <div
             className={cx(
               'toggle-button__content__icon',
@@ -61,14 +58,14 @@ const ToggleButton = ({
               'material-symbols-outlined'
             )}
           >
-            {materialIconB}
+            {materialIconAlt}
           </div>
         )}
       </div>
       <div
         className={cx(
-          'toggle-button__root__shape',
-          'toggle-button__root__shape--part-foreground'
+          'toggle-button__shape',
+          'toggle-button__shape--part-foreground'
         )}
       />
     </AriaToggleButton>

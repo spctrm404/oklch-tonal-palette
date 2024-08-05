@@ -139,6 +139,9 @@ const PaletteController = ({
           handleChangeXYSlider({ x, y }, 'lInflect', 'cMax');
         }}
       />
+      <p>
+        {lInflect}, {cMax}
+      </p>
       {/* <NumberBox
         value={lInflect}
         min={0}

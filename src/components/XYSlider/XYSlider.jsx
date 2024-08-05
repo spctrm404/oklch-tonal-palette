@@ -33,7 +33,6 @@ const XYSlider = ({
 
   const positionRef = useRef({ x: 0, y: 0 });
 
-  const rootRef = useRef(null);
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
 
@@ -72,31 +71,26 @@ const XYSlider = ({
       return acc;
     }, {});
   }, [minValue, maxValue, normalizedPosition]);
+  const relativePositionToTrack = useCallback(() => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    const position = positionRef.current;
+    return {
+      x:
+        clamp(
+          position.x,
+          -0.5 * thumbRect.width,
+          trackRect.width - 0.5 * thumbRect.width
+        ) / trackRect.width,
+      y:
+        clamp(
+          position.y,
+          -0.5 * thumbRect.height,
+          trackRect.height - 0.5 * thumbRect.height
+        ) / trackRect.height,
+    };
+  }, []);
 
-  const getClampedPosition = useCallback((position) => {
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-    return {
-      x: clamp(
-        position.x,
-        -0.5 * thumbRect.width,
-        trackRect.width - 0.5 * thumbRect.width
-      ),
-      y: clamp(
-        position.y,
-        -0.5 * thumbRect.height,
-        trackRect.height - 0.5 * thumbRect.height
-      ),
-    };
-  }, []);
-  const getNormalizedPosition = useCallback((position) => {
-    const trackRect = trackRef.current.getBoundingClientRect();
-    const thumbRect = thumbRef.current.getBoundingClientRect();
-    return {
-      x: (position.x + 0.5 * thumbRect.width) / trackRect.width,
-      y: 1 - (position.y + 0.5 * thumbRect.height) / trackRect.height,
-    };
-  }, []);
   const getClampedValue = useCallback(
     (value) => {
       return Object.keys(value).reduce((acc, key) => {
@@ -115,6 +109,23 @@ const XYSlider = ({
     },
     [step]
   );
+
+  const clampPosition = useCallback(() => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    positionRef.current = {
+      x: clamp(
+        positionRef.current.x,
+        -0.5 * thumbRect.width,
+        trackRect.width - 0.5 * thumbRect.width
+      ),
+      y: clamp(
+        positionRef.current.y,
+        -0.5 * thumbRect.height,
+        trackRect.height - 0.5 * thumbRect.height
+      ),
+    };
+  }, []);
 
   const onChangeEndHandler = useCallback(() => {
     const newValue = valueFromPosition();
@@ -139,28 +150,24 @@ const XYSlider = ({
         x: e.x - 0.5 * thumbRect.width,
         y: e.y - 0.5 * thumbRect.height,
       };
-      // console.log('onPressStart', positionRef.current);
       onChangeHandler();
     },
     [onChangeHandler]
   );
   const onMove = useCallback(
     (e) => {
-      if (e.pointerType === 'keyboard')
-        positionRef.current = getClampedPosition(positionRef.current);
+      if (e.pointerType === 'keyboard') clampPosition();
       positionRef.current.x += e.deltaX;
       positionRef.current.y += e.deltaY;
-      // console.log('onMove', positionRef.current);
       onChangeHandler();
     },
-    [getClampedPosition, onChangeHandler]
+    [clampPosition, onChangeHandler]
   );
   const onMoveEnd = useCallback(() => {
-    positionRef.current = getClampedPosition(positionRef.current);
+    clampPosition();
     setDragging(false);
-    // console.log('onMoveEnd', positionRef.current);
     onChangeEndHandler();
-  }, [getClampedPosition, onChangeEndHandler]);
+  }, [clampPosition, onChangeEndHandler]);
 
   const { hoverProps: trackHoverProps, isHovered: trackIsHovered } = useHover(
     {}
@@ -220,30 +227,25 @@ const XYSlider = ({
   );
 
   const setPositionByValue = useCallback(() => {
-    // console.log('setByValue');
-    const newPosition = positionFromValue();
-    positionRef.current = newPosition;
+    positionRef.current = positionFromValue();
   }, [positionFromValue]);
-  //error on here
-  const applyPosition = useCallback(
-    (position) => {
-      const clampedPosition = getClampedPosition(position);
-      console.log(clampedPosition);
-      const a = getNormalizedPosition(clampedPosition);
-      // thumbRef.current.style.setProperty('left', `${clampedPosition.x}px`);
-      // thumbRef.current.style.setProperty('top', `${clampedPosition.y}px`);
-      thumbRef.current.style.setProperty('left', `${100 * a.x}%`);
-      thumbRef.current.style.setProperty('top', `${100 * a.y}%`);
-    },
-    [getClampedPosition, getNormalizedPosition]
-  );
+  const applyPosition = useCallback(() => {
+    thumbRef.current.style.setProperty(
+      'left',
+      `${100 * relativePositionToTrack().x}%`
+    );
+    thumbRef.current.style.setProperty(
+      'top',
+      `${100 * relativePositionToTrack().y}%`
+    );
+  }, [relativePositionToTrack]);
 
   useLayoutEffect(() => {
     setPositionByValue();
-    applyPosition(positionRef.current);
+    applyPosition();
   }, []);
   useLayoutEffect(() => {
-    applyPosition(positionRef.current);
+    applyPosition();
   });
 
   return (
@@ -255,7 +257,6 @@ const XYSlider = ({
         '--normalized-val-x': normalizedValue().x,
         '--normalized-val-y': normalizedValue().y,
       }}
-      ref={rootRef}
       {...props}
     >
       <div
@@ -272,30 +273,30 @@ const XYSlider = ({
         <div className={cx('xyslider__track__shape')} />
         <div
           className={cx(
-            'xyslider__guide',
-            'xyslider__guide--part-top',
-            'xyslider__guide--part-vertical'
+            'xyslider__track__guide',
+            'xyslider__track__guide--part-top',
+            'xyslider__track__guide--part-vertical'
           )}
         />
         <div
           className={cx(
-            'xyslider__guide',
-            'xyslider__guide--part-right',
-            'xyslider__guide--part-horizontal'
+            'xyslider__track__guide',
+            'xyslider__track__guide--part-right',
+            'xyslider__track__guide--part-horizontal'
           )}
         />
         <div
           className={cx(
-            'xyslider__guide',
-            'xyslider__guide--part-bottom',
-            'xyslider__guide--part-vertical'
+            'xyslider__track__guide',
+            'xyslider__track__guide--part-bottom',
+            'xyslider__track__guide--part-vertical'
           )}
         />
         <div
           className={cx(
-            'xyslider__guide',
-            'xyslider__guide--part-left',
-            'xyslider__guide--part-horizontal'
+            'xyslider__track__guide',
+            'xyslider__track__guide--part-left',
+            'xyslider__track__guide--part-horizontal'
           )}
         />
         <div
@@ -312,30 +313,30 @@ const XYSlider = ({
           }}
           ref={thumbRef}
         >
-          <div className={cx('xyslider__state')} />
+          <div className={cx('xyslider__thumb__state')} />
           <div className={cx('xyslider__thumb__shape')}>
             <div
               className={cx(
-                'xyslider__thumb__shape__indicator',
-                'xyslider__thumb__shape__indicator--part-top'
+                'xyslider__thumb__shape__component',
+                'xyslider__thumb__shape__component--part-top'
               )}
             />
             <div
               className={cx(
-                'xyslider__thumb__shape__indicator',
-                'xyslider__thumb__shape__indicator--part-right'
+                'xyslider__thumb__shape__component',
+                'xyslider__thumb__shape__component--part-right'
               )}
             />
             <div
               className={cx(
-                'xyslider__thumb__shape__indicator',
-                'xyslider__thumb__shape__indicator--part-bottom'
+                'xyslider__thumb__shape__component',
+                'xyslider__thumb__shape__component--part-bottom'
               )}
             />
             <div
               className={cx(
-                'xyslider__thumb__shape__indicator',
-                'xyslider__thumb__shape__indicator--part-left'
+                'xyslider__thumb__shape__component',
+                'xyslider__thumb__shape__component--part-left'
               )}
             />
           </div>

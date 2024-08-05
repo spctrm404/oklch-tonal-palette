@@ -70,7 +70,7 @@ const Slider = ({
           )}
         />
         <AriaSliderThumb className={cx('slider__thumb')}>
-          <div className={cx('slider__state')} />
+          <div className={cx('slider__thumb__state')} />
           <div className={cx('slider__thumb__shape')} />
         </AriaSliderThumb>
       </AriaSliderTrack>

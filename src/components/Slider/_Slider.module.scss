@@ -150,6 +150,51 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       cursor: auto;
     }
 
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 1;
+      background-color: var(--primary-light);
+      border-radius: $state-rad;
+      opacity: 0;
+      transition: background-color $duration $easing, opacity $duration $easing,
+        transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+      @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
+        width: $state-width;
+        height: $state-height;
+      }
+      @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
+        width: $state-height;
+        height: $state-width;
+      }
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-hovered] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-focused] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[focus-visible] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-dragging] #{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-disabled] #{&} {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+      }
+    }
+
     &__shape {
       position: absolute;
       top: 50%;
@@ -196,53 +241,6 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
           );
         }
       }
-    }
-  }
-
-  &__state {
-    $parent-selector: '.slider__thumb';
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    background-color: var(--primary-light);
-    border-radius: $state-rad;
-    opacity: 0;
-    transition: background-color $duration $easing, opacity $duration $easing,
-      transform $duration $easing;
-    transform: translate(-50%, -50%) scale(0%, 0%);
-    @at-root #{$root-selector}[data-orientation='horizontal'] #{&} {
-      width: $state-width;
-      height: $state-height;
-    }
-    @at-root #{$root-selector}[data-orientation='vertical'] #{&} {
-      width: $state-height;
-      height: $state-width;
-    }
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      background-color: var(--primary-dark);
-    }
-
-    @at-root #{$parent-selector}[data-hovered] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-focused] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[focus-visible] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-dragging] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-disabled] #{&} {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0%, 0%);
     }
   }
 }

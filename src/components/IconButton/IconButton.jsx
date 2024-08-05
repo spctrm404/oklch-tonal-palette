@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_IconButton.module.scss';
@@ -9,13 +9,11 @@ const cx = classNames.bind(st);
 const IconButton = ({
   buttontype = 'standard',
   materialIcon = '',
-  className = '',
   onPress = () => {},
+  className = '',
   ...props
 }) => {
   const { theme } = useContext(ThemeContext);
-
-  const rootRef = useRef(null);
 
   const onPressHandler = useCallback(() => {
     onPress?.();
@@ -27,13 +25,12 @@ const IconButton = ({
       data-button-type={buttontype}
       onPress={onPressHandler}
       data-theme={theme}
-      ref={rootRef}
       {...props}
     >
       <div
         className={cx(
-          'icon-button__root__shape',
-          'icon-button__root__shape--part-background'
+          'icon-button__shape',
+          'icon-button__shape--part-background'
         )}
       />
       <div className={cx('icon-button__state')} />
@@ -49,8 +46,8 @@ const IconButton = ({
       </div>
       <div
         className={cx(
-          'icon-button__root__shape',
-          'icon-button__root__shape--part-foreground'
+          'icon-button__shape',
+          'icon-button__shape--part-foreground'
         )}
       />
     </AriaButton>

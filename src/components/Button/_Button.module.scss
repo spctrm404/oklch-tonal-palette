@@ -158,115 +158,115 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         box-shadow: var(--shadow-0);
       }
     }
+  }
 
-    &__shape {
-      position: relative;
-      grid-row: 1 / -1;
-      grid-column: 1 / -1;
-      border-radius: $rad;
+  &__shape {
+    position: relative;
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    border-radius: $rad;
 
-      &--part {
-        &-background {
-          z-index: 1;
-          @at-root #{$root-selector}[data-button-type='elevated'] #{&} {
-            background-color: var(--surface-container-low-light);
-            @at-root #{$root-selector}[data-theme='dark']#{&} {
-              background-color: var(--surface-container-low-dark);
-            }
-
-            @at-root #{$root-selector}[data-disabled]#{&} {
-              background-color: color-mix(
-                in oklch,
-                var(--on-surface-light) 12%,
-                transparent
-              );
-              @at-root #{$root-selector}[data-theme='dark']#{&} {
-                background-color: color-mix(
-                  in oklch,
-                  var(--on-surface-dark) 12%,
-                  transparent
-                );
-              }
-            }
+    &--part {
+      &-background {
+        z-index: 1;
+        @at-root #{$root-selector}[data-button-type='elevated'] #{&} {
+          background-color: var(--surface-container-low-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--surface-container-low-dark);
           }
-          @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
-            background-color: var(--secondary-container-light);
-            @at-root #{$root-selector}[data-theme='dark']#{&} {
-              background-color: var(--secondary-container-dark);
-            }
 
-            @at-root #{$root-selector}[data-disabled]#{&} {
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: color-mix(
+              in oklch,
+              var(--on-surface-light) 12%,
+              transparent
+            );
+            @at-root #{$root-selector}[data-theme='dark']#{&} {
               background-color: color-mix(
                 in oklch,
-                var(--on-surface-light) 12%,
+                var(--on-surface-dark) 12%,
                 transparent
               );
-              @at-root #{$root-selector}[data-theme='dark']#{&} {
-                background-color: color-mix(
-                  in oklch,
-                  var(--on-surface-dark) 12%,
-                  transparent
-                );
-              }
-            }
-          }
-          @at-root #{$root-selector}[data-button-type='filled'] #{&} {
-            background-color: var(--primary-light);
-            @at-root #{$root-selector}[data-theme='dark']#{&} {
-              background-color: var(--primary-dark);
-            }
-
-            @at-root #{$root-selector}[data-disabled]#{&} {
-              background-color: color-mix(
-                in oklch,
-                var(--on-surface-light) 12%,
-                transparent
-              );
-              @at-root #{$root-selector}[data-theme='dark']#{&} {
-                background-color: color-mix(
-                  in oklch,
-                  var(--on-surface-dark) 12%,
-                  transparent
-                );
-              }
             }
           }
         }
+        @at-root #{$root-selector}[data-button-type='tonal'] #{&} {
+          background-color: var(--secondary-container-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--secondary-container-dark);
+          }
 
-        &-foreground {
-          z-index: 4;
-          @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
-            border-color: var(--outline-light);
-            border-style: solid;
-            border-width: $border-thickness;
-            transition: border-color $duration $easing,
-              box-shadow $duration $easing;
-
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: color-mix(
+              in oklch,
+              var(--on-surface-light) 12%,
+              transparent
+            );
             @at-root #{$root-selector}[data-theme='dark']#{&} {
-              border-color: var(--outline-dark);
-            }
-
-            @at-root #{$root-selector}[data-pressed]#{&} {
-              border-color: var(--primary-light);
-              @at-root #{$root-selector}[data-theme='dark']#{&} {
-                border-color: var(--primary-dark);
-              }
-            }
-
-            @at-root #{$root-selector}[data-disabled]#{&} {
-              border-color: color-mix(
+              background-color: color-mix(
                 in oklch,
-                var(--on-surface-light) 12%,
+                var(--on-surface-dark) 12%,
                 transparent
               );
+            }
+          }
+        }
+        @at-root #{$root-selector}[data-button-type='filled'] #{&} {
+          background-color: var(--primary-light);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-dark);
+          }
 
-              @at-root #{$root-selector}[data-theme='dark']#{&} {
-                border-color: color-mix(
-                  in oklch,
-                  var(--on-surface-dark) 12%,
-                  transparent
-                );
-              }
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            background-color: color-mix(
+              in oklch,
+              var(--on-surface-light) 12%,
+              transparent
+            );
+            @at-root #{$root-selector}[data-theme='dark']#{&} {
+              background-color: color-mix(
+                in oklch,
+                var(--on-surface-dark) 12%,
+                transparent
+              );
+            }
+          }
+        }
+      }
+
+      &-foreground {
+        z-index: 4;
+        @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+          border-color: var(--outline-light);
+          border-style: solid;
+          border-width: $border-thickness;
+          transition: border-color $duration $easing,
+            box-shadow $duration $easing;
+
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            border-color: var(--outline-dark);
+          }
+
+          @at-root #{$root-selector}[data-pressed]#{&} {
+            border-color: var(--primary-light);
+            @at-root #{$root-selector}[data-theme='dark']#{&} {
+              border-color: var(--primary-dark);
+            }
+          }
+
+          @at-root #{$root-selector}[data-disabled]#{&} {
+            border-color: color-mix(
+              in oklch,
+              var(--on-surface-light) 12%,
+              transparent
+            );
+
+            @at-root #{$root-selector}[data-theme='dark']#{&} {
+              border-color: color-mix(
+                in oklch,
+                var(--on-surface-dark) 12%,
+                transparent
+              );
             }
           }
         }

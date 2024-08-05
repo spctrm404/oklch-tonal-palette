@@ -98,101 +98,105 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         }
       }
     }
-  }
 
-  &__guide {
-    $parent-selector: '.xyslider__track';
-    $line-light: color-mix(in oklch, var(--primary-light) 16%, transparent);
-    $line-dark: color-mix(in oklch, var(--primary-dark) 16%, transparent);
+    &__guide {
+      $line-light: color-mix(in oklch, var(--primary-light) 16%, transparent);
+      $line-dark: color-mix(in oklch, var(--primary-dark) 16%, transparent);
 
-    position: absolute;
-    z-index: 2;
-    transition: background-color $duration $easing, transform $duration $easing;
+      position: absolute;
+      z-index: 2;
+      transition: background-color $duration $easing,
+        transform $duration $easing;
 
-    @at-root #{$parent-selector}[data-hovered] #{&} {
-      transform: scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-focused])
-        #{&} {
-      transform: scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-dragging])
-        #{&} {
-      transform: scale(100%, 100%);
-    }
-
-    &--part {
-      &-vertical {
-        width: $guide-thickness;
-        transform: scale(100%, 0%);
+      @at-root #{$parent-selector}[data-hovered] #{&} {
+        transform: scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-focused])
+          #{&} {
+        transform: scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}:has(#{$root-selector}__thumb[data-dragging])
+          #{&} {
+        transform: scale(100%, 100%);
       }
 
-      &-horizontal {
-        height: $guide-thickness;
-        transform: scale(0%, 100%);
-      }
-
-      &-top {
-        top: 0;
-        bottom: calc(100% - var(--normalized-val-y) * 100% + 0.5 * $thumb-size);
-        left: calc(
-          var(--normalized-val-x) * 100% + $thumb-shape-size - 0.5 *
-            $guide-thickness - 0.5 * $thumb-size
-        );
-        border-radius: 0 0 $guide-rad $guide-rad;
-        transform-origin: bottom center;
-        @include dashed-line($guide-dash, $guide-gap, top, $line-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, top, $line-dark);
+      &--part {
+        &-vertical {
+          width: $guide-thickness;
+          transform: scale(100%, 0%);
         }
-      }
 
-      &-bottom {
-        top: calc(
-          var(--normalized-val-y) * 100% + $thumb-size - 0.5 * $thumb-size
-        );
-        bottom: 0;
-        left: calc(
-          var(--normalized-val-x) * 100% + $thumb-shape-size - 0.5 *
-            $guide-thickness - 0.5 * $thumb-size
-        );
-        border-radius: $guide-rad $guide-rad 0 0;
-        transform-origin: top center;
-        @include dashed-line($guide-dash, $guide-gap, bottom, $line-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, bottom, $line-dark);
+        &-horizontal {
+          height: $guide-thickness;
+          transform: scale(0%, 100%);
         }
-      }
 
-      &-left {
-        top: calc(
-          var(--normalized-val-y) * 100% + $thumb-shape-size - 0.5 *
-            $guide-thickness - 0.5 * $thumb-size
-        );
-        right: calc(100% - var(--normalized-val-x) * 100% + 0.5 * $thumb-size);
-        left: 0;
-        border-radius: 0 $guide-rad $guide-rad 0;
-        transform-origin: center right;
-        @include dashed-line($guide-dash, $guide-gap, left, $line-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, left, $line-dark);
+        &-top {
+          top: 0;
+          bottom: calc(
+            100% - var(--normalized-val-y) * 100% + 0.5 * $thumb-size
+          );
+          left: calc(
+            var(--normalized-val-x) * 100% + $thumb-shape-size - 0.5 *
+              $guide-thickness - 0.5 * $thumb-size
+          );
+          border-radius: 0 0 $guide-rad $guide-rad;
+          transform-origin: bottom center;
+          @include dashed-line($guide-dash, $guide-gap, top, $line-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            @include dashed-line($guide-dash, $guide-gap, top, $line-dark);
+          }
         }
-      }
 
-      &-right {
-        top: calc(
-          var(--normalized-val-y) * 100% + $thumb-shape-size - 0.5 *
-            $guide-thickness - 0.5 * $thumb-size
-        );
-        right: 0;
-        left: calc(
-          var(--normalized-val-x) * 100% + $thumb-size - 0.5 * $thumb-size
-        );
-        border-radius: $guide-rad 0 0 $guide-rad;
-        transform-origin: center left;
-        @include dashed-line($guide-dash, $guide-gap, right, $line-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          @include dashed-line($guide-dash, $guide-gap, right, $line-dark);
+        &-bottom {
+          top: calc(
+            var(--normalized-val-y) * 100% + $thumb-size - 0.5 * $thumb-size
+          );
+          bottom: 0;
+          left: calc(
+            var(--normalized-val-x) * 100% + $thumb-shape-size - 0.5 *
+              $guide-thickness - 0.5 * $thumb-size
+          );
+          border-radius: $guide-rad $guide-rad 0 0;
+          transform-origin: top center;
+          @include dashed-line($guide-dash, $guide-gap, bottom, $line-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            @include dashed-line($guide-dash, $guide-gap, bottom, $line-dark);
+          }
+        }
+
+        &-left {
+          top: calc(
+            var(--normalized-val-y) * 100% + $thumb-shape-size - 0.5 *
+              $guide-thickness - 0.5 * $thumb-size
+          );
+          right: calc(
+            100% - var(--normalized-val-x) * 100% + 0.5 * $thumb-size
+          );
+          left: 0;
+          border-radius: 0 $guide-rad $guide-rad 0;
+          transform-origin: center right;
+          @include dashed-line($guide-dash, $guide-gap, left, $line-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            @include dashed-line($guide-dash, $guide-gap, left, $line-dark);
+          }
+        }
+
+        &-right {
+          top: calc(
+            var(--normalized-val-y) * 100% + $thumb-shape-size - 0.5 *
+              $guide-thickness - 0.5 * $thumb-size
+          );
+          right: 0;
+          left: calc(
+            var(--normalized-val-x) * 100% + $thumb-size - 0.5 * $thumb-size
+          );
+          border-radius: $guide-rad 0 0 $guide-rad;
+          transform-origin: center left;
+          @include dashed-line($guide-dash, $guide-gap, right, $line-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            @include dashed-line($guide-dash, $guide-gap, right, $line-dark);
+          }
         }
       }
     }
@@ -214,6 +218,46 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       cursor: auto;
     }
 
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 1;
+      width: $state-size;
+      height: $state-size;
+      background-color: var(--primary-light);
+      border-radius: $state-rad;
+      opacity: 0;
+      transition: background-color $duration $easing, opacity $duration $easing,
+        transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--primary-dark);
+      }
+
+      @at-root #{$parent-selector}[data-hovered] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-focused] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[focus-visible] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$parent-selector}[data-dragging] #{&} {
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-disabled] #{&} {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+      }
+    }
+
     &__shape {
       position: absolute;
       top: 50%;
@@ -230,7 +274,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         height: $thumb-shape-size-pressed;
       }
 
-      &__indicator {
+      &__component {
         position: absolute;
         background-color: var(--primary-light);
         border-radius: $thumb-shape-indicator-rad;
@@ -296,48 +340,6 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
           }
         }
       }
-    }
-  }
-
-  &__state {
-    $parent-selector: '.xyslider__thumb';
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    width: $state-size;
-    height: $state-size;
-    background-color: var(--primary-light);
-    border-radius: $state-rad;
-    opacity: 0;
-    transition: background-color $duration $easing, opacity $duration $easing,
-      transform $duration $easing;
-    transform: translate(-50%, -50%) scale(0%, 0%);
-
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      background-color: var(--primary-dark);
-    }
-
-    @at-root #{$parent-selector}[data-hovered] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-focused] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[focus-visible] #{&} {
-      opacity: 0.08;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$parent-selector}[data-dragging] #{&} {
-      opacity: 0.12;
-      transform: translate(-50%, -50%) scale(100%, 100%);
-    }
-    @at-root #{$root-selector}[data-disabled] #{&} {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0%, 0%);
     }
   }
 }

@@ -34,8 +34,3 @@ export const replaceCamelCaseWord = (
       .replace(/(?:^|\s)\S/g, (char) => char.toUpperCase());
   });
 };
-
-export const disassembleDigits = (num) => {
-  const [intPart, decimalPart] = num.toString().split('.');
-  return [intPart, decimalPart];
-};
