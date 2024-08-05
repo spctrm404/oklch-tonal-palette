@@ -23,10 +23,7 @@ function App() {
   }, []);
 
   const [palettes, setPalettes] = useState([createARandomPalette()]);
-  const [selectedPalette, setSelectedPalette] = useState({
-    id: palettes[0].id,
-    idx: 0,
-  });
+  const [selectedPalette, setSelectedPalette] = useState(palettes[0]);
 
   const addAPalette = useCallback(() => {
     const newPalette = createARandomPalette();
@@ -50,8 +47,13 @@ function App() {
     });
   };
 
-  const clickPaletteHandler = (id, idx) => {
-    setSelectedPalette({ id: id, idx: idx });
+  const findeSelectedPalette = useCallback(() => {
+    return palettes.find((palette) => palette.id === selectedPalette.id);
+  }, [palettes, selectedPalette]);
+
+  const clickPaletteHandler = (id) => {
+    const selected = palettes.find((palette) => palette.id === id);
+    setSelectedPalette(selected);
   };
   useEffect(() => {}, []);
 
@@ -73,27 +75,26 @@ function App() {
       />
       <div className="control">
         <PaletteController
-          totalChips={palettes[selectedPalette.idx].chipNum}
-          lInflect={palettes[selectedPalette.idx].lInflect}
-          cMax={palettes[selectedPalette.idx].cMax}
-          hFrom={palettes[selectedPalette.idx].hueFrom}
-          hTo={palettes[selectedPalette.idx].hueTo}
+          totalChips={findeSelectedPalette().chipNum}
+          lInflect={findeSelectedPalette().lInflect}
+          cMax={findeSelectedPalette().cMax}
+          hFrom={findeSelectedPalette().hueFrom}
+          hTo={findeSelectedPalette().hueTo}
           onChange={handleChangePaletteController}
         ></PaletteController>
       </div>
       <div className="palette">
-        {palettes.map((aPalette, idx) => (
+        {palettes.map((aPalette) => (
           <Palette
             key={aPalette.id}
+            id={aPalette.id}
             totalChips={aPalette.chipNum}
             lInflect={aPalette.lInflect}
             cMax={aPalette.cMax}
             hFrom={aPalette.hueFrom}
             hTo={aPalette.hueTo}
             selected={aPalette.id === selectedPalette.id}
-            onClickPalette={() => {
-              clickPaletteHandler(aPalette.id, idx);
-            }}
+            onClickPalette={clickPaletteHandler}
           />
         ))}
       </div>

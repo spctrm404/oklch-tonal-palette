@@ -58,7 +58,6 @@ export const createColour = (
 
   if (idx === 0)
     return {
-      id: crypto.randomUUID(),
       mode: `oklch`,
       l: 0,
       c: 0,
@@ -69,7 +68,6 @@ export const createColour = (
 
   if (idx === totalColours)
     return {
-      id: crypto.randomUUID(),
       mode: `oklch`,
       l: 1,
       c: 0,
@@ -88,7 +86,6 @@ export const createColour = (
   const inSrgb = displayable(rawColour);
 
   return {
-    id: crypto.randomUUID(),
     mode: `oklch`,
     l: p3ClamppedColour.l,
     c: p3ClamppedColour.c,

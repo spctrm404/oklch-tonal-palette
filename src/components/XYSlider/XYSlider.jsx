@@ -170,7 +170,7 @@ const XYSlider = ({
       if (!isDisabled) onMoveEnd();
     },
   });
-  const trackProps = mergeProps(
+  const trackInteractionProps = mergeProps(
     trackHoverProps,
     trackPressProps,
     trackMoveProps
@@ -201,7 +201,7 @@ const XYSlider = ({
       if (!isDisabled) onMoveEnd();
     },
   });
-  const thumbProps = mergeProps(
+  const thumbInteractionProps = mergeProps(
     thumbHoverProps,
     thumbFocusProps,
     thumbPressProps,
@@ -231,7 +231,7 @@ const XYSlider = ({
     >
       <div
         className={cx('xyslider__track')}
-        {...trackProps}
+        {...trackInteractionProps}
         {...(!isDisabled && trackIsHovered && { 'data-hovered': 'true' })}
         {...(isDisabled && { 'data-disabled': 'true' })}
         style={{
@@ -271,7 +271,7 @@ const XYSlider = ({
         />
         <div
           className={cx('xyslider__thumb')}
-          {...thumbProps}
+          {...thumbInteractionProps}
           {...(!isDisabled && thumbIsHovered && { 'data-hovered': 'true' })}
           {...(!isDisabled && isDragging && { 'data-dragging': 'true' })}
           {...(!isDisabled && isFocused && { 'data-focused': 'true' })}
