@@ -1,0 +1,18 @@
+$gy: 0.25rem;
+
+.radio-group {
+  display: grid;
+  grid-auto-flow: row;
+
+  &[data-orientation='vertical'] {
+    grid-auto-flow: row;
+    row-gap: $gy;
+    place-items: center start;
+  }
+
+  &[data-orientation='horizontal'] {
+    grid-auto-flow: column;
+    column-gap: $gy;
+    place-items: center start;
+  }
+}

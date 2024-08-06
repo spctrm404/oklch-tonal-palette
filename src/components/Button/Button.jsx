@@ -9,7 +9,7 @@ const cx = classNames.bind(st);
 const Button = ({
   buttontype = 'text',
   materialIcon = '',
-  label = '',
+  text = '',
   onPress = () => {},
   className = '',
   ...props
@@ -39,7 +39,7 @@ const Button = ({
             {materialIcon}
           </div>
         )}
-        <div className={cx('button__content__label')}>{label}</div>
+        <div className={cx('button__content__label')}>{text}</div>
         <div
           className={cx('button__shape', 'button__shape--part-foreground')}
         />

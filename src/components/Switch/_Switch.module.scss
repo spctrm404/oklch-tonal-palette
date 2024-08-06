@@ -243,6 +243,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
     line-height: $icon-size;
     color: var(--surface-container-highest-light);
+    user-select: none;
     transition: color $duration $easing, opacity $duration $easing;
     @at-root #{$root-selector}[data-theme='dark'] #{&} {
       color: var(--surface-container-highest-dark);

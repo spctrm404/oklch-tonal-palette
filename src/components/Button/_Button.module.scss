@@ -236,7 +236,9 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 
       &-foreground {
         z-index: 4;
+        display: none;
         @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
+          display: block;
           border-color: var(--outline-light);
           border-style: solid;
           border-width: $border-thickness;
@@ -347,7 +349,9 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     grid-column: 1 / -1;
     column-gap: $content-gx;
     place-items: center stretch;
+    justify-content: center;
     padding-inline: $content-px;
+    user-select: none;
     transition: color $duration $easing;
     @at-root #{$root-selector}[data-has-icon] #{&} {
       grid-template-columns: min-content max-content;

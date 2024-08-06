@@ -1,0 +1,121 @@
+.theme {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  place-items: center end;
+  margin-inline: 1.5rem;
+}
+
+.total-swatch {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  margin-inline: 1.5rem;
+}
+
+.hues {
+  display: grid;
+  grid-template-rows: min-content 6rem min-content;
+  grid-template-columns: repeat(2, 1fr);
+  place-items: stretch stretch;
+
+  &__range {
+    grid-row: 1 / span 1;
+    grid-column: 1 / -1;
+    margin-inline: 1.5rem;
+  }
+
+  &__slider {
+    grid-row: 2 / span 1;
+    grid-column: 1 / -1;
+
+    &--control {
+      &-from {
+        align-self: start;
+      }
+
+      &-to {
+        align-self: end;
+      }
+    }
+  }
+
+  &__number-field {
+    grid-row: 3 / span 1;
+
+    &--control {
+      &-from {
+        grid-column: 1 / span 1;
+        justify-self: start;
+        margin-left: 20px;
+      }
+
+      &-to {
+        grid-column: 2 / span 1;
+        justify-self: end;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+.l-c {
+  display: grid;
+  grid-template-rows: 1fr 48px 48px;
+  grid-template-columns: 56px 1fr;
+  place-items: stretch stretch;
+
+  &__xy {
+    grid-row: 1 / span 1;
+    grid-column: 2 / span 1;
+  }
+
+  &__slider {
+    &--control {
+      &-x {
+        grid-row: 2 / span 1;
+        grid-column: 2 / span 1;
+      }
+
+      &-y {
+        grid-row: 1 / span 1;
+        grid-column: 1 / span 1;
+        justify-self: end;
+      }
+    }
+  }
+
+  &__number-fields {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    grid-row: 3 / span 1;
+    grid-column: 1 / -1;
+  }
+
+  &__number-field {
+    &--control {
+      &-x {
+        grid-row: 1 / span 1;
+        grid-column: 1 / span 1;
+        justify-self: start;
+        margin-left: 20px;
+      }
+
+      &-y {
+        grid-row: 1 / span 1;
+        grid-column: 2 / span 1;
+        justify-self: end;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+.create {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+  place-items: center start;
+  margin-inline: 1.5rem;
+}

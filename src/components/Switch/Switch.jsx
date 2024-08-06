@@ -7,8 +7,8 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Switch = ({
-  materialIconA: materialIcon = '',
-  materialIconB: materialIconAlt = '',
+  materialIcon = '',
+  materialIconAlt = '',
   isSelected = false,
   onChange = () => {},
   className = '',

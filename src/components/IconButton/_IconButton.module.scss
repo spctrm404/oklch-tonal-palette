@@ -190,6 +190,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     grid-row: 2 / span 1;
     grid-column: 2 / span 1;
     place-items: center center;
+    user-select: none;
     transition: color $duration $easing;
 
     @at-root #{$root-selector}[data-button-type='standard'] #{&} {
