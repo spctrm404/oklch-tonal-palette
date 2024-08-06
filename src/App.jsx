@@ -12,10 +12,10 @@ function App() {
   const createARandomPalette = useCallback(() => {
     const randomHue = closestQuantized(Math.random() * 360, HUE_STEP);
     const newPalette = {
-      id: crypto.randomUUID(),
+      uid: crypto.randomUUID(),
       chipNum: 10,
       lInflect: 0.5,
-      cMax: 0.1,
+      cMax: 0.11,
       hueFrom: randomHue,
       hueTo: randomHue,
     };
@@ -37,7 +37,7 @@ function App() {
 
     setPalettes((prevPalettes) => {
       return prevPalettes.map((aPalette) => {
-        return aPalette.id === selectedPalette.id
+        return aPalette.uid === selectedPalette.uid
           ? {
               ...aPalette,
               [key]: value,
@@ -48,11 +48,11 @@ function App() {
   };
 
   const findeSelectedPalette = useCallback(() => {
-    return palettes.find((palette) => palette.id === selectedPalette.id);
+    return palettes.find((palette) => palette.uid === selectedPalette.uid);
   }, [palettes, selectedPalette]);
 
-  const clickPaletteHandler = (id) => {
-    const selected = palettes.find((palette) => palette.id === id);
+  const clickPaletteHandler = (uid) => {
+    const selected = palettes.find((palette) => palette.uid === uid);
     setSelectedPalette(selected);
   };
   useEffect(() => {}, []);
@@ -86,14 +86,14 @@ function App() {
       <div className="palette">
         {palettes.map((aPalette) => (
           <Palette
-            key={aPalette.id}
-            id={aPalette.id}
+            key={aPalette.uid}
+            uid={aPalette.uid}
             totalChips={aPalette.chipNum}
             lInflect={aPalette.lInflect}
             cMax={aPalette.cMax}
             hFrom={aPalette.hueFrom}
             hTo={aPalette.hueTo}
-            selected={aPalette.id === selectedPalette.id}
+            selected={aPalette.uid === selectedPalette.uid}
             onClickPalette={clickPaletteHandler}
           />
         ))}

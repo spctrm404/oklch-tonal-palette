@@ -1,7 +1,4 @@
-// todo: change style on keypressed
-
 import { useCallback, useContext } from 'react';
-
 import {
   Slider as AriaSlider,
   SliderThumb as AriaSliderThumb,

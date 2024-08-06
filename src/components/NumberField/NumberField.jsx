@@ -29,32 +29,26 @@ const NumberField = ({
   const innerValueRef = useRef(0);
 
   const syncInnerValueToValue = useCallback(() => {
-    // console.log('setInnerVal');
     innerValueRef.current = value;
     isChagedRef.current = false;
   }, [value]);
 
   const onChangeHandler = useCallback((newValue) => {
-    // console.log('onChange');
     const prevInnerValue = innerValueRef.current;
     innerValueRef.current = newValue;
     isChagedRef.current = prevInnerValue !== innerValueRef.current;
   }, []);
   const onKeyDownHandler = useCallback(
     (e) => {
-      // console.log('onKeyDown');
-      // console.log(inputRef.current);
       if (isChagedRef.current) onChange?.(innerValueRef.current);
       if (e.key === 'Enter') inputRef.current.blur();
     },
     [onChange]
   );
   const onBlurHandler = useCallback(() => {
-    // console.log('onBlur');
     if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
-    // console.log('onPress');
     if (isChagedRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
 

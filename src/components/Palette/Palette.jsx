@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   HUE_INTEGER_LENGTH,
   LIGHTNESS_DECIMAL_LENGTH,
@@ -23,7 +16,7 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Palette = ({
-  id,
+  uid,
   totalChips: totalSwatches,
   lInflect: lightnessInflect,
   cMax: maxChroma,
@@ -43,7 +36,7 @@ const Palette = ({
       hueTo
     );
     return newColours.map((aColour) => {
-      return { ...aColour, id: crypto.randomUUID() };
+      return { ...aColour, uid: crypto.randomUUID() };
     });
   }, [totalSwatches, lightnessInflect, maxChroma, hueFrom, hueTo]);
   const updateSwatch = useCallback(() => {
@@ -58,8 +51,8 @@ const Palette = ({
       return newColours.map((aNewColour, idx) => {
         const aPrevSwatchToBeUpdated = prevSwatches[idx];
         return aPrevSwatchToBeUpdated
-          ? { ...aNewColour, id: aPrevSwatchToBeUpdated.id }
-          : { ...aNewColour, id: crypto.randomUUID() };
+          ? { ...aNewColour, uid: aPrevSwatchToBeUpdated.uid }
+          : { ...aNewColour, uid: crypto.randomUUID() };
       });
     });
   }, [totalSwatches, lightnessInflect, maxChroma, hueFrom, hueTo]);
@@ -69,8 +62,8 @@ const Palette = ({
   const [swatches, setSwatches] = useState(initialSwatch);
 
   const onPressHandler = useCallback(() => {
-    onPress?.(id);
-  }, [onPress, id]);
+    onPress?.(uid);
+  }, [onPress, uid]);
 
   const { hoverProps, isHovered } = useHover({
     onHoverStart: () => {},
