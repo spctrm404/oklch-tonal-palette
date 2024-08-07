@@ -19,7 +19,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     place-items: stretch stretch;
     min-width: calc(var(--min-ch) * 1ch + 2 * $input-px + 2 * $button-size);
     max-width: calc(
-      (var(--min-ch) + 6) * 1ch + 2 * $input-px + 2 * $button-size
+      (var(--min-ch) + 2) * 1ch + 2 * $input-px + 2 * $button-size
     );
     font-size: $font-size;
     font-style: normal;

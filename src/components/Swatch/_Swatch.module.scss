@@ -23,6 +23,8 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   display: grid;
   grid-template-rows: min-content min-content;
   grid-template-columns: 1fr;
+  place-items: stretch stretch;
+  min-width: min-content;
   white-space: nowrap;
   user-select: none;
 

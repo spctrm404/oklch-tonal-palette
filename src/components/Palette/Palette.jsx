@@ -17,19 +17,19 @@ const cx = classNames.bind(st);
 
 const Palette = ({
   uid,
-  totalSwatches,
+  swatchStep,
   lightnessInflect,
   peakChroma,
   hueFrom,
   hueTo,
   isSelected,
-  onClickPalette: onPress = () => {},
+  onPress = () => {},
   className = '',
   ...props
 }) => {
   const initialSwatch = useCallback(() => {
     const newColours = createColours(
-      totalSwatches,
+      Math.floor(100 / swatchStep),
       lightnessInflect,
       peakChroma,
       hueFrom,
@@ -38,11 +38,11 @@ const Palette = ({
     return newColours.map((aColour) => {
       return { ...aColour, uid: crypto.randomUUID() };
     });
-  }, [totalSwatches, lightnessInflect, peakChroma, hueFrom, hueTo]);
+  }, [swatchStep, lightnessInflect, peakChroma, hueFrom, hueTo]);
   const updateSwatch = useCallback(() => {
     setSwatches((prevSwatches) => {
       const newColours = createColours(
-        totalSwatches,
+        Math.floor(100 / swatchStep),
         lightnessInflect,
         peakChroma,
         hueFrom,
@@ -55,7 +55,7 @@ const Palette = ({
           : { ...aNewColour, uid: crypto.randomUUID() };
       });
     });
-  }, [totalSwatches, lightnessInflect, peakChroma, hueFrom, hueTo]);
+  }, [swatchStep, lightnessInflect, peakChroma, hueFrom, hueTo]);
 
   const { theme } = useContext(ThemeContext);
 
@@ -90,48 +90,11 @@ const Palette = ({
       className={cx('palette', className)}
       {...(isSelected && { 'data-selected': true })}
       {...(isHovered && { 'data-hovered': true })}
-      data-total-swatches={totalSwatches}
+      data-total-swatches={Math.floor(100 / swatchStep) + 1}
       data-theme={theme}
       {...rootInteractionProps}
       {...props}
     >
-      <div className={cx('palette__header')}>
-        <div className={cx('palette__header__stikcy')}>
-          <span className={cx('palette__info', 'palette__info--part-label')}>
-            #
-          </span>
-          <span className={cx('palette__info', 'palette__info--part-value')}>
-            {totalSwatches + 1}
-          </span>
-          {` `}
-          <span className={cx('palette__info', 'palette__info--part-label')}>
-            {'H:'}
-          </span>
-          <span className={cx('palette__info', 'palette__info--part-value')}>
-            {`${formatNumLength(
-              hueFrom,
-              HUE_INTEGER_LENGTH,
-              HUE_DECIMAL_LENGTH
-            )}-${formatNumLength(
-              hueTo,
-              HUE_INTEGER_LENGTH,
-              HUE_DECIMAL_LENGTH
-            )}`}
-          </span>{' '}
-          <span className={cx('palette__info', 'palette__info--part-label')}>
-            {'Cm:'}
-          </span>
-          <span className={cx('palette__info', 'palette__info--part-value')}>
-            {formatNumLength(peakChroma, 0, CHROMA_DECIMAL_LENGTH)}
-          </span>{' '}
-          <span className={cx('palette__info', 'palette__info--part-label')}>
-            {'Li:'}
-          </span>
-          <span className={cx('palette__info', 'palette__info--part-value')}>
-            {formatNumLength(lightnessInflect, 0, LIGHTNESS_DECIMAL_LENGTH)}
-          </span>
-        </div>
-      </div>
       <ul className={cx('palette__swatches')}>
         {swatches.map((aSwatch) => {
           return (
