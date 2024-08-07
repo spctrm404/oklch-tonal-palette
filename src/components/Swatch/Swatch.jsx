@@ -15,9 +15,9 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const Swatch = ({
-  l: lightness,
-  c: chroma,
-  h: hue,
+  lightness,
+  chroma,
+  hue,
   inP3,
   inSrgb,
   className = '',

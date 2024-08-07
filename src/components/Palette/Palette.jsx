@@ -17,12 +17,12 @@ const cx = classNames.bind(st);
 
 const Palette = ({
   uid,
-  totalChips: totalSwatches,
-  lInflect: lightnessInflect,
-  cMax: maxChroma,
-  hFrom: hueFrom,
-  hTo: hueTo,
-  selected: isSelected,
+  totalSwatches,
+  lightnessInflect,
+  peakChroma,
+  hueFrom,
+  hueTo,
+  isSelected,
   onClickPalette: onPress = () => {},
   className = '',
   ...props
@@ -31,20 +31,20 @@ const Palette = ({
     const newColours = createColours(
       totalSwatches,
       lightnessInflect,
-      maxChroma,
+      peakChroma,
       hueFrom,
       hueTo
     );
     return newColours.map((aColour) => {
       return { ...aColour, uid: crypto.randomUUID() };
     });
-  }, [totalSwatches, lightnessInflect, maxChroma, hueFrom, hueTo]);
+  }, [totalSwatches, lightnessInflect, peakChroma, hueFrom, hueTo]);
   const updateSwatch = useCallback(() => {
     setSwatches((prevSwatches) => {
       const newColours = createColours(
         totalSwatches,
         lightnessInflect,
-        maxChroma,
+        peakChroma,
         hueFrom,
         hueTo
       );
@@ -55,7 +55,7 @@ const Palette = ({
           : { ...aNewColour, uid: crypto.randomUUID() };
       });
     });
-  }, [totalSwatches, lightnessInflect, maxChroma, hueFrom, hueTo]);
+  }, [totalSwatches, lightnessInflect, peakChroma, hueFrom, hueTo]);
 
   const { theme } = useContext(ThemeContext);
 
@@ -122,7 +122,7 @@ const Palette = ({
             {'Cm:'}
           </span>
           <span className={cx('palette__info', 'palette__info--part-value')}>
-            {formatNumLength(maxChroma, 0, CHROMA_DECIMAL_LENGTH)}
+            {formatNumLength(peakChroma, 0, CHROMA_DECIMAL_LENGTH)}
           </span>{' '}
           <span className={cx('palette__info', 'palette__info--part-label')}>
             {'Li:'}
@@ -137,10 +137,10 @@ const Palette = ({
           return (
             <Swatch
               className={cx('palette__swatch')}
-              key={aSwatch.id}
-              l={aSwatch.l}
-              c={aSwatch.c}
-              h={aSwatch.h}
+              key={aSwatch.uid}
+              lightness={aSwatch.l}
+              chroma={aSwatch.c}
+              hue={aSwatch.h}
               inP3={aSwatch.inP3}
               inSrgb={aSwatch.inSrgb}
             ></Swatch>

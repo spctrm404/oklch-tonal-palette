@@ -15,18 +15,24 @@
 
 .hues {
   display: grid;
-  grid-template-rows: min-content 6rem min-content;
+  grid-template-rows: min-content min-content 6rem min-content;
   grid-template-columns: repeat(2, 1fr);
   place-items: stretch stretch;
 
-  &__range {
+  &__title {
     grid-row: 1 / span 1;
+    grid-column: 1 / -1;
+    margin-left: 1.5rem;
+  }
+
+  &__range {
+    grid-row: 2 / span 1;
     grid-column: 1 / -1;
     margin-inline: 1.5rem;
   }
 
   &__slider {
-    grid-row: 2 / span 1;
+    grid-row: 3 / span 1;
     grid-column: 1 / -1;
 
     &--control {
@@ -41,7 +47,7 @@
   }
 
   &__number-field {
-    grid-row: 3 / span 1;
+    grid-row: 4 / span 1;
 
     &--control {
       &-from {
@@ -61,17 +67,23 @@
 
 .l-c {
   display: grid;
-  grid-template-rows: 1fr 48px;
+  grid-template-rows: min-content 1fr 48px;
   grid-template-columns: repeat(2, 1fr);
   place-items: stretch stretch;
 
-  &__xy {
+  &__title {
     grid-row: 1 / span 1;
+    grid-column: 1 / -1;
+    margin-left: 1.5rem;
+  }
+
+  &__xy {
+    grid-row: 2 / span 1;
     grid-column: 1 / -1;
   }
 
   &__number-field {
-    grid-row: 2 / span 1;
+    grid-row: 3 / span 1;
 
     &--control {
       &-x {

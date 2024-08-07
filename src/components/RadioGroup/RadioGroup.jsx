@@ -26,7 +26,7 @@ const RadioGroup = ({
     <AriaRadioGroup
       value={value}
       onChange={onChangeHandler}
-      className={cx('radio-group', className)}
+      className={cx('radio-group', 'radio-group__root', className)}
       data-theme={theme}
       {...props}
     >

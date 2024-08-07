@@ -45,7 +45,6 @@ export const findApcaCompliantColor = (
   );
 };
 
-// todo: remove uuid (move to other component)
 export const createColour = (
   idx,
   totalColours,

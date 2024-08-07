@@ -1,10 +1,19 @@
-import { useCallback, useContext, useReducer, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useId,
+  useLayoutEffect,
+  useReducer,
+  useState,
+} from 'react';
+import { Label as AriaLabel } from 'react-aria-components';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
   HUE_STEP,
   CHROMA_LIMIT,
 } from './utils/constants.js';
+import { closestQuantized } from './utils/numberUtils.js';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import Switch from './components/Switch/Switch';
 import Radio from './components/Radio/Radio';
@@ -13,26 +22,35 @@ import Slider from './components/Slider/Slider';
 import NumberField from './components/NumberField/NumberField';
 import XYSlider from './components/XYSlider/XYSlider';
 import Button from './components/Button/Button';
+import Palette from './components/Palette/Palette';
 import './_App.scss';
 function App() {
-  const { theme, toggleTheme, updateHues, syncHues } = useContext(ThemeContext);
+  const { theme, toggleTheme, updateHue, syncHues } = useContext(ThemeContext);
 
-  const initialPaletteProps = () => {
-    const randomHue = 360 * Math.random();
+  const initialPaletteProps = useCallback(() => {
+    const randomHue = closestQuantized(360 * Math.random(), HUE_STEP);
     return {
+      selectedPalete: null,
       swatchStep: 10,
+      isHueRanged: false,
       hueFrom: randomHue,
       hueTo: randomHue,
       lightnessInflect: 0.5,
-      chromaPeak: 0.11,
+      peakChroma: 0.11,
     };
-  };
+  }, []);
   const palettePropsReducer = (state, action) => {
     switch (action.type) {
       case 'change_swatch_step': {
         return {
           ...state,
           swatchStep: action.nextVal,
+        };
+      }
+      case 'toggle_hue_ranged': {
+        return {
+          ...state,
+          isHueRanged: !state.isHueRanged,
         };
       }
       case 'change_hue_from': {
@@ -59,10 +77,10 @@ function App() {
           lightnessInflect: action.nextVal,
         };
       }
-      case 'change_chroma_peak': {
+      case 'change_peak_chroma': {
         return {
           ...state,
-          chromaPeak: action.nextVal,
+          peakChroma: action.nextVal,
         };
       }
     }
@@ -73,7 +91,21 @@ function App() {
     null,
     initialPaletteProps
   );
-  const [isHueRanged, setHueRange] = useState(false);
+
+  const [palettes, setPalettes] = useState([]);
+  const addNewPalette = useCallback(() => {
+    const newPalette = {
+      uid: crypto.randomUUID(),
+      totalSwatches: Math.floor(100 / paletteProps.swatchStep),
+      lightnessInflect: paletteProps.lightnessInflect,
+      peakChroma: paletteProps.peakChroma,
+      hueFrom: paletteProps.hueFrom,
+      hueTo: paletteProps.hueTo,
+    };
+    setPalettes((prevPalettes) => {
+      return [...prevPalettes, newPalette];
+    });
+  });
 
   const onChangeSwatchStepHandler = useCallback((newString) => {
     palettePropsDispatch({
@@ -83,7 +115,9 @@ function App() {
   }, []);
   const onChangeHueRangedHandler = useCallback(
     (newBoolean) => {
-      setHueRange(newBoolean);
+      palettePropsDispatch({
+        type: 'toggle_hue_ranged',
+      });
       if (!newBoolean) {
         palettePropsDispatch({
           type: 'sync_hue_to',
@@ -99,15 +133,15 @@ function App() {
         type: 'change_hue_from',
         nextVal: newNumber,
       });
-      updateHues('from', newNumber);
-      if (!isHueRanged) {
+      updateHue('from', newNumber);
+      if (!paletteProps.isHueRanged) {
         palettePropsDispatch({
           type: 'sync_hue_to',
         });
         syncHues();
       }
     },
-    [isHueRanged, updateHues, syncHues]
+    [paletteProps, updateHue, syncHues]
   );
   const onChangeHueToHandler = useCallback(
     (newNumber) => {
@@ -115,9 +149,9 @@ function App() {
         type: 'change_hue_to',
         nextVal: newNumber,
       });
-      updateHues('to', newNumber);
+      updateHue('to', newNumber);
     },
-    [updateHues]
+    [updateHue]
   );
   const onChangeLightnessAndChromaHandler = useCallback(({ x, y }) => {
     palettePropsDispatch({
@@ -125,7 +159,7 @@ function App() {
       nextVal: x,
     });
     palettePropsDispatch({
-      type: 'change_chroma_peak',
+      type: 'change_peak_chroma',
       nextVal: y,
     });
   }, []);
@@ -137,10 +171,24 @@ function App() {
   }, []);
   const onChangeChromaHandler = useCallback((newNumber) => {
     palettePropsDispatch({
-      type: 'change_chroma_peak',
+      type: 'change_peak_chroma',
       nextVal: newNumber,
     });
   }, []);
+  const onPressCreateHandler = useCallback(() => {
+    addNewPalette();
+  }, [addNewPalette]);
+
+  useLayoutEffect(() => {
+    updateHue('from', paletteProps.hueFrom);
+    syncHues();
+  }, []);
+
+  const swatchStepTitleId = useId();
+  const huesTitleId = useId();
+  const lAndCTitleId = useId();
+
+  console.log(palettes);
 
   return (
     <>
@@ -153,7 +201,11 @@ function App() {
         />
       </div>
       <div className="swatch-step">
+        <h3 className={'section-title'} id={swatchStepTitleId}>
+          Swatch Step
+        </h3>
         <RadioGroup
+          aria-labelledby={swatchStepTitleId}
           value={paletteProps.swatchStep.toString()}
           orientation="horizontal"
           onChange={onChangeSwatchStepHandler}
@@ -165,12 +217,17 @@ function App() {
         </RadioGroup>
       </div>
       <div className="hues">
+        <h3 className={'section-title hues__title'} id={huesTitleId}>
+          Hue
+        </h3>
         <Switch
+          aria-labelledby={huesTitleId}
           className="hues__range"
-          isSelected={isHueRanged}
+          isSelected={paletteProps.isHueRanged}
           onChange={onChangeHueRangedHandler}
         />
         <Slider
+          aria-labelledby={huesTitleId}
           className="hues__slider hues__slider--control-from"
           value={paletteProps.hueFrom}
           minValue={0}
@@ -180,8 +237,9 @@ function App() {
           onChangeEnd={onChangeHueFromHandler}
         />
         <Slider
+          aria-labelledby={huesTitleId}
           className="hues__slider hues__slider--control-to"
-          isDisabled={!isHueRanged}
+          isDisabled={!paletteProps.isHueRanged}
           value={paletteProps.hueTo}
           minValue={0}
           maxValue={360}
@@ -190,6 +248,7 @@ function App() {
           onChangeEnd={onChangeHueToHandler}
         />
         <NumberField
+          aria-labelledby={huesTitleId}
           className="hues__number-field hues__number-field--control-from"
           value={paletteProps.hueFrom}
           minValue={0}
@@ -199,8 +258,9 @@ function App() {
           onChangeEnd={onChangeHueFromHandler}
         />
         <NumberField
+          aria-labelledby={huesTitleId}
           className="hues__number-field hues__number-field--control-to"
-          isDisabled={!isHueRanged}
+          isDisabled={!paletteProps.isHueRanged}
           value={paletteProps.hueTo}
           minValue={0}
           maxValue={360}
@@ -210,19 +270,24 @@ function App() {
         />
       </div>
       <div className="l-c">
+        <h3 className={'section-title l-c__title'} id={lAndCTitleId}>
+          Lightness & Chroma
+        </h3>
         <XYSlider
+          aria-labelledby={lAndCTitleId}
           className="l-c__xy"
           minValue={{ x: 0, y: 0 }}
           maxValue={{ x: 1, y: CHROMA_LIMIT }}
           step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
           value={{
             x: paletteProps.lightnessInflect,
-            y: paletteProps.chromaPeak,
+            y: paletteProps.peakChroma,
           }}
           onChangeEnd={onChangeLightnessAndChromaHandler}
           onChange={onChangeLightnessAndChromaHandler}
         />
         <NumberField
+          aria-labelledby={lAndCTitleId}
           className="l-c__number-field l-c__number-field--control-x"
           value={paletteProps.lightnessInflect}
           minValue={0}
@@ -232,8 +297,9 @@ function App() {
           onChangeEnd={onChangeLightnessHandler}
         />
         <NumberField
+          aria-labelledby={lAndCTitleId}
           className="l-c__number-field l-c__number-field--control-y"
-          value={paletteProps.chromaPeak}
+          value={paletteProps.peakChroma}
           minValue={0}
           maxValue={CHROMA_LIMIT}
           step={CHROMA_STEP}
@@ -246,8 +312,29 @@ function App() {
           buttontype="filled"
           materialIcon="add"
           text="create a palette"
+          onPress={onPressCreateHandler}
+          isDisabled={paletteProps.selectedPalete}
         />
       </div>
+      {palettes.length > 0 && (
+        <div className="palettes">
+          {palettes.map((aPalette) => {
+            return (
+              <Palette
+                key={aPalette.uid}
+                uid={aPalette.uid}
+                totalSwatches={aPalette.totalSwatches}
+                lightnessInflect={aPalette.lightnessInflect}
+                peakChroma={aPalette.peakChroma}
+                hueFrom={aPalette.hueFrom}
+                hueTo={aPalette.hueTo}
+                isSelected={false}
+                onClickPalette={() => {}}
+              />
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }

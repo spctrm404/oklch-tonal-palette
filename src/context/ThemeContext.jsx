@@ -36,7 +36,7 @@ const ThemeProvider = ({ children }) => {
     });
   }, []);
 
-  const updateHues = useCallback((key, value) => {
+  const updateHue = useCallback((key, value) => {
     setHues((prevHues) => {
       return { ...prevHues, [key]: value };
     });
@@ -73,7 +73,8 @@ const ThemeProvider = ({ children }) => {
           );
         }
       );
-    }
+    },
+    []
   );
   const applyDynamicHueCssProperties = useCallback(
     (lightnessTable, name, peakChroma, chromaMultiplier, targetDom) => {
@@ -329,7 +330,7 @@ const ThemeProvider = ({ children }) => {
         toggleTheme,
         hues,
         setHues,
-        updateHues,
+        updateHue,
         syncHues,
       }}
     >
