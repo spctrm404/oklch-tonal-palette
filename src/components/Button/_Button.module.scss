@@ -16,20 +16,13 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 .button {
   $root-selector: &;
 
-  padding: 0;
-  background-color: transparent;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-
   &__root {
     display: grid;
     grid-template-rows: 1fr min-content 1fr;
     grid-template-columns: 1fr;
     place-items: stretch stretch;
     height: $height;
+    padding: 0;
     overflow: hidden;
     font-family: inherit;
     font-size: $font-size;
@@ -37,7 +30,13 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     font-weight: $font-weight;
     line-height: $line-height;
     cursor: pointer;
+    background-color: transparent;
+    border: none;
     border-radius: $rad;
+
+    &:focus {
+      outline: none;
+    }
 
     &[data-button-type='elevated'] {
       box-shadow: var(--shadow-1-light);
@@ -167,8 +166,9 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     border-radius: $rad;
 
     &--part {
-      &-background {
+      &-bg {
         z-index: 1;
+        transition: background-color $duration $easing;
         @at-root #{$root-selector}[data-button-type='elevated'] #{&} {
           background-color: var(--surface-container-low-light);
           @at-root #{$root-selector}[data-theme='dark']#{&} {
@@ -234,17 +234,13 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         }
       }
 
-      &-foreground {
+      &-fg {
         z-index: 4;
-        display: none;
+        transition: border-color $duration $easing;
         @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
-          display: block;
           border-color: var(--outline-light);
           border-style: solid;
           border-width: $border-thickness;
-          transition: border-color $duration $easing,
-            box-shadow $duration $easing;
-
           @at-root #{$root-selector}[data-theme='dark']#{&} {
             border-color: var(--outline-dark);
           }
@@ -409,7 +405,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       line-height: $icon-size;
     }
 
-    &__label {
+    &__text {
       grid-row: 1 / -1;
       white-space: nowrap;
     }

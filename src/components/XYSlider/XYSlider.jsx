@@ -228,7 +228,7 @@ const XYSlider = ({
       {...props}
     >
       <div
-        className={cx('xyslider__track')}
+        className={cx('xyslider__track', 'xyslider-track')}
         {...trackInteractionProps}
         {...(!isDisabled && trackIsHovered && { 'data-hovered': 'true' })}
         {...(isDisabled && { 'data-disabled': 'true' })}
@@ -238,37 +238,41 @@ const XYSlider = ({
         }}
         ref={trackRef}
       >
-        <div className={cx('xyslider__track__shape')} />
+        <div className={cx('xyslider__track__shape', 'xyslider-track-shape')} />
         <div
           className={cx(
             'xyslider__track__guide',
             'xyslider__track__guide--part-top',
-            'xyslider__track__guide--part-vertical'
+            'xyslider__track__guide--part-vertical',
+            'xyslider-track-guide-top'
           )}
         />
         <div
           className={cx(
             'xyslider__track__guide',
             'xyslider__track__guide--part-right',
-            'xyslider__track__guide--part-horizontal'
+            'xyslider__track__guide--part-horizontal',
+            'xyslider-track-guide-right'
           )}
         />
         <div
           className={cx(
             'xyslider__track__guide',
             'xyslider__track__guide--part-bottom',
-            'xyslider__track__guide--part-vertical'
+            'xyslider__track__guide--part-vertical',
+            'xyslider-track-guide-bottom'
           )}
         />
         <div
           className={cx(
             'xyslider__track__guide',
             'xyslider__track__guide--part-left',
-            'xyslider__track__guide--part-horizontal'
+            'xyslider__track__guide--part-horizontal',
+            'xyslider-track-guide-left'
           )}
         />
         <div
-          className={cx('xyslider__thumb')}
+          className={cx('xyslider__thumb', 'xyslider-thumb')}
           {...thumbInteractionProps}
           {...(!isDisabled && thumbIsHovered && { 'data-hovered': 'true' })}
           {...(!isDisabled && isDragging && { 'data-dragging': 'true' })}
@@ -281,30 +285,36 @@ const XYSlider = ({
           }}
           ref={thumbRef}
         >
-          <div className={cx('xyslider__thumb__state')} />
-          <div className={cx('xyslider__thumb__shape')}>
+          <div
+            className={cx('xyslider__thumb__state', 'xyslider-thumb-state')}
+          />
+          <div className={cx('xyslider__thumb__shape', 'xyslider-thumb-shape')}>
             <div
               className={cx(
                 'xyslider__thumb__shape__component',
-                'xyslider__thumb__shape__component--part-top'
+                'xyslider__thumb__shape__component--part-top',
+                'xyslider-thumb-shape-top'
               )}
             />
             <div
               className={cx(
                 'xyslider__thumb__shape__component',
-                'xyslider__thumb__shape__component--part-right'
+                'xyslider__thumb__shape__component--part-right',
+                'xyslider-thumb-shape-right'
               )}
             />
             <div
               className={cx(
                 'xyslider__thumb__shape__component',
-                'xyslider__thumb__shape__component--part-bottom'
+                'xyslider__thumb__shape__component--part-bottom',
+                'xyslider-thumb-shape-bottom'
               )}
             />
             <div
               className={cx(
                 'xyslider__thumb__shape__component',
-                'xyslider__thumb__shape__component--part-left'
+                'xyslider__thumb__shape__component--part-left',
+                'xyslider-thumb-shape-left'
               )}
             />
           </div>

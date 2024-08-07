@@ -42,6 +42,12 @@ const ThemeProvider = ({ children }) => {
     });
   }, []);
 
+  const syncHues = useCallback(() => {
+    setHues((prevHues) => {
+      return { ...prevHues, ['to']: prevHues['from'] };
+    });
+  }, []);
+
   const applyStaticHueCssProperties = useCallback(
     (lightnessTable, name, peakChroma, hue, targetDom) => {
       Object.entries(lightnessTable).forEach(
@@ -312,7 +318,7 @@ const ThemeProvider = ({ children }) => {
 
     const body = document.body;
     body.dataset.theme = theme;
-  }, [theme, hues, applyDynamicHueCssProperties]);
+  }, [theme, hues, applyStaticHueCssProperties, applyDynamicHueCssProperties]);
 
   return (
     <ThemeContext.Provider
@@ -324,6 +330,7 @@ const ThemeProvider = ({ children }) => {
         hues,
         setHues,
         updateHues,
+        syncHues,
       }}
     >
       {children}

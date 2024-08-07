@@ -30,15 +30,17 @@ const IconButton = ({
       <div
         className={cx(
           'icon-button__shape',
-          'icon-button__shape--part-background'
+          'icon-button__shape--part-bg',
+          'icon-button-bg'
         )}
       />
-      <div className={cx('icon-button__state')} />
-      <div className={cx('icon-button__content')}>
+      <div className={cx('icon-button__state', 'icon-button-state')} />
+      <div className={cx('icon-button__content', 'icon-button-content')}>
         <div
           className={cx(
             'icon-button__content__icon',
-            'material-symbols-outlined'
+            'material-symbols-outlined',
+            'icon-button-icon'
           )}
         >
           {materialIcon}
@@ -47,7 +49,8 @@ const IconButton = ({
       <div
         className={cx(
           'icon-button__shape',
-          'icon-button__shape--part-foreground'
+          'icon-button__shape--part-fg',
+          'icon-button-fg'
         )}
       />
     </AriaButton>

@@ -36,16 +36,18 @@ const ToggleButton = ({
       <div
         className={cx(
           'toggle-button__shape',
-          'toggle-button__shape--part-background'
+          'toggle-button__shape--part-bg',
+          'toggle-button'
         )}
       />
-      <div className={cx('toggle-button__state')} />
-      <div className={cx('toggle-button__content')}>
+      <div className={cx('toggle-button__state', 'toggle-button-state')} />
+      <div className={cx('toggle-button__content', 'toggle-button-content')}>
         <div
           className={cx(
             'toggle-button__content__icon',
             'toggle-button__content__icon--part-a',
-            'material-symbols-outlined'
+            'material-symbols-outlined',
+            'toggle-button-icon'
           )}
         >
           {materialIcon}
@@ -55,7 +57,8 @@ const ToggleButton = ({
             className={cx(
               'toggle-button__content__icon',
               'toggle-button__content__icon--part-b',
-              'material-symbols-outlined'
+              'material-symbols-outlined',
+              'toggle-button-icon-alt'
             )}
           >
             {materialIconAlt}
@@ -65,7 +68,8 @@ const ToggleButton = ({
       <div
         className={cx(
           'toggle-button__shape',
-          'toggle-button__shape--part-foreground'
+          'toggle-button__shape--part-fg',
+          'toggle-button-fg'
         )}
       />
     </AriaToggleButton>

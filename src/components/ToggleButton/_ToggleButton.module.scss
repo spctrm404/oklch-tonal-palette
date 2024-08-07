@@ -9,14 +9,6 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 .toggle-button {
   $root-selector: &;
 
-  padding: 0;
-  background-color: transparent;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-
   &__root {
     display: grid;
     grid-template-rows: 1fr min-content 1fr;
@@ -24,7 +16,14 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     place-items: stretch stretch;
     width: $size;
     height: $size;
+    padding: 0;
     cursor: pointer;
+    background-color: transparent;
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
 
     &[data-disabled] #{&} {
       cursor: auto;
@@ -40,7 +39,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     border-radius: $rad;
 
     &--part {
-      &-background {
+      &-bg {
         z-index: 1;
         transition: background-color $duration $easing;
         @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
@@ -127,7 +126,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
         }
       }
 
-      &-foreground {
+      &-fg {
         z-index: 4;
         @at-root #{$root-selector}[data-button-type='outlined'] #{&} {
           border-color: var(--outline-light);

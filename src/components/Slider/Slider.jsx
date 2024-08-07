@@ -23,14 +23,14 @@ const Slider = ({
   const { theme } = useContext(ThemeContext);
 
   const onChangeEndHandler = useCallback(
-    (newValue) => {
-      onChangeEnd?.(newValue);
+    (newNumber) => {
+      onChangeEnd?.(newNumber);
     },
     [onChangeEnd]
   );
   const onChangeHandler = useCallback(
-    (newValue) => {
-      onChange?.(newValue);
+    (newNumber) => {
+      onChange?.(newNumber);
     },
     [onChange]
   );
@@ -53,22 +53,24 @@ const Slider = ({
       style={{ '--normalized-val': normalizedValue() }}
       {...props}
     >
-      <AriaSliderTrack className={cx('slider__track')}>
+      <AriaSliderTrack className={cx('slider__track', 'slider-track')}>
         <div
           className={cx(
             'slider__track__shape',
-            'slider__track__shape--part-active'
+            'slider__track__shape--part-active',
+            'slider-track-active'
           )}
         />
         <div
           className={cx(
             'slider__track__shape',
-            'slider__track__shape--part-inactive'
+            'slider__track__shape--part-inactive',
+            'slider-track-inactive'
           )}
         />
-        <AriaSliderThumb className={cx('slider__thumb')}>
-          <div className={cx('slider__thumb__state')} />
-          <div className={cx('slider__thumb__shape')} />
+        <AriaSliderThumb className={cx('slider__thumb', 'slider-thumb')}>
+          <div className={cx('slider__thumb__state', 'slider-thumb-state')} />
+          <div className={cx('slider__thumb__shape', 'slider-thumb-shape')} />
         </AriaSliderThumb>
       </AriaSliderTrack>
     </AriaSlider>

@@ -26,7 +26,7 @@ const NumberField = ({
   const inputRef = useRef(null);
 
   const isChagedRef = useRef(false);
-  const innerValueRef = useRef(0);
+  const innerValueRef = useRef(value);
 
   const syncInnerValueToValue = useCallback(() => {
     innerValueRef.current = value;
@@ -54,7 +54,7 @@ const NumberField = ({
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
-  }, [syncInnerValueToValue]);
+  }, [syncInnerValueToValue, props.isDisabled]);
 
   const digitLength = useCallback(() => {
     const [minIntegerPart, minDecimalPart] = minValue.toString().split('.');
@@ -88,14 +88,28 @@ const NumberField = ({
       style={{ '--min-ch': digitLength() }}
       {...props}
     >
-      <AriaGroup className={cx('number-field__group')}>
-        <AriaInput className={cx('number-field__input')} ref={inputRef} />
-        <div className={cx('number-field__input__shape')} />
-        <div className={cx('number-field__input__state')} />
+      <AriaGroup className={cx('number-field__group', 'number-field-group')}>
+        <AriaInput
+          className={cx('number-field__input', 'number-field-input')}
+          ref={inputRef}
+        />
+        <div
+          className={cx(
+            'number-field__input__shape',
+            'number-field-intput-shape'
+          )}
+        />
+        <div
+          className={cx(
+            'number-field__input__state',
+            'number-field-input-shape'
+          )}
+        />
         <IconButton
           className={cx(
             'number-field__button',
-            'number-field__button--part-decrease'
+            'number-field__button--part-decrease',
+            'number-field-button-decrease'
           )}
           buttontype={'tonal'}
           materialIcon={'remove'}
@@ -105,7 +119,8 @@ const NumberField = ({
         <IconButton
           className={cx(
             'number-field__button',
-            'number-field__button--part-increase'
+            'number-field__button--part-increase',
+            'number-field-button-increase'
           )}
           buttontype={'tonal'}
           materialIcon={'add'}

@@ -1,9 +1,10 @@
+$gx: 0.5rem;
 $button-size: 3rem;
 $button-state-size: 2.5rem;
 $button-shape-size: 1.25rem;
 $button-shape-border-thickness: 0.125rem;
 $button-shape-core-size: 0.625rem;
-$text-px: 1rem;
+$text-pr: 0.75rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
@@ -13,6 +14,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   display: grid;
   grid-template-rows: $button-size;
   grid-template-columns: $button-size min-content;
+  column-gap: $gx;
   place-items: center start;
 
   &__button {
@@ -140,7 +142,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
   }
 
   &__text {
-    padding-inline: $text-px;
+    padding-right: $text-pr;
     color: var(--on-bg-light);
     white-space: nowrap;
     user-select: none;

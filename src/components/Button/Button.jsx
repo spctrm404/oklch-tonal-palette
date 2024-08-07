@@ -29,21 +29,27 @@ const Button = ({
       data-theme={theme}
       {...props}
     >
-      <div className={cx('button__shape', 'button__shape--part-background')} />
-      <div className={cx('button__state')} />
-      <div className={cx('button__content')}>
+      <div
+        className={cx('button__shape', 'button__shape--part-bg', 'button-bg')}
+      />
+      <div className={cx('button__state', 'button-state')} />
+      <div className={cx('button__content', 'button-content')}>
         {materialIcon && (
           <div
-            className={cx('button__content__icon', 'material-symbols-outlined')}
+            className={cx(
+              'button__content__icon',
+              'material-symbols-outlined',
+              'button-icon'
+            )}
           >
             {materialIcon}
           </div>
         )}
-        <div className={cx('button__content__label')}>{text}</div>
-        <div
-          className={cx('button__shape', 'button__shape--part-foreground')}
-        />
+        <div className={cx('button__content__text', 'button-text')}>{text}</div>
       </div>
+      <div
+        className={cx('button__shape', 'button__shape--part-fg', 'button-fg')}
+      />
     </AriaButton>
   );
 };

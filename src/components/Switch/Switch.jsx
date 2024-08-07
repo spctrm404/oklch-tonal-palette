@@ -17,8 +17,8 @@ const Switch = ({
   const { theme } = useContext(ThemeContext);
 
   const onChangeHandler = useCallback(
-    (newValue) => {
-      onChange?.(newValue);
+    (newBoolean) => {
+      onChange?.(newBoolean);
     },
     [onChange]
   );
@@ -31,18 +31,19 @@ const Switch = ({
       data-theme={theme}
       {...props}
     >
-      <div className={cx('switch__track')}>
-        <div className={cx('switch__track__shape')} />
-        <div className={cx('switch__thumb')}>
-          <div className={cx('switch__thumb__state')} />
-          <div className={cx('switch__thumb__shape')}>
+      <div className={cx('switch__track', 'switch-track')}>
+        <div className={cx('switch__track__shape', 'switch-track-shape')} />
+        <div className={cx('switch__thumb', 'switch-thumb')}>
+          <div className={cx('switch__thumb__state', 'switch-thumb-state')} />
+          <div className={cx('switch__thumb__shape', 'switch-thumb-shape')}>
             {materialIcon && materialIconAlt && (
               <>
                 <div
                   className={cx(
                     'switch__icon',
                     'switch__icon--part-a',
-                    'material-symbols-outlined'
+                    'material-symbols-outlined',
+                    'switch-icon-a'
                   )}
                 >
                   {materialIcon}
@@ -51,7 +52,8 @@ const Switch = ({
                   className={cx(
                     'switch__icon',
                     'switch__icon--part-b',
-                    'material-symbols-outlined'
+                    'material-symbols-outlined',
+                    'switch-icon-b'
                   )}
                 >
                   {materialIconAlt}
