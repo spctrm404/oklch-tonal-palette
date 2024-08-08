@@ -319,7 +319,7 @@ const ThemeProvider = ({ children }) => {
 
     const body = document.body;
     body.dataset.theme = theme;
-  }, [theme, hues, applyStaticHueCssProperties, applyDynamicHueCssProperties]);
+  }, [hues]);
 
   return (
     <ThemeContext.Provider

@@ -18,6 +18,7 @@ import { ThemeContext } from './context/ThemeContext.jsx';
 import Switch from './components/Switch/Switch';
 import Radio from './components/Radio/Radio';
 import RadioGroup from './components/RadioGroup/RadioGroup';
+import Select from './components/Select/Select';
 import Slider from './components/Slider/Slider';
 import NumberField from './components/NumberField/NumberField';
 import XYSlider from './components/XYSlider/XYSlider';
@@ -128,13 +129,45 @@ function App() {
   }, [paletteProps]);
 
   const [selectedPaletteUid, setSelectedPaletteUid] = useState(palettes[0].uid);
-
-  const onChangeSwatchStepHandler = useCallback((newString) => {
-    palettePropsDispatch({
-      type: 'change_swatch_step',
-      nextVal: Number(newString),
+  const getSelectedPalette = useCallback(
+    (uid) => {
+      return palettes.find((aPalette) => {
+        return aPalette.uid === uid;
+      });
+    },
+    [palettes]
+  );
+  const selectedPalette = useCallback(() => {
+    return palettes.find((aPalette) => {
+      return aPalette.uid === selectedPaletteUid;
     });
-  }, []);
+  }, [palettes, selectedPaletteUid]);
+  const changeSelectedPalette = useCallback(
+    (key, value) => {
+      setPalettes((prevPalettes) => {
+        return prevPalettes.map((aPrevPalettes) => {
+          if (aPrevPalettes.uid === selectedPalette().uid)
+            return {
+              ...aPrevPalettes,
+              [key]: value,
+            };
+          return { ...aPrevPalettes };
+        });
+      });
+    },
+    [selectedPalette]
+  );
+
+  const onChangeSwatchStepHandler = useCallback(
+    (newString) => {
+      palettePropsDispatch({
+        type: 'change_swatch_step',
+        nextVal: Number(newString),
+      });
+      changeSelectedPalette('swatchStep', Number(newString));
+    },
+    [changeSelectedPalette]
+  );
   const onChangeHueRangedHandler = useCallback(
     (newBoolean) => {
       palettePropsDispatch({
@@ -145,9 +178,10 @@ function App() {
           type: 'sync_hue_to',
         });
         syncHues();
+        changeSelectedPalette('hueTo', paletteProps.hueFrom);
       }
     },
-    [syncHues]
+    [paletteProps, changeSelectedPalette]
   );
   const onChangeHueFromHandler = useCallback(
     (newNumber) => {
@@ -156,14 +190,16 @@ function App() {
         nextVal: newNumber,
       });
       updateHue('from', newNumber);
+      changeSelectedPalette('hueFrom', newNumber);
       if (!paletteProps.isHueRanged) {
         palettePropsDispatch({
           type: 'sync_hue_to',
         });
-        syncHues();
+        updateHue('to', newNumber);
+        changeSelectedPalette('hueTo', newNumber);
       }
     },
-    [paletteProps, updateHue, syncHues]
+    [paletteProps, changeSelectedPalette]
   );
   const onChangeHueToHandler = useCallback(
     (newNumber) => {
@@ -172,48 +208,52 @@ function App() {
         nextVal: newNumber,
       });
       updateHue('to', newNumber);
+      changeSelectedPalette('hueTo', newNumber);
     },
-    [updateHue]
+    [changeSelectedPalette]
   );
-  const onChangeLightnessAndChromaHandler = useCallback(({ x, y }) => {
-    palettePropsDispatch({
-      type: 'change_lightness_inflect',
-      nextVal: x,
-    });
-    palettePropsDispatch({
-      type: 'change_peak_chroma',
-      nextVal: y,
-    });
-  }, []);
-  const onChangeLightnessHandler = useCallback((newNumber) => {
-    palettePropsDispatch({
-      type: 'change_lightness_inflect',
-      nextVal: newNumber,
-    });
-  }, []);
-  const onChangeChromaHandler = useCallback((newNumber) => {
-    palettePropsDispatch({
-      type: 'change_peak_chroma',
-      nextVal: newNumber,
-    });
-  }, []);
+  const onChangeLightnessAndChromaHandler = useCallback(
+    ({ x, y }) => {
+      palettePropsDispatch({
+        type: 'change_lightness_inflect',
+        nextVal: x,
+      });
+      palettePropsDispatch({
+        type: 'change_peak_chroma',
+        nextVal: y,
+      });
+      changeSelectedPalette('lightnessInflect', x);
+      changeSelectedPalette('peakChroma', y);
+    },
+    [changeSelectedPalette]
+  );
+  const onChangeLightnessHandler = useCallback(
+    (newNumber) => {
+      palettePropsDispatch({
+        type: 'change_lightness_inflect',
+        nextVal: newNumber,
+      });
+      changeSelectedPalette('lightnessInflect', newNumber);
+    },
+    [changeSelectedPalette]
+  );
+  const onChangeChromaHandler = useCallback(
+    (newNumber) => {
+      palettePropsDispatch({
+        type: 'change_peak_chroma',
+        nextVal: newNumber,
+      });
+      changeSelectedPalette('peakChroma', newNumber);
+    },
+    [changeSelectedPalette]
+  );
   const onPressCreateHandler = useCallback(() => {
     addNewPalette();
   }, [addNewPalette]);
-
-  const getSelectedPalette = useCallback(
-    (uid) => {
-      return palettes.find((aPalette) => {
-        return aPalette.uid === uid;
-      });
-    },
-    [palettes]
-  );
   const onPressPaletteHandler = useCallback(
     (newUid) => {
       setSelectedPaletteUid(newUid);
       const selectedPalette = getSelectedPalette(newUid);
-      console.log(selectedPalette);
       palettePropsDispatch({
         type: 'import_palette',
         swatchStep: selectedPalette.swatchStep,
@@ -223,24 +263,38 @@ function App() {
         peakChroma: selectedPalette.peakChroma,
       });
       updateHue('from', selectedPalette.hueFrom);
-      syncHues();
+      updateHue('to', selectedPalette.hueTo);
     },
-    [getSelectedPalette, updateHue, syncHues]
+    [getSelectedPalette]
   );
-  const selectedPalette = useCallback(() => {
-    return palettes.find((aPalette) => {
-      return aPalette.uid === selectedPaletteUid;
-    });
-  }, [palettes, selectedPaletteUid]);
 
   useLayoutEffect(() => {
     updateHue('from', paletteProps.hueFrom);
-    syncHues();
+    updateHue('to', paletteProps.hueTo);
   }, []);
 
   const swatchStepTitleId = useId();
   const huesTitleId = useId();
   const lAndCTitleId = useId();
+
+  const swatchStepItems = [
+    {
+      uid: crypto.randomUUID(),
+      text: 10,
+    },
+    {
+      uid: crypto.randomUUID(),
+      text: 5,
+    },
+    {
+      uid: crypto.randomUUID(),
+      text: 2,
+    },
+    {
+      uid: crypto.randomUUID(),
+      text: 1,
+    },
+  ];
 
   return (
     <>
@@ -252,6 +306,9 @@ function App() {
           onChange={toggleTheme}
         />
       </div>
+      {/* <div className="test">
+        <Select items={swatchStepItems} />
+      </div> */}
       <div className="swatch-step">
         <h3 className={'section-title'} id={swatchStepTitleId}>
           Swatch Step
