@@ -25,6 +25,13 @@ import XYSlider from './components/XYSlider/XYSlider';
 import Button from './components/Button/Button';
 import Palette from './components/Palette/Palette';
 import './_App.scss';
+import st from './_App.module.scss';
+import classNames from 'classnames/bind';
+import IconButton from './components/IconButton/IconButton.jsx';
+import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
+
+const cx = classNames.bind(st);
+
 function App() {
   const { theme, toggleTheme, updateHue, syncHues } = useContext(ThemeContext);
 
@@ -301,159 +308,235 @@ function App() {
     },
   ];
 
+  // return (
+  //   <>
+  //     <div className="theme">
+  //       <Switch
+  //         materialIcon="dark_mode"
+  //         materialIconAlt="light_mode"
+  //         isSelected={theme === 'light'}
+  //         onChange={toggleTheme}
+  //       />
+  //     </div>
+  //     {/* <div className="test">
+  //       <Select items={swatchStepItems} />
+  //     </div> */}
+  //     <div className="swatch-step">
+  //       <h3 className={'section-title'} id={swatchStepTitleId}>
+  //         Swatch Step
+  //       </h3>
+  //       <RadioGroup
+  //         aria-labelledby={swatchStepTitleId}
+  //         value={paletteProps.swatchStep.toString()}
+  //         orientation="horizontal"
+  //         onChange={onChangeSwatchStepHandler}
+  //       >
+  //         <Radio text="10" value="10" />
+  //         <Radio text="5" value="5" />
+  //         <Radio text="2" value="2" />
+  //         <Radio text="1" value="1" />
+  //       </RadioGroup>
+  //     </div>
+  //     <div className="hues">
+  //       <h3 className={'section-title hues__title'} id={huesTitleId}>
+  //         Hue
+  //       </h3>
+  //       <Switch
+  //         aria-labelledby={huesTitleId}
+  //         className="hues__range"
+  //         isSelected={paletteProps.isHueRanged}
+  //         onChange={onChangeHueRangedHandler}
+  //       />
+  //       <Slider
+  //         aria-labelledby={huesTitleId}
+  //         className="hues__slider hues__slider--control-from"
+  //         value={paletteProps.hueFrom}
+  //         minValue={0}
+  //         maxValue={360}
+  //         step={HUE_STEP}
+  //         onChange={onChangeHueFromHandler}
+  //         onChangeEnd={onChangeHueFromHandler}
+  //       />
+  //       <Slider
+  //         aria-labelledby={huesTitleId}
+  //         className="hues__slider hues__slider--control-to"
+  //         isDisabled={!paletteProps.isHueRanged}
+  //         value={paletteProps.hueTo}
+  //         minValue={0}
+  //         maxValue={360}
+  //         step={HUE_STEP}
+  //         onChange={onChangeHueToHandler}
+  //         onChangeEnd={onChangeHueToHandler}
+  //       />
+  //       <div className="hues__number-fields">
+  //         <NumberField
+  //           aria-labelledby={huesTitleId}
+  //           className="hues__number-field hues__number-field--control-from"
+  //           value={paletteProps.hueFrom}
+  //           minValue={0}
+  //           maxValue={360}
+  //           step={HUE_STEP}
+  //           onChange={onChangeHueFromHandler}
+  //           onChangeEnd={onChangeHueFromHandler}
+  //         />
+  //         <NumberField
+  //           aria-labelledby={huesTitleId}
+  //           className="hues__number-field hues__number-field--control-to"
+  //           isDisabled={!paletteProps.isHueRanged}
+  //           value={paletteProps.hueTo}
+  //           minValue={0}
+  //           maxValue={360}
+  //           step={HUE_STEP}
+  //           onChange={onChangeHueToHandler}
+  //           onChangeEnd={onChangeHueToHandler}
+  //         />
+  //       </div>
+  //     </div>
+  //     <div className="l-c">
+  //       <h3 className={'section-title l-c__title'} id={lAndCTitleId}>
+  //         Lightness & Chroma
+  //       </h3>
+  //       <XYSlider
+  //         aria-labelledby={lAndCTitleId}
+  //         className="l-c__xy"
+  //         minValue={{ x: 0, y: 0 }}
+  //         maxValue={{ x: 1, y: CHROMA_LIMIT }}
+  //         step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
+  //         value={{
+  //           x: paletteProps.lightnessInflect,
+  //           y: paletteProps.peakChroma,
+  //         }}
+  //         onChangeEnd={onChangeLightnessAndChromaHandler}
+  //         onChange={onChangeLightnessAndChromaHandler}
+  //       />
+  //       <div className="l-c__number-fields">
+  //         <NumberField
+  //           aria-labelledby={lAndCTitleId}
+  //           className="l-c__number-field l-c__number-field--control-x"
+  //           value={paletteProps.lightnessInflect}
+  //           minValue={0}
+  //           maxValue={1}
+  //           step={LIGHTNESS_STEP}
+  //           onChange={onChangeLightnessHandler}
+  //           onChangeEnd={onChangeLightnessHandler}
+  //         />
+  //         <NumberField
+  //           aria-labelledby={lAndCTitleId}
+  //           className="l-c__number-field l-c__number-field--control-y"
+  //           value={paletteProps.peakChroma}
+  //           minValue={0}
+  //           maxValue={CHROMA_LIMIT}
+  //           step={CHROMA_STEP}
+  //           onChange={onChangeChromaHandler}
+  //           onChangeEnd={onChangeChromaHandler}
+  //         />
+  //       </div>
+  //     </div>
+  //     <div className="create">
+  //       <Button
+  //         buttontype="filled"
+  //         materialIcon="add"
+  //         text="create a palette"
+  //         onPress={onPressCreateHandler}
+  //         isDisabled={paletteProps.selectedPalete}
+  //       />
+  //     </div>
+  //     {palettes.length > 0 && (
+  //       <div className="palettes">
+  //         {palettes.map((aPalette) => {
+  //           return (
+  //             <Palette
+  //               className="palette"
+  //               key={aPalette.uid}
+  //               uid={aPalette.uid}
+  //               swatchStep={aPalette.swatchStep}
+  //               lightnessInflect={aPalette.lightnessInflect}
+  //               peakChroma={aPalette.peakChroma}
+  //               hueFrom={aPalette.hueFrom}
+  //               hueTo={aPalette.hueTo}
+  //               isSelected={aPalette.uid === selectedPaletteUid}
+  //               onPress={onPressPaletteHandler}
+  //             />
+  //           );
+  //         })}
+  //       </div>
+  //     )}
+  //   </>
+  // );
+
+  const [isDrawerOpened, setDrawerOpened] = useState(false);
+
   return (
     <>
-      <div className="theme">
-        <Switch
-          materialIcon="dark_mode"
-          materialIconAlt="light_mode"
-          isSelected={theme === 'light'}
-          onChange={toggleTheme}
-        />
-      </div>
-      {/* <div className="test">
-        <Select items={swatchStepItems} />
-      </div> */}
-      <div className="swatch-step">
-        <h3 className={'section-title'} id={swatchStepTitleId}>
-          Swatch Step
-        </h3>
-        <RadioGroup
-          aria-labelledby={swatchStepTitleId}
-          value={paletteProps.swatchStep.toString()}
-          orientation="horizontal"
-          onChange={onChangeSwatchStepHandler}
+      <div className={cx('grid')}>
+        <div
+          className={cx('drawer')}
+          {...(isDrawerOpened && { 'data-opened': 'true' })}
         >
-          <Radio text="10" value="10" />
-          <Radio text="5" value="5" />
-          <Radio text="2" value="2" />
-          <Radio text="1" value="1" />
-        </RadioGroup>
-      </div>
-      <div className="hues">
-        <h3 className={'section-title hues__title'} id={huesTitleId}>
-          Hue
-        </h3>
-        <Switch
-          aria-labelledby={huesTitleId}
-          className="hues__range"
-          isSelected={paletteProps.isHueRanged}
-          onChange={onChangeHueRangedHandler}
-        />
-        <Slider
-          aria-labelledby={huesTitleId}
-          className="hues__slider hues__slider--control-from"
-          value={paletteProps.hueFrom}
-          minValue={0}
-          maxValue={360}
-          step={HUE_STEP}
-          onChange={onChangeHueFromHandler}
-          onChangeEnd={onChangeHueFromHandler}
-        />
-        <Slider
-          aria-labelledby={huesTitleId}
-          className="hues__slider hues__slider--control-to"
-          isDisabled={!paletteProps.isHueRanged}
-          value={paletteProps.hueTo}
-          minValue={0}
-          maxValue={360}
-          step={HUE_STEP}
-          onChange={onChangeHueToHandler}
-          onChangeEnd={onChangeHueToHandler}
-        />
-        <div className="hues__number-fields">
-          <NumberField
-            aria-labelledby={huesTitleId}
-            className="hues__number-field hues__number-field--control-from"
-            value={paletteProps.hueFrom}
-            minValue={0}
-            maxValue={360}
-            step={HUE_STEP}
-            onChange={onChangeHueFromHandler}
-            onChangeEnd={onChangeHueFromHandler}
-          />
-          <NumberField
-            aria-labelledby={huesTitleId}
-            className="hues__number-field hues__number-field--control-to"
-            isDisabled={!paletteProps.isHueRanged}
-            value={paletteProps.hueTo}
-            minValue={0}
-            maxValue={360}
-            step={HUE_STEP}
-            onChange={onChangeHueToHandler}
-            onChangeEnd={onChangeHueToHandler}
-          />
+          <div className={cx('drawer__button')}>
+            <ToggleButton
+              buttontype="standard"
+              materialIconA="tune"
+              materialIconB="close"
+              isSelected={isDrawerOpened}
+              onChange={() => {
+                setDrawerOpened(!isDrawerOpened);
+              }}
+            />
+          </div>
+          <div className={cx('drawer__scrollable')}>
+            <div className={cx('controller')}></div>
+          </div>
+        </div>
+        <div className={cx('main')}>
+          <div className={cx('main__button')}>
+            <Switch
+              materialIcon="dark_mode"
+              materialIconAlt="light_mode"
+              isSelected={theme === 'light'}
+              onChange={toggleTheme}
+            />
+          </div>
+          <div className={cx('main__scrollable')}>
+            <div className={cx('palettes')}>
+              <div className={cx('palette')}>
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+              </div>
+              <div className={cx('palette')}>
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+                <div className={cx('swatch')} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="l-c">
-        <h3 className={'section-title l-c__title'} id={lAndCTitleId}>
-          Lightness & Chroma
-        </h3>
-        <XYSlider
-          aria-labelledby={lAndCTitleId}
-          className="l-c__xy"
-          minValue={{ x: 0, y: 0 }}
-          maxValue={{ x: 1, y: CHROMA_LIMIT }}
-          step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-          value={{
-            x: paletteProps.lightnessInflect,
-            y: paletteProps.peakChroma,
-          }}
-          onChangeEnd={onChangeLightnessAndChromaHandler}
-          onChange={onChangeLightnessAndChromaHandler}
-        />
-        <div className="l-c__number-fields">
-          <NumberField
-            aria-labelledby={lAndCTitleId}
-            className="l-c__number-field l-c__number-field--control-x"
-            value={paletteProps.lightnessInflect}
-            minValue={0}
-            maxValue={1}
-            step={LIGHTNESS_STEP}
-            onChange={onChangeLightnessHandler}
-            onChangeEnd={onChangeLightnessHandler}
-          />
-          <NumberField
-            aria-labelledby={lAndCTitleId}
-            className="l-c__number-field l-c__number-field--control-y"
-            value={paletteProps.peakChroma}
-            minValue={0}
-            maxValue={CHROMA_LIMIT}
-            step={CHROMA_STEP}
-            onChange={onChangeChromaHandler}
-            onChangeEnd={onChangeChromaHandler}
-          />
-        </div>
-      </div>
-      <div className="create">
-        <Button
-          buttontype="filled"
-          materialIcon="add"
-          text="create a palette"
-          onPress={onPressCreateHandler}
-          isDisabled={paletteProps.selectedPalete}
-        />
-      </div>
-      {palettes.length > 0 && (
-        <div className="palettes">
-          {palettes.map((aPalette) => {
-            return (
-              <Palette
-                className="palette"
-                key={aPalette.uid}
-                uid={aPalette.uid}
-                swatchStep={aPalette.swatchStep}
-                lightnessInflect={aPalette.lightnessInflect}
-                peakChroma={aPalette.peakChroma}
-                hueFrom={aPalette.hueFrom}
-                hueTo={aPalette.hueTo}
-                isSelected={aPalette.uid === selectedPaletteUid}
-                onPress={onPressPaletteHandler}
-              />
-            );
-          })}
-        </div>
-      )}
     </>
   );
 }
