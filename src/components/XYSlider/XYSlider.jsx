@@ -213,8 +213,8 @@ const XYSlider = ({
   useResize({ onResize: setPositionByValue, onResizeEnd: setPositionByValue });
 
   useLayoutEffect(() => {
-    setPositionByValue();
-  }, []);
+    if (!isDragging) setPositionByValue();
+  }, [value]);
 
   return (
     <div

@@ -110,6 +110,10 @@ const ThemeProvider = ({ children }) => {
   );
 
   useLayoutEffect(() => {
+    const body = document.body;
+    body.dataset.theme = theme;
+  }, [theme]);
+  useLayoutEffect(() => {
     const vivids = {
       name: {
         light: 0.4,
@@ -316,9 +320,6 @@ const ThemeProvider = ({ children }) => {
       '--shadow-5-dark',
       '0rem .5rem .75rem .375rem rgba(0, 0, 0, 0.15), 0rem .25rem .25rem 0rem rgba(0, 0, 0, 0.30)'
     );
-
-    const body = document.body;
-    body.dataset.theme = theme;
   }, [hues]);
 
   return (
