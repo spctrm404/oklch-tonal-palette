@@ -31,7 +31,6 @@ function App() {
   const initialPaletteProps = useCallback(() => {
     const randomHue = closestQuantized(360 * Math.random(), HUE_STEP);
     return {
-      selectedPalete: null,
       swatchStep: 10,
       isHueRanged: false,
       hueFrom: randomHue,
@@ -40,6 +39,7 @@ function App() {
       peakChroma: 0.11,
     };
   }, []);
+
   const palettePropsReducer = (state, action) => {
     switch (action.type) {
       case 'change_swatch_step': {
@@ -97,6 +97,7 @@ function App() {
     }
     throw Error('Unknown action: ' + action.type);
   };
+
   const [paletteProps, palettePropsDispatch] = useReducer(
     palettePropsReducer,
     null,
@@ -113,7 +114,9 @@ function App() {
       hueTo: paletteProps.hueTo,
     };
   }, [paletteProps]);
+
   const [palettes, setPalettes] = useState([initialPalette()]);
+
   const addNewPalette = useCallback(() => {
     const newPalette = {
       uid: crypto.randomUUID(),
@@ -129,6 +132,7 @@ function App() {
   }, [paletteProps]);
 
   const [selectedPaletteUid, setSelectedPaletteUid] = useState(palettes[0].uid);
+
   const getSelectedPalette = useCallback(
     (uid) => {
       return palettes.find((aPalette) => {
@@ -137,6 +141,7 @@ function App() {
     },
     [palettes]
   );
+
   const selectedPalette = useCallback(() => {
     return palettes.find((aPalette) => {
       return aPalette.uid === selectedPaletteUid;
@@ -146,7 +151,7 @@ function App() {
     (key, value) => {
       setPalettes((prevPalettes) => {
         return prevPalettes.map((aPrevPalettes) => {
-          if (aPrevPalettes.uid === selectedPalette().uid)
+          if (aPrevPalettes.uid === selectedPaletteUid)
             return {
               ...aPrevPalettes,
               [key]: value,
@@ -155,7 +160,7 @@ function App() {
         });
       });
     },
-    [selectedPalette]
+    [selectedPaletteUid]
   );
 
   const onChangeSwatchStepHandler = useCallback(
@@ -181,7 +186,7 @@ function App() {
         changeSelectedPalette('hueTo', paletteProps.hueFrom);
       }
     },
-    [paletteProps, changeSelectedPalette]
+    [paletteProps, changeSelectedPalette, syncHues]
   );
   const onChangeHueFromHandler = useCallback(
     (newNumber) => {
@@ -199,7 +204,7 @@ function App() {
         changeSelectedPalette('hueTo', newNumber);
       }
     },
-    [paletteProps, changeSelectedPalette]
+    [paletteProps, changeSelectedPalette, updateHue]
   );
   const onChangeHueToHandler = useCallback(
     (newNumber) => {
@@ -210,7 +215,7 @@ function App() {
       updateHue('to', newNumber);
       changeSelectedPalette('hueTo', newNumber);
     },
-    [changeSelectedPalette]
+    [changeSelectedPalette, updateHue]
   );
   const onChangeLightnessAndChromaHandler = useCallback(
     ({ x, y }) => {
@@ -265,7 +270,7 @@ function App() {
       updateHue('from', selectedPalette.hueFrom);
       updateHue('to', selectedPalette.hueTo);
     },
-    [getSelectedPalette]
+    [getSelectedPalette, updateHue]
   );
 
   useLayoutEffect(() => {
@@ -442,7 +447,7 @@ function App() {
                 peakChroma={aPalette.peakChroma}
                 hueFrom={aPalette.hueFrom}
                 hueTo={aPalette.hueTo}
-                isSelected={false}
+                isSelected={aPalette.uid === selectedPaletteUid}
                 onPress={onPressPaletteHandler}
               />
             );
