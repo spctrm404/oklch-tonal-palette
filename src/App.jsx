@@ -1,9 +1,11 @@
 import {
   useCallback,
   useContext,
+  useEffect,
   useId,
   useLayoutEffect,
   useReducer,
+  useRef,
   useState,
 } from 'react';
 import { Label as AriaLabel } from 'react-aria-components';
@@ -91,6 +93,11 @@ function App() {
           peakChroma: action.nextVal,
         };
       }
+      case 'update_all': {
+        return {
+          ...state,
+        };
+      }
       case 'import_palette': {
         return {
           ...state,
@@ -172,6 +179,13 @@ function App() {
 
   const [isDrawerOpened, setDrawerOpened] = useState(false);
 
+  const controllerRef = useRef(null);
+
+  const onChangeDrawerButtonHandler = useCallback(() => {
+    setDrawerOpened((prevState) => {
+      return !prevState;
+    });
+  }, []);
   const onChangeSwatchStepHandler = useCallback(
     (newString) => {
       palettePropsDispatch({
@@ -287,6 +301,21 @@ function App() {
     updateHue('to', paletteProps.hueTo);
   }, []);
 
+  useEffect(() => {
+    const controller = controllerRef.current;
+    const onTransitionEndHandler = (e) => {
+      if (e.target !== controller) return;
+      console.log('a');
+      palettePropsDispatch({
+        type: 'update_all',
+      });
+    };
+    controller.addEventListener('transitionend', onTransitionEndHandler);
+    return () => {
+      controller.removeEventListener('transitionend', onTransitionEndHandler);
+    };
+  }, []);
+
   const swatchStepTitleId = useId();
   const huesTitleId = useId();
   const lAndCTitleId = useId();
@@ -305,13 +334,11 @@ function App() {
               materialIconA="tune"
               materialIconB="left_panel_close"
               isSelected={isDrawerOpened}
-              onChange={() => {
-                setDrawerOpened(!isDrawerOpened);
-              }}
+              onChange={onChangeDrawerButtonHandler}
             />
           </div>
           <div className={cx('drawer__scrollable')}>
-            <div className={cx('controller')}>
+            <div className={cx('controller')} ref={controllerRef}>
               <div
                 className={cx(
                   'controller__section',

@@ -31,26 +31,22 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
       font-size: $icon-size;
       font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
       line-height: $icon-size;
+      color: var(--outline-variant-light);
       text-align: center;
       opacity: 0;
       transition: color $duration $easing, opacity $duration $easing;
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        color: var(--outline-variant-dark);
+      }
 
       &--part {
         &-warning {
-          color: var(--warning-light);
-          @at-root #{$root-selector}[data-theme='dark'] #{&} {
-            color: var(--warning-dark);
-          }
           @at-root #{$root-selector}[data-gamut='p3'] #{&} {
             opacity: 1;
           }
         }
 
         &-error {
-          color: var(--error-light);
-          @at-root #{$root-selector}[data-theme='dark'] #{&} {
-            color: var(--error-dark);
-          }
           @at-root #{$root-selector}[data-gamut='unknown'] #{&} {
             opacity: 1;
           }

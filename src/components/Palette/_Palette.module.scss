@@ -10,6 +10,10 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
     overflow: scroll auto;
     scrollbar-width: none;
     user-select: none;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   &__grid {
