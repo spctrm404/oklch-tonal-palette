@@ -1,150 +1,59 @@
 $border-rad: 0.25rem;
-$name-p: 0.5rem;
-$info-p: 1rem;
-$info-gx: 0.75rem;
-$info-gy: 0.5rem;
-$info-font-size: 0.625rem;
-$label-font-width: 75;
-$label-font-weight: 300;
-$value-font-weight: 500;
-$name-font-size: 0.75rem;
-$name-font-weight: 500;
-$name-line-height: $name-font-size;
-$icon-size: 1rem;
-$icon-offset-x: -0.5rem;
-$icon-offset-y: -0.25rem;
+$icon-size: 0.75rem;
+$icon-py: 0.25rem;
 $duration: 200ms;
 $easing: cubic-bezier(0.2, 0, 0, 1);
 
 .swatch {
   $root-selector: &;
 
-  position: relative;
-  display: grid;
-  grid-template-rows: min-content min-content;
-  grid-template-columns: 1fr;
-  place-items: stretch stretch;
-  min-width: min-content;
-  white-space: nowrap;
-  user-select: none;
-
-  &__paint {
-    grid-row: 1 / span 1;
-    grid-column: 1 / -1;
-    background-color: oklch(var(--bg-l) var(--bg-c) calc(var(--bg-h) * 1deg));
-    border-radius: $border-rad $border-rad 0 0;
+  &__root {
+    display: block;
+    user-select: none;
   }
 
-  &__info {
+  &__preview {
+    height: 3rem;
+    background-color: oklch(
+      var(--lightness) var(--chroma) calc(var(--hue) * 1deg)
+    );
+    border-radius: $border-rad;
+  }
+
+  &__status {
     display: grid;
-    grid-template-rows: repeat(3, 1lh);
-    grid-template-columns: max-content 1fr;
-    grid-row: 1 / span 1;
-    grid-column: 1 / -1;
-    gap: $info-gy $info-gx;
-    padding: $info-p;
-    font-size: $info-font-size;
-    line-height: $info-font-size;
-    opacity: 0;
-    transition: opacity $duration $easing;
+    align-items: center center;
+    padding-block: $icon-py;
 
-    @at-root #{$root-selector}[data-hovered] #{&} {
-      opacity: 1;
-    }
-  }
+    &__icon {
+      grid-row: 1;
+      grid-column: 1;
+      font-size: $icon-size;
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      line-height: $icon-size;
+      text-align: center;
+      opacity: 0;
+      transition: color $duration $easing, opacity $duration $easing;
 
-  &__label {
-    grid-column: 1 / span 1;
-    font-variation-settings: 'wdth' $label-font-width;
-    font-weight: $label-font-weight;
-    color: oklch(
-      var(--txt-week-l) var(--txt-week-c) calc(var(--txt-week-h) * 1deg)
-    );
-
-    &--for {
-      &-l {
-        grid-row: 1 / span 1;
-      }
-
-      &-c {
-        grid-row: 2 / span 1;
-      }
-
-      &-h {
-        grid-row: 3 / span 1;
-      }
-    }
-  }
-
-  &__value {
-    grid-column: 2 / span 1;
-    font-weight: $value-font-weight;
-    color: oklch(
-      var(--txt-strong-l) var(--txt-strong-c) calc(var(--txt-strong-h) * 1deg)
-    );
-    text-align: right;
-
-    &--for {
-      &-l {
-        grid-row: 1 / span 1;
-      }
-
-      &-c {
-        grid-row: 2 / span 1;
-      }
-
-      &-h {
-        grid-row: 3 / span 1;
-      }
-    }
-  }
-
-  &__name {
-    grid-row: 2 / span 1;
-    grid-column: 1 / -1;
-    padding: $name-p;
-    font-size: $name-font-size;
-    font-weight: $name-font-weight;
-    line-height: $name-line-height;
-    color: var(--on-surface-light);
-    text-align: center;
-    background-color: var(--surface-container-high-light);
-    border-radius: 0 0 $border-rad $border-rad;
-    transition: background-color $duration $easing, color $duration $easing;
-    @at-root #{$root-selector}[data-theme='dark'] #{&} {
-      color: var(--on-surface-dark);
-      background-color: var(--surface-container-high-dark);
-    }
-  }
-
-  &__icon {
-    position: absolute;
-    right: $icon-offset-x;
-    bottom: $icon-offset-y;
-    font-size: $icon-size;
-    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
-    line-height: $icon-size;
-    opacity: 0;
-    transition: color $duration $easing, opacity $duration $easing;
-
-    &--part {
-      &-warning {
-        color: var(--warning-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          color: var(--warning-dark);
+      &--part {
+        &-warning {
+          color: var(--warning-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            color: var(--warning-dark);
+          }
+          @at-root #{$root-selector}[data-gamut='p3'] #{&} {
+            opacity: 1;
+          }
         }
-        @at-root #{$root-selector}--gamut-p3 #{&} {
-          opacity: 1;
-        }
-      }
 
-      &-error {
-        color: var(--error-light);
-        @at-root #{$root-selector}[data-theme='dark'] #{&} {
-          color: var(--error-dark);
-        }
-        @at-root #{$root-selector}--gamut-out #{&} {
-          opacity: 1;
+        &-error {
+          color: var(--error-light);
+          @at-root #{$root-selector}[data-theme='dark'] #{&} {
+            color: var(--error-dark);
+          }
+          @at-root #{$root-selector}[data-gamut='unknown'] #{&} {
+            opacity: 1;
+          }
         }
       }
     }
