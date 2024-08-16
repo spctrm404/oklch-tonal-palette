@@ -36,15 +36,15 @@ const ThemeProvider = ({ children }) => {
     });
   }, []);
 
-  const updateHue = useCallback((key, value) => {
+  const updateHues = useCallback((newHues) => {
     setHues((prevHues) => {
-      return { ...prevHues, [key]: value };
+      return { ...prevHues, ...newHues };
     });
   }, []);
 
   const syncHues = useCallback(() => {
     setHues((prevHues) => {
-      return { ...prevHues, ['to']: prevHues['from'] };
+      return { ...prevHues, ['to']: prevHues.from };
     });
   }, []);
 
@@ -331,7 +331,7 @@ const ThemeProvider = ({ children }) => {
         toggleTheme,
         hues,
         setHues,
-        updateHue,
+        updateHues,
         syncHues,
       }}
     >

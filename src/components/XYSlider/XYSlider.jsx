@@ -8,7 +8,6 @@ import {
   useState,
 } from 'react';
 import { mergeProps, useFocus, useHover, useMove, usePress } from 'react-aria';
-import useResize from '../../hooks/useResize.js';
 import { clamp, closestQuantized } from '../../utils/numberUtils.js';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_XYSlider.module.scss';
@@ -32,8 +31,13 @@ const XYSlider = ({
   const [isDragging, setDragging] = useState(false);
   const [isFocused, setFocused] = useState(false);
 
+  const valueRef = useRef(value);
+  const minValueRef = useRef(minValue);
+  const maxValueRef = useRef(maxValue);
+
   const positionRef = useRef({ x: 0, y: 0 });
 
+  const rootRef = useRef(null);
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
 
@@ -54,7 +58,7 @@ const XYSlider = ({
           : (value[key] - minValue[key]) / (maxValue[key] - minValue[key]);
       return acc;
     }, {});
-  }, [maxValue, minValue, value]);
+  }, [minValue, maxValue, value]);
 
   const positionFromValue = useCallback(() => {
     const trackRect = trackRef.current.getBoundingClientRect();
@@ -110,16 +114,24 @@ const XYSlider = ({
   }, []);
 
   const onChangeEndHandler = useCallback(() => {
+    console.log('onChangeEnd');
+    console.log('value', value);
     const newValue = valueFromPosition();
+    console.log('position', positionRef.current);
+    console.log('newValue', newValue);
     const quantizedValue = getQuantizedValue(newValue);
     onChangeEnd?.(quantizedValue);
-  }, [onChangeEnd, valueFromPosition, getQuantizedValue]);
+  }, [value, onChangeEnd, valueFromPosition, getQuantizedValue]);
   const onChangeHandler = useCallback(() => {
+    console.log('onChange');
+    console.log('value', value);
     const newValue = valueFromPosition();
+    console.log('position', positionRef.current);
+    console.log('newValue', newValue);
     const clampedValue = getClampedValue(newValue);
     const quantizedValue = getQuantizedValue(clampedValue);
     onChange?.(quantizedValue);
-  }, [onChange, valueFromPosition, getClampedValue, getQuantizedValue]);
+  }, [value, onChange, valueFromPosition, getClampedValue, getQuantizedValue]);
 
   const onPressStart = useCallback(
     (e) => {
@@ -208,15 +220,61 @@ const XYSlider = ({
     thumbMoveProp
   );
 
+  useLayoutEffect(() => {
+    valueRef.current = { ...value };
+    minValueRef.current = { ...minValue };
+    maxValueRef.current = { ...maxValue };
+  });
+
   const setPositionByValue = useCallback(() => {
     positionRef.current = positionFromValue();
   }, [positionFromValue]);
 
-  useResize({ onResize: setPositionByValue, onResizeEnd: setPositionByValue });
+  useLayoutEffect(() => {
+    console.log('layoutEffect');
+    if (!isDragging) {
+      setPositionByValue();
+      console.log('position', positionRef.current);
+    }
+  }, [value, isDragging, setPositionByValue]);
 
   useLayoutEffect(() => {
-    if (!isDragging) setPositionByValue();
-  }, [value]);
+    const root = rootRef.current;
+    const onResizeHandler = (entries) => {
+      entries.forEach((anEntry) => {
+        if (anEntry.target === root) {
+          console.log('resize');
+          const value = valueRef.current;
+          const minValue = minValueRef.current;
+          const maxValue = maxValueRef.current;
+          const normalizedValue = Object.keys(value).reduce((acc, key) => {
+            acc[key] =
+              key === 'y'
+                ? 1 -
+                  (value[key] - minValue[key]) / (maxValue[key] - minValue[key])
+                : (value[key] - minValue[key]) /
+                  (maxValue[key] - minValue[key]);
+            return acc;
+          }, {});
+          const trackRect = trackRef.current.getBoundingClientRect();
+          const thumbRect = thumbRef.current.getBoundingClientRect();
+          const newPosition = {
+            x: normalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
+            y: normalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
+          };
+          positionRef.current = newPosition;
+          console.log('position', positionRef.current);
+          console.log('valueByPosition', valueFromPosition());
+        }
+      });
+    };
+    let resizeObserver = new ResizeObserver(onResizeHandler);
+    resizeObserver.observe(root);
+    return () => {
+      resizeObserver.unobserve(root);
+      resizeObserver = null;
+    };
+  }, []);
 
   return (
     <div
@@ -228,6 +286,7 @@ const XYSlider = ({
         '--normalized-val-y': normalizedValue().y,
       }}
       {...props}
+      ref={rootRef}
     >
       <div
         className={cx('xyslider__track', 'xyslider-track')}

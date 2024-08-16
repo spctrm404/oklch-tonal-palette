@@ -1,14 +1,11 @@
 import {
   useCallback,
   useContext,
-  useEffect,
   useId,
   useLayoutEffect,
-  useReducer,
   useRef,
   useState,
 } from 'react';
-import { Label as AriaLabel } from 'react-aria-components';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
@@ -20,7 +17,6 @@ import { ThemeContext } from './context/ThemeContext.jsx';
 import Switch from './components/Switch/Switch';
 import Radio from './components/Radio/Radio';
 import RadioGroup from './components/RadioGroup/RadioGroup';
-import Select from './components/Select/Select';
 import Slider from './components/Slider/Slider';
 import NumberField from './components/NumberField/NumberField';
 import XYSlider from './components/XYSlider/XYSlider';
@@ -29,124 +25,40 @@ import Palette from './components/Palette/Palette';
 // import './_App.scss';
 import st from './_App.module.scss';
 import classNames from 'classnames/bind';
-import IconButton from './components/IconButton/IconButton.jsx';
 import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 
 const cx = classNames.bind(st);
 
 function App() {
-  const { theme, toggleTheme, updateHue, syncHues } = useContext(ThemeContext);
+  const { theme, updateTheme, toggleTheme, updateHues, syncHues } =
+    useContext(ThemeContext);
 
-  const initialPaletteProps = useCallback(() => {
+  const initialPaletteControl = () => {
     const randomHue = closestQuantized(360 * Math.random(), HUE_STEP);
     return {
       swatchStep: 10,
-      isHueRanged: false,
       hueFrom: randomHue,
       hueTo: randomHue,
       lightnessInflect: 0.5,
       peakChroma: 0.11,
     };
-  }, []);
-
-  const palettePropsReducer = (state, action) => {
-    switch (action.type) {
-      case 'change_swatch_step': {
-        return {
-          ...state,
-          swatchStep: action.nextVal,
-        };
-      }
-      case 'toggle_hue_ranged': {
-        return {
-          ...state,
-          isHueRanged: !state.isHueRanged,
-        };
-      }
-      case 'change_hue_from': {
-        return {
-          ...state,
-          hueFrom: action.nextVal,
-        };
-      }
-      case 'change_hue_to': {
-        return {
-          ...state,
-          hueTo: action.nextVal,
-        };
-      }
-      case 'sync_hue_to': {
-        return {
-          ...state,
-          hueTo: state.hueFrom,
-        };
-      }
-      case 'change_lightness_inflect': {
-        return {
-          ...state,
-          lightnessInflect: action.nextVal,
-        };
-      }
-      case 'change_peak_chroma': {
-        return {
-          ...state,
-          peakChroma: action.nextVal,
-        };
-      }
-      case 'update_all': {
-        return {
-          ...state,
-        };
-      }
-      case 'import_palette': {
-        return {
-          ...state,
-          swatchStep: action.swatchStep,
-          hueFrom: action.hueFrom,
-          hueTo: action.hueTo,
-          lightnessInflect: action.lightnessInflect,
-          peakChroma: action.peakChroma,
-        };
-      }
-    }
-    throw Error('Unknown action: ' + action.type);
   };
+  const [paletteControl, setPaletteControl] = useState(initialPaletteControl());
 
-  const [paletteProps, palettePropsDispatch] = useReducer(
-    palettePropsReducer,
-    null,
-    initialPaletteProps
-  );
+  const [isHueRanged, setHueRanged] = useState(false);
 
-  const initialPalette = useCallback(() => {
-    return {
-      uid: crypto.randomUUID(),
-      swatchStep: paletteProps.swatchStep,
-      lightnessInflect: paletteProps.lightnessInflect,
-      peakChroma: paletteProps.peakChroma,
-      hueFrom: paletteProps.hueFrom,
-      hueTo: paletteProps.hueTo,
-    };
-  }, [paletteProps]);
-
+  const initialPalette = () => {
+    return { ...paletteControl, ['uid']: crypto.randomUUID() };
+  };
   const [palettes, setPalettes] = useState([initialPalette()]);
-
-  const addNewPalette = useCallback(() => {
-    const newPalette = {
-      uid: crypto.randomUUID(),
-      swatchStep: paletteProps.swatchStep,
-      lightnessInflect: paletteProps.lightnessInflect,
-      peakChroma: paletteProps.peakChroma,
-      hueFrom: paletteProps.hueFrom,
-      hueTo: paletteProps.hueTo,
-    };
+  const addANewPalette = useCallback(() => {
+    const aNewPalette = { ...paletteControl, ['uid']: crypto.randomUUID() };
     setPalettes((prevPalettes) => {
-      return [...prevPalettes, newPalette];
+      return [...prevPalettes, aNewPalette];
     });
-  }, [paletteProps]);
+  }, [paletteControl]);
 
   const [selectedPaletteUid, setSelectedPaletteUid] = useState(palettes[0].uid);
-
   const getSelectedPalette = useCallback(
     (uid) => {
       return palettes.find((aPalette) => {
@@ -156,25 +68,30 @@ function App() {
     [palettes]
   );
 
-  const selectedPalette = useCallback(() => {
-    return palettes.find((aPalette) => {
-      return aPalette.uid === selectedPaletteUid;
-    });
-  }, [palettes, selectedPaletteUid]);
-  const changeSelectedPalette = useCallback(
-    (key, value) => {
+  const updateSelectedPalette = useCallback(
+    (newProps) => {
       setPalettes((prevPalettes) => {
         return prevPalettes.map((aPrevPalettes) => {
           if (aPrevPalettes.uid === selectedPaletteUid)
             return {
               ...aPrevPalettes,
-              [key]: value,
+              ...newProps,
+              ['uid']: aPrevPalettes.uid,
             };
           return { ...aPrevPalettes };
         });
       });
     },
     [selectedPaletteUid]
+  );
+  const updatePaletteControl = useCallback(
+    (newProps, gate = true) => {
+      setPaletteControl((prevPaletteControl) => {
+        return { ...prevPaletteControl, ...newProps };
+      });
+      if (gate) updateSelectedPalette(newProps);
+    },
+    [updateSelectedPalette]
   );
 
   const [isDrawerOpened, setDrawerOpened] = useState(false);
@@ -188,137 +105,93 @@ function App() {
   }, []);
   const onChangeSwatchStepHandler = useCallback(
     (newString) => {
-      palettePropsDispatch({
-        type: 'change_swatch_step',
-        nextVal: Number(newString),
-      });
-      changeSelectedPalette('swatchStep', Number(newString));
+      updatePaletteControl({ swatchStep: Number(newString) });
     },
-    [changeSelectedPalette]
+    [updatePaletteControl]
   );
   const onChangeHueRangedHandler = useCallback(
     (newBoolean) => {
-      palettePropsDispatch({
-        type: 'toggle_hue_ranged',
-      });
+      setHueRanged(newBoolean);
       if (!newBoolean) {
-        palettePropsDispatch({
-          type: 'sync_hue_to',
-        });
+        updatePaletteControl({ hueTo: paletteControl.hueFrom });
         syncHues();
-        changeSelectedPalette('hueTo', paletteProps.hueFrom);
       }
     },
-    [paletteProps, changeSelectedPalette, syncHues]
+    [paletteControl, updatePaletteControl, syncHues]
   );
   const onChangeHueFromHandler = useCallback(
     (newNumber) => {
-      palettePropsDispatch({
-        type: 'change_hue_from',
-        nextVal: newNumber,
-      });
-      updateHue('from', newNumber);
-      changeSelectedPalette('hueFrom', newNumber);
-      if (!paletteProps.isHueRanged) {
-        palettePropsDispatch({
-          type: 'sync_hue_to',
-        });
-        updateHue('to', newNumber);
-        changeSelectedPalette('hueTo', newNumber);
-      }
+      updatePaletteControl(
+        isHueRanged
+          ? { hueFrom: newNumber }
+          : { hueFrom: newNumber, hueTo: newNumber }
+      );
+      updateHues(
+        isHueRanged ? { from: newNumber } : { from: newNumber, to: newNumber }
+      );
     },
-    [paletteProps, changeSelectedPalette, updateHue]
+    [isHueRanged, updatePaletteControl, updateHues]
   );
   const onChangeHueToHandler = useCallback(
     (newNumber) => {
-      palettePropsDispatch({
-        type: 'change_hue_to',
-        nextVal: newNumber,
-      });
-      updateHue('to', newNumber);
-      changeSelectedPalette('hueTo', newNumber);
+      updatePaletteControl({ hueTo: newNumber });
+      updateHues({ to: newNumber });
     },
-    [changeSelectedPalette, updateHue]
+    [updatePaletteControl, updateHues]
   );
   const onChangeLightnessAndChromaHandler = useCallback(
     ({ x, y }) => {
-      palettePropsDispatch({
-        type: 'change_lightness_inflect',
-        nextVal: x,
+      updatePaletteControl({
+        lightnessInflect: x,
+        peakChroma: y,
       });
-      palettePropsDispatch({
-        type: 'change_peak_chroma',
-        nextVal: y,
-      });
-      changeSelectedPalette('lightnessInflect', x);
-      changeSelectedPalette('peakChroma', y);
     },
-    [changeSelectedPalette]
+    [updatePaletteControl]
   );
   const onChangeLightnessHandler = useCallback(
     (newNumber) => {
-      palettePropsDispatch({
-        type: 'change_lightness_inflect',
-        nextVal: newNumber,
+      updatePaletteControl({
+        lightnessInflect: newNumber,
       });
-      changeSelectedPalette('lightnessInflect', newNumber);
     },
-    [changeSelectedPalette]
+    [updatePaletteControl]
   );
   const onChangeChromaHandler = useCallback(
     (newNumber) => {
-      palettePropsDispatch({
-        type: 'change_peak_chroma',
-        nextVal: newNumber,
+      updatePaletteControl({
+        peakChroma: newNumber,
       });
-      changeSelectedPalette('peakChroma', newNumber);
     },
-    [changeSelectedPalette]
+    [updatePaletteControl]
   );
   const onPressCreateHandler = useCallback(() => {
-    addNewPalette();
-  }, [addNewPalette]);
+    addANewPalette();
+  }, [addANewPalette]);
   const onPressPaletteHandler = useCallback(
     (newUid) => {
       setSelectedPaletteUid(newUid);
       const selectedPalette = getSelectedPalette(newUid);
-      palettePropsDispatch({
-        type: 'import_palette',
-        swatchStep: selectedPalette.swatchStep,
-        hueFrom: selectedPalette.hueFrom,
-        hueTo: selectedPalette.hueTo,
-        lightnessInflect: selectedPalette.lightnessInflect,
-        peakChroma: selectedPalette.peakChroma,
-      });
-      updateHue('from', selectedPalette.hueFrom);
-      updateHue('to', selectedPalette.hueTo);
+      updatePaletteControl(selectedPalette, false);
+      updateHues({ from: selectedPalette.hueFrom, to: selectedPalette.hueTo });
     },
-    [getSelectedPalette, updateHue]
+    [getSelectedPalette, updatePaletteControl, updateHues]
   );
-
-  useLayoutEffect(() => {
-    updateHue('from', paletteProps.hueFrom);
-    updateHue('to', paletteProps.hueTo);
-  }, []);
-
-  useEffect(() => {
-    const controller = controllerRef.current;
-    const onTransitionEndHandler = (e) => {
-      if (e.target !== controller) return;
-      console.log('a');
-      palettePropsDispatch({
-        type: 'update_all',
-      });
-    };
-    controller.addEventListener('transitionend', onTransitionEndHandler);
-    return () => {
-      controller.removeEventListener('transitionend', onTransitionEndHandler);
-    };
-  }, []);
 
   const swatchStepTitleId = useId();
   const huesTitleId = useId();
   const lAndCTitleId = useId();
+
+  useLayoutEffect(() => {
+    updateHues({ from: paletteControl.hueFrom, to: paletteControl.hueTo });
+  }, []);
+
+  useLayoutEffect(() => {
+    const checkTheme = (e) => {
+      updateTheme(e.matches);
+    };
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+    checkTheme(mediaQuery);
+  }, []);
 
   return (
     <>
@@ -353,7 +226,7 @@ function App() {
                 </h3>
                 <RadioGroup
                   aria-labelledby={swatchStepTitleId}
-                  value={paletteProps.swatchStep.toString()}
+                  value={paletteControl.swatchStep.toString()}
                   orientation="horizontal"
                   onChange={onChangeSwatchStepHandler}
                 >
@@ -378,13 +251,13 @@ function App() {
                 <Switch
                   aria-labelledby={huesTitleId}
                   className={cx('controller__is-ranged')}
-                  isSelected={paletteProps.isHueRanged}
+                  isSelected={isHueRanged}
                   onChange={onChangeHueRangedHandler}
                 />
                 <Slider
                   aria-labelledby={huesTitleId}
                   className={cx('controller__slider-hue-from')}
-                  value={paletteProps.hueFrom}
+                  value={paletteControl.hueFrom}
                   minValue={0}
                   maxValue={360}
                   step={HUE_STEP}
@@ -394,8 +267,8 @@ function App() {
                 <Slider
                   aria-labelledby={huesTitleId}
                   className={cx('controller__slider-hue-to')}
-                  isDisabled={!paletteProps.isHueRanged}
-                  value={paletteProps.hueTo}
+                  isDisabled={!isHueRanged}
+                  value={paletteControl.hueTo}
                   minValue={0}
                   maxValue={360}
                   step={HUE_STEP}
@@ -406,7 +279,7 @@ function App() {
                   <NumberField
                     aria-labelledby={huesTitleId}
                     className={cx('controller__number-fields-hue-from')}
-                    value={paletteProps.hueFrom}
+                    value={paletteControl.hueFrom}
                     minValue={0}
                     maxValue={360}
                     step={HUE_STEP}
@@ -416,8 +289,8 @@ function App() {
                   <NumberField
                     aria-labelledby={huesTitleId}
                     className={cx('controller__number-fields-hue-to')}
-                    isDisabled={!paletteProps.isHueRanged}
-                    value={paletteProps.hueTo}
+                    isDisabled={!isHueRanged}
+                    value={paletteControl.hueTo}
                     minValue={0}
                     maxValue={360}
                     step={HUE_STEP}
@@ -445,8 +318,8 @@ function App() {
                   maxValue={{ x: 1, y: CHROMA_LIMIT }}
                   step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
                   value={{
-                    x: paletteProps.lightnessInflect,
-                    y: paletteProps.peakChroma,
+                    x: paletteControl.lightnessInflect,
+                    y: paletteControl.peakChroma,
                   }}
                   onChangeEnd={onChangeLightnessAndChromaHandler}
                   onChange={onChangeLightnessAndChromaHandler}
@@ -455,7 +328,7 @@ function App() {
                   <NumberField
                     aria-labelledby={lAndCTitleId}
                     className={cx('controller__number-fields-l')}
-                    value={paletteProps.lightnessInflect}
+                    value={paletteControl.lightnessInflect}
                     minValue={0}
                     maxValue={1}
                     step={LIGHTNESS_STEP}
@@ -465,7 +338,7 @@ function App() {
                   <NumberField
                     aria-labelledby={lAndCTitleId}
                     className={cx('controller__number-fields-c')}
-                    value={paletteProps.peakChroma}
+                    value={paletteControl.peakChroma}
                     minValue={0}
                     maxValue={CHROMA_LIMIT}
                     step={CHROMA_STEP}
@@ -485,7 +358,7 @@ function App() {
                   materialIcon="add"
                   text="create a palette"
                   onPress={onPressCreateHandler}
-                  isDisabled={paletteProps.selectedPalete}
+                  isDisabled={paletteControl.selectedPalete}
                 />
               </div>
             </div>

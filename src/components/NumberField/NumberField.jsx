@@ -25,36 +25,36 @@ const NumberField = ({
 
   const inputRef = useRef(null);
 
-  const isChagedRef = useRef(false);
   const innerValueRef = useRef(value);
+  const isInnerValueMatchRef = useRef(true);
 
   const syncInnerValueToValue = useCallback(() => {
     innerValueRef.current = value;
-    isChagedRef.current = false;
+    isInnerValueMatchRef.current = true;
   }, [value]);
 
   const onChangeHandler = useCallback((newValue) => {
     const prevInnerValue = innerValueRef.current;
     innerValueRef.current = newValue;
-    isChagedRef.current = prevInnerValue !== innerValueRef.current;
+    isInnerValueMatchRef.current = prevInnerValue === innerValueRef.current;
   }, []);
   const onKeyDownHandler = useCallback(
     (e) => {
-      if (isChagedRef.current) onChange?.(innerValueRef.current);
+      if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
       if (e.key === 'Enter') inputRef.current.blur();
     },
     [onChange]
   );
   const onBlurHandler = useCallback(() => {
-    if (isChagedRef.current) onChange?.(innerValueRef.current);
+    if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
-    if (isChagedRef.current) onChange?.(innerValueRef.current);
+    if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
   }, [onChange]);
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
-  }, [syncInnerValueToValue, props.isDisabled]);
+  }, [syncInnerValueToValue]);
 
   const digitLength = useCallback(() => {
     const [minIntegerPart, minDecimalPart] = minValue.toString().split('.');
