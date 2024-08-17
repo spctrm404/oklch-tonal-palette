@@ -110,6 +110,10 @@ const ThemeProvider = ({ children }) => {
   );
 
   useLayoutEffect(() => {
+    const isLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    updateTheme(isLight);
+  }, [updateTheme]);
+  useLayoutEffect(() => {
     const body = document.body;
     body.dataset.theme = theme;
   }, [theme]);
