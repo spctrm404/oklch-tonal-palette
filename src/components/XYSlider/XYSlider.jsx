@@ -1,5 +1,3 @@
-//malfunc when collapsed
-
 import {
   useCallback,
   useContext,
@@ -16,10 +14,10 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const XYSlider = ({
+  value = { x: 50, y: 50 },
   minValue = { x: 0, y: 0 },
   maxValue = { x: 100, y: 100 },
   step = { x: 1, y: 1 },
-  value = { x: 50, y: 50 },
   onChangeEnd = () => {},
   onChange = () => {},
   isDisabled = false,
@@ -31,9 +29,9 @@ const XYSlider = ({
   const [isDragging, setDragging] = useState(false);
   const [isFocused, setFocused] = useState(false);
 
-  const valueRef = useRef(value);
-  const minValueRef = useRef(minValue);
-  const maxValueRef = useRef(maxValue);
+  const lastValueRef = useRef(value);
+  const lastMinValueRef = useRef(minValue);
+  const lastMaxValueRef = useRef(maxValue);
 
   const positionRef = useRef({ x: 0, y: 0 });
 
@@ -77,6 +75,30 @@ const XYSlider = ({
     }, {});
   }, [minValue, maxValue, normalizedPosition]);
 
+  const normalizedLastValue = useCallback(() => {
+    const lastValue = lastValueRef.current;
+    const lastMinValue = lastMinValueRef.current;
+    const lastMaxValue = lastMaxValueRef.current;
+    return Object.keys(lastValue).reduce((acc, key) => {
+      acc[key] =
+        key === 'y'
+          ? 1 -
+            (lastValue[key] - lastMinValue[key]) /
+              (lastMaxValue[key] - lastMinValue[key])
+          : (lastValue[key] - lastMinValue[key]) /
+            (lastMaxValue[key] - lastMinValue[key]);
+      return acc;
+    }, {});
+  }, []);
+  const positionFromLastValue = useCallback(() => {
+    const trackRect = trackRef.current.getBoundingClientRect();
+    const thumbRect = thumbRef.current.getBoundingClientRect();
+    return {
+      x: normalizedLastValue().x * trackRect.width - 0.5 * thumbRect.width,
+      y: normalizedLastValue().y * trackRect.height - 0.5 * thumbRect.height,
+    };
+  }, [normalizedLastValue]);
+
   const getClampedValue = useCallback(
     (value) => {
       return Object.keys(value).reduce((acc, key) => {
@@ -114,24 +136,24 @@ const XYSlider = ({
   }, []);
 
   const onChangeEndHandler = useCallback(() => {
-    console.log('onChangeEnd');
-    console.log('value', value);
+    // console.log('onChangeEnd');
+    // console.log('value', value);
     const newValue = valueFromPosition();
-    console.log('position', positionRef.current);
-    console.log('newValue', newValue);
+    // console.log('position', positionRef.current);
+    // console.log('newValue', newValue);
     const quantizedValue = getQuantizedValue(newValue);
     onChangeEnd?.(quantizedValue);
-  }, [value, onChangeEnd, valueFromPosition, getQuantizedValue]);
+  }, [onChangeEnd, valueFromPosition, getQuantizedValue]);
   const onChangeHandler = useCallback(() => {
-    console.log('onChange');
-    console.log('value', value);
+    // console.log('onChange');
+    // console.log('value', value);
     const newValue = valueFromPosition();
-    console.log('position', positionRef.current);
-    console.log('newValue', newValue);
+    // console.log('position', positionRef.current);
+    // console.log('newValue', newValue);
     const clampedValue = getClampedValue(newValue);
     const quantizedValue = getQuantizedValue(clampedValue);
     onChange?.(quantizedValue);
-  }, [value, onChange, valueFromPosition, getClampedValue, getQuantizedValue]);
+  }, [onChange, valueFromPosition, getClampedValue, getQuantizedValue]);
 
   const onPressStart = useCallback(
     (e) => {
@@ -171,7 +193,7 @@ const XYSlider = ({
       if (!isDisabled) onPressStart(e);
     },
     onPressUp: () => {
-      if (!isDisabled) setDragging(false);
+      setDragging(false);
     },
   });
   const { moveProps: trackMoveProps } = useMove({
@@ -197,7 +219,7 @@ const XYSlider = ({
       if (!isDisabled) setFocused(true);
     },
     onBlur: () => {
-      if (!isDisabled) setFocused(false);
+      setFocused(false);
     },
   });
   const { pressProps: thumbPressProps } = usePress({
@@ -221,22 +243,19 @@ const XYSlider = ({
   );
 
   useLayoutEffect(() => {
-    valueRef.current = { ...value };
-    minValueRef.current = { ...minValue };
-    maxValueRef.current = { ...maxValue };
+    lastValueRef.current = { ...value };
+    lastMinValueRef.current = { ...minValue };
+    lastMaxValueRef.current = { ...maxValue };
   });
 
-  const setPositionByValue = useCallback(() => {
-    positionRef.current = positionFromValue();
-  }, [positionFromValue]);
-
   useLayoutEffect(() => {
-    console.log('layoutEffect');
-    if (!isDragging) {
-      setPositionByValue();
-      console.log('position', positionRef.current);
-    }
-  }, [value, isDragging, setPositionByValue]);
+    // console.log('layoutEffect');
+    if (!isDragging)
+      // {
+      positionRef.current = positionFromValue();
+    // console.log('position', positionRef.current);
+    // }
+  }, [isDragging, positionFromValue]);
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -244,25 +263,26 @@ const XYSlider = ({
       entries.forEach((anEntry) => {
         if (anEntry.target === root) {
           console.log('resize');
-          const value = valueRef.current;
-          const minValue = minValueRef.current;
-          const maxValue = maxValueRef.current;
-          const normalizedValue = Object.keys(value).reduce((acc, key) => {
-            acc[key] =
-              key === 'y'
-                ? 1 -
-                  (value[key] - minValue[key]) / (maxValue[key] - minValue[key])
-                : (value[key] - minValue[key]) /
-                  (maxValue[key] - minValue[key]);
-            return acc;
-          }, {});
-          const trackRect = trackRef.current.getBoundingClientRect();
-          const thumbRect = thumbRef.current.getBoundingClientRect();
-          const newPosition = {
-            x: normalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
-            y: normalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
-          };
-          positionRef.current = newPosition;
+          // const value = lastValueRef.current;
+          // const minValue = lastMinValueRef.current;
+          // const maxValue = lastMaxValueRef.current;
+          // const normalizedValue = Object.keys(value).reduce((acc, key) => {
+          //   acc[key] =
+          //     key === 'y'
+          //       ? 1 -
+          //         (value[key] - minValue[key]) / (maxValue[key] - minValue[key])
+          //       : (value[key] - minValue[key]) /
+          //         (maxValue[key] - minValue[key]);
+          //   return acc;
+          // }, {});
+          // const trackRect = trackRef.current.getBoundingClientRect();
+          // const thumbRect = thumbRef.current.getBoundingClientRect();
+          // const newPosition = {
+          //   x: normalizedValue.x * trackRect.width - 0.5 * thumbRect.width,
+          //   y: normalizedValue.y * trackRect.height - 0.5 * thumbRect.height,
+          // };
+          // positionRef.current = newPosition;
+          positionRef.current = positionFromLastValue();
           console.log('position', positionRef.current);
           console.log('valueByPosition', valueFromPosition());
         }

@@ -185,14 +185,6 @@ function App() {
     updateHues({ from: paletteControl.hueFrom, to: paletteControl.hueTo });
   }, []);
 
-  useLayoutEffect(() => {
-    const checkTheme = (e) => {
-      updateTheme(e.matches);
-    };
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
-    checkTheme(mediaQuery);
-  }, []);
-
   return (
     <>
       <div className={cx('grid')}>
