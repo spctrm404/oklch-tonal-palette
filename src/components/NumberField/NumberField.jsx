@@ -23,10 +23,10 @@ const NumberField = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const inputRef = useRef(null);
-
   const innerValueRef = useRef(value);
   const isInnerValueMatchRef = useRef(true);
+
+  const inputRef = useRef(null);
 
   const syncInnerValueToValue = useCallback(() => {
     innerValueRef.current = value;
@@ -54,6 +54,7 @@ const NumberField = ({
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
+    console.log(isInnerValueMatchRef.current);
   }, [syncInnerValueToValue]);
 
   const digitLength = useCallback(() => {
@@ -79,7 +80,7 @@ const NumberField = ({
       minValue={minValue}
       maxValue={maxValue}
       step={step}
-      value={innerValueRef.current}
+      value={isInnerValueMatchRef.current ? value : innerValueRef.current}
       onChange={onChangeHandler}
       onKeyDown={onKeyDownHandler}
       onBlur={onBlurHandler}

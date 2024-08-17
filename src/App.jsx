@@ -22,7 +22,7 @@ import NumberField from './components/NumberField/NumberField';
 import XYSlider from './components/XYSlider/XYSlider';
 import Button from './components/Button/Button';
 import Palette from './components/Palette/Palette';
-// import './_App.scss';
+import './_App.scss';
 import st from './_App.module.scss';
 import classNames from 'classnames/bind';
 import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
@@ -30,8 +30,7 @@ import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 const cx = classNames.bind(st);
 
 function App() {
-  const { theme, updateTheme, toggleTheme, updateHues, syncHues } =
-    useContext(ThemeContext);
+  const { theme, toggleTheme, updateHues, syncHues } = useContext(ThemeContext);
 
   const initialPaletteControl = () => {
     const randomHue = closestQuantized(360 * Math.random(), HUE_STEP);
@@ -303,19 +302,21 @@ function App() {
                 >
                   Lightness & Chroma
                 </h3>
-                <XYSlider
-                  aria-labelledby={lAndCTitleId}
-                  className={cx('controller__xy-slider')}
-                  minValue={{ x: 0, y: 0 }}
-                  maxValue={{ x: 1, y: CHROMA_LIMIT }}
-                  step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
-                  value={{
-                    x: paletteControl.lightnessInflect,
-                    y: paletteControl.peakChroma,
-                  }}
-                  onChangeEnd={onChangeLightnessAndChromaHandler}
-                  onChange={onChangeLightnessAndChromaHandler}
-                />
+                <div className={cx('controller__l-c')}>
+                  <XYSlider
+                    aria-labelledby={lAndCTitleId}
+                    className={cx('controller__xy-slider')}
+                    minValue={{ x: 0, y: 0 }}
+                    maxValue={{ x: 1, y: CHROMA_LIMIT }}
+                    step={{ x: LIGHTNESS_STEP, y: CHROMA_STEP }}
+                    value={{
+                      x: paletteControl.lightnessInflect,
+                      y: paletteControl.peakChroma,
+                    }}
+                    onChangeEnd={onChangeLightnessAndChromaHandler}
+                    onChange={onChangeLightnessAndChromaHandler}
+                  />
+                </div>
                 <div className={cx('controller__number-fields-l-c')}>
                   <NumberField
                     aria-labelledby={lAndCTitleId}

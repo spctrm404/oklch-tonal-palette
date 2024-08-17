@@ -24,23 +24,31 @@ $transition: $duration $easing;
 }
 
 .drawer {
+  position: relative;
+  z-index: 3;
   display: grid;
   grid-template-rows: subgrid;
   grid-template-columns: subgrid;
   grid-row: 1 / -1;
   grid-column: 1;
   place-items: stretch stretch;
-  background-color: var(--surface-container-low-light);
+  background-color: var(--surface-container-light);
+  box-shadow: var(--shadow-0);
+  transition: background-color $transition $duration,
+    box-shadow $transition $duration;
 
   &[data-theme='dark'] {
-    background-color: var(--surface-container-low-dark);
+    background-color: var(--surface-container-dark);
   }
 
   &[data-opened] {
     background-color: var(--surface-container-high-light);
+    box-shadow: var(--shadow-3-light);
+    transition: background-color $transition, box-shadow $transition;
 
     &[data-theme='dark'] {
       background-color: var(--surface-container-high-dark);
+      box-shadow: var(--shadow-3-dark);
     }
   }
 
@@ -69,32 +77,47 @@ $transition: $duration $easing;
     opacity: 1;
     transition: opacity $transition $duration;
   }
+
+  &__l-c {
+    height: 15.5rem;
+    background-color: aqua;
+  }
+
+  &__xy-slider {
+    height: 100%;
+  }
 }
 
 .menu {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-row: 1;
   grid-column: 2;
   place-items: center end;
   padding-inline: $menu-px;
-  background-color: var(--surface-container-low-light);
+  background-color: var(--surface-container-light);
+  transition: background-color $transition;
 
   &[data-theme='dark'] {
-    background-color: var(--surface-container-low-dark);
+    background-color: var(--surface-container-dark);
   }
 }
 
 .main {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-row: 2;
   grid-column: 2;
   place-items: center stretch;
   overflow: scroll;
+  background-color: var(--surface-container-low-light);
   scrollbar-width: none;
-  background-color: var(--surface-container-lowest-light);
+  transition: background-color $transition;
 
   &[data-theme='dark'] {
-    background-color: var(--surface-container-lowest-dark);
+    background-color: var(--surface-container-low-dark);
   }
 }
 

@@ -262,7 +262,7 @@ const XYSlider = ({
     const onResizeHandler = (entries) => {
       entries.forEach((anEntry) => {
         if (anEntry.target === root) {
-          console.log('resize');
+          // console.log('resize');
           // const value = lastValueRef.current;
           // const minValue = lastMinValueRef.current;
           // const maxValue = lastMaxValueRef.current;
@@ -283,8 +283,8 @@ const XYSlider = ({
           // };
           // positionRef.current = newPosition;
           positionRef.current = positionFromLastValue();
-          console.log('position', positionRef.current);
-          console.log('valueByPosition', valueFromPosition());
+          // console.log('position', positionRef.current);
+          // console.log('valueByPosition', valueFromPosition());
         }
       });
     };
