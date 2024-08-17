@@ -45,7 +45,7 @@ const Swatch = ({
             'material-symbols-outlined'
           )}
         >
-          warning
+          priority_high
         </div>
         <div
           className={cx(
@@ -54,7 +54,7 @@ const Swatch = ({
             'material-symbols-outlined'
           )}
         >
-          error
+          close
         </div>
       </div>
     </li>
