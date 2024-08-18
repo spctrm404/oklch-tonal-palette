@@ -79,16 +79,16 @@ export const createColour = (
   const chroma = chromaOfLightness(lightness, lightnessInflect, peakChroma);
   const hue = hueOfLightness(lightness, hueFrom, hueTo);
 
-  const rawColour = `oklch(${lightness} ${chroma} ${hue})`;
-  const p3ClamppedColour = clampChroma(rawColour, `oklch`, `p3`);
-  const inP3 = chroma <= p3ClamppedColour.c;
-  const inSrgb = displayable(rawColour);
+  const rawOklch = `oklch(${lightness} ${chroma} ${hue})`;
+  const p3ClamppedOklch = clampChroma(rawOklch, `oklch`, `p3`);
+  const inP3 = chroma <= p3ClamppedOklch.c;
+  const inSrgb = displayable(rawOklch);
 
   return {
     mode: `oklch`,
-    l: p3ClamppedColour.l,
-    c: p3ClamppedColour.c,
-    h: p3ClamppedColour.h,
+    l: p3ClamppedOklch.l,
+    c: p3ClamppedOklch.c,
+    h: p3ClamppedOklch.h,
     inP3: inP3,
     inSrgb: inSrgb,
   };

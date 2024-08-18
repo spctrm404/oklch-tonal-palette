@@ -1,4 +1,13 @@
 $g: 0.25rem;
+$gx: 0.5rem;
+$button-size: 3rem;
+$button-state-size: 2.5rem;
+$button-shape-size: 1.25rem;
+$button-shape-border-thickness: 0.125rem;
+$button-shape-core-size: 0.625rem;
+$text-pr: 0.75rem;
+$duration: 200ms;
+$easing: cubic-bezier(0.2, 0, 0, 1);
 
 .radio-group {
   $root-selector: &;
@@ -18,6 +27,151 @@ $g: 0.25rem;
       grid-auto-flow: column;
       column-gap: $g;
       place-items: center start;
+    }
+  }
+}
+
+.radio {
+  $root-selector: &;
+
+  display: grid;
+  grid-template-rows: $button-size;
+  grid-template-columns: $button-size min-content;
+  column-gap: $gx;
+  place-items: center start;
+
+  &__button {
+    position: relative;
+    grid-column: 1 / span 1;
+    place-self: stretch stretch;
+
+    &__state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: $button-state-size;
+      height: $button-state-size;
+      background-color: var(--on-surface-light);
+      border-radius: 512rem;
+      opacity: 0;
+      transition: background-color $duration $easing, opacity $duration $easing,
+        transform $duration $easing;
+      transform: translate(-50%, -50%) scale(0%, 0%);
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        background-color: var(--on-surface-dark);
+      }
+
+      @at-root #{$root-selector}[data-hovered] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-focused] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-focus-visible] #{&} {
+        opacity: 0.08;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+      }
+      @at-root #{$root-selector}[data-pressed] #{&} {
+        background-color: var(--primary-light);
+        opacity: 0.12;
+        transform: translate(-50%, -50%) scale(100%, 100%);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--primary-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-selected] #{&} {
+        background-color: var(--primary-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          background-color: var(--primary-dark);
+        }
+      }
+    }
+
+    &__shape {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: $button-shape-size;
+      height: $button-shape-size;
+      border-color: var(--on-surface-variant-light);
+      border-style: solid;
+      border-width: $button-shape-border-thickness;
+      border-radius: 512rem;
+      transition: border-color $duration $easing;
+      transform: translate(-50%, -50%);
+      @at-root #{$root-selector}[data-theme='dark'] #{&} {
+        border-color: var(--on-surface-variant-dark);
+      }
+
+      @at-root #{$root-selector}[data-hovered] #{&} {
+        border-color: var(--on-surface-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: var(--on-surface-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-focused] #{&} {
+        border-color: var(--on-surface-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: var(--on-surface-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-focus-visible] #{&} {
+        border-color: var(--on-surface-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: var(--on-surface-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-pressed] #{&} {
+        border-color: var(--on-surface-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: var(--on-surface-dark);
+        }
+      }
+      @at-root #{$root-selector}[data-selected] #{&} {
+        border-color: var(--primary-light);
+        @at-root #{$root-selector}[data-theme='dark']#{&} {
+          border-color: var(--primary-dark);
+        }
+      }
+
+      &::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        width: $button-shape-core-size;
+        height: $button-shape-core-size;
+        content: '';
+        background-color: var(--on-surface-light);
+        border-radius: 512rem;
+        transition: background-color $duration $easing,
+          transform $duration $easing;
+        transform: translate(-50%, -50%) scale(0%, 0%);
+        @at-root #{$root-selector}[data-theme='dark'] #{&} {
+          background-color: var(--on-surface-dark);
+        }
+
+        @at-root #{$root-selector}[data-selected] #{&} {
+          background-color: var(--primary-light);
+          transform: translate(-50%, -50%) scale(100%, 100%);
+          @at-root #{$root-selector}[data-theme='dark']#{&} {
+            background-color: var(--primary-dark);
+          }
+        }
+      }
+    }
+  }
+
+  &__text {
+    padding-right: $text-pr;
+    color: var(--on-bg-light);
+    white-space: nowrap;
+    user-select: none;
+
+    @at-root #{$root-selector}[data-theme='dark'] #{&} {
+      color: var(--on-bg-dark);
     }
   }
 }

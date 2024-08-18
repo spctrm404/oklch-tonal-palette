@@ -79,12 +79,22 @@ $transition: $duration $easing;
   }
 
   &__l-c {
+    display: grid;
+    place-items: stretch stretch;
     height: 15.5rem;
-    background-color: aqua;
+  }
+
+  &__gamut-graph {
+    grid-row: 1;
+    grid-column: 1;
+    place-self: center center;
+    width: calc(100% - $button-size);
+    height: calc(100% - $button-size);
   }
 
   &__xy-slider {
-    height: 100%;
+    grid-row: 1;
+    grid-column: 1;
   }
 }
 

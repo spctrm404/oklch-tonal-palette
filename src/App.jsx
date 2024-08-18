@@ -15,17 +15,17 @@ import {
 import { closestQuantized } from './utils/numberUtils.js';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import Switch from './components/Switch/Switch';
-import Radio from './components/Radio/Radio';
+import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 import RadioGroup from './components/RadioGroup/RadioGroup';
 import Slider from './components/Slider/Slider';
 import NumberField from './components/NumberField/NumberField';
 import XYSlider from './components/XYSlider/XYSlider';
+import GamutGraph from './components/GamutGraph/GamutGraph.jsx';
 import Button from './components/Button/Button';
 import Palette from './components/Palette/Palette';
 import './_App.scss';
 import st from './_App.module.scss';
 import classNames from 'classnames/bind';
-import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 
 const cx = classNames.bind(st);
 
@@ -180,6 +180,13 @@ function App() {
   const huesTitleId = useId();
   const lAndCTitleId = useId();
 
+  const swatchStepItemsRef = useRef([
+    { uid: crypto.randomUUID(), text: '10', value: '10' },
+    { uid: crypto.randomUUID(), text: '5', value: '5' },
+    { uid: crypto.randomUUID(), text: '2', value: '2' },
+    { uid: crypto.randomUUID(), text: '1', value: '1' },
+  ]);
+
   useLayoutEffect(() => {
     updateHues({ from: paletteControl.hueFrom, to: paletteControl.hueTo });
   }, []);
@@ -217,15 +224,11 @@ function App() {
                 </h3>
                 <RadioGroup
                   aria-labelledby={swatchStepTitleId}
+                  items={swatchStepItemsRef.current}
                   value={paletteControl.swatchStep.toString()}
                   orientation="horizontal"
                   onChange={onChangeSwatchStepHandler}
-                >
-                  <Radio text="10" value="10" />
-                  <Radio text="5" value="5" />
-                  <Radio text="2" value="2" />
-                  <Radio text="1" value="1" />
-                </RadioGroup>
+                ></RadioGroup>
               </div>
               <div
                 className={cx(
@@ -303,6 +306,15 @@ function App() {
                   Lightness & Chroma
                 </h3>
                 <div className={cx('controller__l-c')}>
+                  <GamutGraph
+                    width={400}
+                    height={200}
+                    lightnessInflect={paletteControl.lightnessInflect}
+                    peakChroma={paletteControl.peakChroma}
+                    hueFrom={paletteControl.hueFrom}
+                    hueTo={paletteControl.hueTo}
+                    className={cx('controller__gamut-graph')}
+                  />
                   <XYSlider
                     aria-labelledby={lAndCTitleId}
                     className={cx('controller__xy-slider')}

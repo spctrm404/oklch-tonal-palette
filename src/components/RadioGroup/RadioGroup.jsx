@@ -1,5 +1,8 @@
 import { useCallback, useContext } from 'react';
-import { RadioGroup as AriaRadioGroup } from 'react-aria-components';
+import {
+  Radio as AriaRadio,
+  RadioGroup as AriaRadioGroup,
+} from 'react-aria-components';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_RadioGroup.module.scss';
 import classNames from 'classnames/bind';
@@ -7,10 +10,10 @@ import classNames from 'classnames/bind';
 const cx = classNames.bind(st);
 
 const RadioGroup = ({
+  items = null,
   value = '',
   onChange = () => {},
   className,
-  children,
   ...props
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -30,7 +33,23 @@ const RadioGroup = ({
       data-theme={theme}
       {...props}
     >
-      {children}
+      {items.map((anItem) => {
+        return (
+          <AriaRadio
+            className={cx('radio')}
+            key={anItem.uid}
+            uid={anItem.uid}
+            value={anItem.value}
+            data-theme={theme}
+          >
+            <div className={cx('radio__button')}>
+              <div className={cx('radio__button__state')} />
+              <div className={cx('radio__button__shape')} />
+            </div>
+            <div className={cx('radio__text')}>{anItem.text}</div>
+          </AriaRadio>
+        );
+      })}
     </AriaRadioGroup>
   );
 };
