@@ -35,7 +35,6 @@ const GamutGraph = ({
         (1 - peakChroma / CHROMA_LIMIT) * ctx.canvas.height
       );
       ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
-      ctx.closePath();
       ctx.stroke();
     },
     [lightnessInflect, peakChroma]
@@ -100,7 +99,11 @@ const GamutGraph = ({
   }, [render]);
 
   return (
-    <div className={cx('canvas-container', className)} ref={canvasContainerRef}>
+    <div
+      className={cx('canvas-container', className)}
+      data-theme={theme}
+      ref={canvasContainerRef}
+    >
       <canvas className={cx('canvas')} ref={canvasRef}></canvas>
     </div>
   );
