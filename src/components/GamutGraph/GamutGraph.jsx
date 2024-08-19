@@ -63,8 +63,10 @@ const GamutGraph = ({
   const renderRamp = useCallback(
     (ctx) => {
       const toP3Rgb = converter('rgb');
-      const strokeColour = toP3Rgb(strokeColourRef.current.light);
-      console.log(strokeColour);
+      const strokeColour =
+        theme === 'light'
+          ? toP3Rgb(strokeColourRef.current.light)
+          : toP3Rgb(strokeColourRef.current.dark);
       ctx.strokeStyle = `rgb(${255 * strokeColour.r} ${255 * strokeColour.g} ${
         255 * strokeColour.b
       })`;
@@ -77,7 +79,7 @@ const GamutGraph = ({
       ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
       ctx.stroke();
     },
-    [lightnessInflect, peakChroma]
+    [theme, lightnessInflect, peakChroma]
   );
 
   const render = useCallback(() => {
