@@ -1,6 +1,21 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { CHROMA_LIMIT } from '../../utils/constants';
-import { hueOfLightness } from '../../utils/colourUtils';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import {
+  CHROMA_LIMIT,
+  P3_MAX_CHROMA_OFFSET,
+  LIGHTNESS_OF_PEAK_CHROMA,
+  SECONDARY_CHROMA_RATIO,
+  NEUTRAL_VARIANT_PEAK_CHROMA,
+  NEUTRAL_PEAK_CHROMA,
+  UTILITY_PEAK_CHROMA,
+} from '../../utils/constants';
+import { createColour, hueOfLightness } from '../../utils/colourUtils';
 import { clampChroma, displayable, converter } from 'culori';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_GamutGraph.module.scss';
@@ -18,8 +33,27 @@ const GamutGraph = ({
   className = '',
   ...props
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const { vividsRef, neutralVariantsRef, neutralsRef, theme } =
+    useContext(ThemeContext);
 
+  const strokeColourRef = useRef({
+    light: createColour(
+      Math.floor(100 * neutralsRef.current.outline.light),
+      100,
+      LIGHTNESS_OF_PEAK_CHROMA,
+      NEUTRAL_PEAK_CHROMA,
+      hueFrom,
+      hueTo
+    ),
+    dark: createColour(
+      Math.floor(100 * neutralsRef.current.outline.dark),
+      100,
+      LIGHTNESS_OF_PEAK_CHROMA,
+      NEUTRAL_PEAK_CHROMA,
+      hueFrom,
+      hueTo
+    ),
+  });
   const [size] = useState({ width: width, height: height });
   const canvasContainerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -28,6 +62,12 @@ const GamutGraph = ({
 
   const renderRamp = useCallback(
     (ctx) => {
+      const toP3Rgb = converter('rgb');
+      const strokeColour = toP3Rgb(strokeColourRef.current.light);
+      console.log(strokeColour);
+      ctx.strokeStyle = `rgb(${255 * strokeColour.r} ${255 * strokeColour.g} ${
+        255 * strokeColour.b
+      })`;
       ctx.beginPath();
       ctx.moveTo(0, ctx.canvas.height);
       ctx.lineTo(
@@ -47,7 +87,7 @@ const GamutGraph = ({
     renderRamp(ctx);
   }, [imageData, renderRamp]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current;
     canvas.width = size.width;
     canvas.height = size.height;
