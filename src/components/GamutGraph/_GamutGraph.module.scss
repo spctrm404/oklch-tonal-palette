@@ -3,6 +3,7 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 $track-rad: 0.25rem;
 
 .canvas-container {
+  overflow: hidden;
   background-color: var(--secondary-container-light);
   border-radius: $track-rad;
   transition: background-color $duration $easing;

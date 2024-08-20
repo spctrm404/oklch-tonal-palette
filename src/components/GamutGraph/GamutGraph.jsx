@@ -15,7 +15,11 @@ import {
   NEUTRAL_PEAK_CHROMA,
   UTILITY_PEAK_CHROMA,
 } from '../../utils/constants';
-import { createColour, hueOfLightness } from '../../utils/colourUtils';
+import {
+  createColour,
+  createColours,
+  hueOfLightness,
+} from '../../utils/colourUtils';
 import { clampChroma, displayable, converter } from 'culori';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
 import st from './_GamutGraph.module.scss';
@@ -60,34 +64,54 @@ const GamutGraph = ({
   const ctxRef = useRef(null);
   const [imageData, setImageData] = useState(null);
 
-  const renderRamp = useCallback(
-    (ctx) => {
-      const toP3Rgb = converter('rgb');
-      const strokeColour =
-        theme === 'light'
-          ? toP3Rgb(strokeColourRef.current.light)
-          : toP3Rgb(strokeColourRef.current.dark);
-      ctx.strokeStyle = `rgb(${255 * strokeColour.r} ${255 * strokeColour.g} ${
-        255 * strokeColour.b
-      })`;
+  const renderRamp = useCallback(() => {
+    const ctx = ctxRef.current;
+    const toP3Rgb = converter('p3');
+    const strokeColour =
+      theme === 'light'
+        ? toP3Rgb(strokeColourRef.current.light)
+        : toP3Rgb(strokeColourRef.current.dark);
+    ctx.strokeStyle = `color(display-p3 ${strokeColour.r} ${strokeColour.g} ${strokeColour.b})`;
+    ctx.beginPath();
+    ctx.moveTo(0, ctx.canvas.height);
+    ctx.lineTo(
+      lightnessInflect * ctx.canvas.width,
+      (1 - peakChroma / CHROMA_LIMIT) * ctx.canvas.height
+    );
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+    ctx.stroke();
+  }, [theme, lightnessInflect, peakChroma]);
+
+  const renderColours = useCallback(() => {
+    const ctx = ctxRef.current;
+    const toP3Rgb = converter('p3');
+    const colours = createColours(
+      10,
+      lightnessInflect,
+      peakChroma,
+      hueFrom,
+      hueTo
+    );
+    const rad = 5;
+    colours.forEach((aColour) => {
+      const fillColour = toP3Rgb(aColour);
+      const x = aColour.l * ctx.canvas.width;
+      const y = (1 - aColour.c / CHROMA_LIMIT) * ctx.canvas.height;
+      ctx.fillStyle = `color(display-p3 ${fillColour.r} ${fillColour.g} ${fillColour.b})`;
       ctx.beginPath();
-      ctx.moveTo(0, ctx.canvas.height);
-      ctx.lineTo(
-        lightnessInflect * ctx.canvas.width,
-        (1 - peakChroma / CHROMA_LIMIT) * ctx.canvas.height
-      );
-      ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+      ctx.ellipse(x, y, rad, rad, 0, 0, 2 * Math.PI);
       ctx.stroke();
-    },
-    [theme, lightnessInflect, peakChroma]
-  );
+      ctx.fill();
+    });
+  }, [lightnessInflect, peakChroma, hueFrom, hueTo]);
 
   const render = useCallback(() => {
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     if (imageData) ctx.putImageData(imageData, 0, 0);
-    renderRamp(ctx);
-  }, [imageData, renderRamp]);
+    renderRamp();
+    renderColours();
+  }, [imageData, renderRamp, renderColours]);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
