@@ -16,9 +16,9 @@ import {
   UTILITY_PEAK_CHROMA,
 } from '../../utils/constants';
 import {
-  createColour,
   createColours,
   hueOfLightness,
+  chromaOfLightness,
 } from '../../utils/colourUtils';
 import { clampChroma, displayable, converter } from 'culori';
 import { ThemeContext } from '../../context/ThemeContext.jsx';
@@ -40,129 +40,153 @@ const GamutGraph = ({
   const { vividsRef, neutralVariantsRef, neutralsRef, theme } =
     useContext(ThemeContext);
 
-  const strokeColourRef = useRef({
-    light: createColour(
-      Math.floor(100 * neutralsRef.current.outline.light),
-      100,
-      LIGHTNESS_OF_PEAK_CHROMA,
-      NEUTRAL_PEAK_CHROMA,
-      hueFrom,
-      hueTo
-    ),
-    dark: createColour(
-      Math.floor(100 * neutralsRef.current.outline.dark),
-      100,
-      LIGHTNESS_OF_PEAK_CHROMA,
-      NEUTRAL_PEAK_CHROMA,
-      hueFrom,
-      hueTo
-    ),
-  });
   const [size] = useState({ width: width, height: height });
   const canvasContainerRef = useRef(null);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
   const [imageData, setImageData] = useState(null);
-
-  const renderRamp = useCallback(() => {
-    const ctx = ctxRef.current;
-    const toP3Rgb = converter('p3');
-    const strokeColour =
-      theme === 'light'
-        ? toP3Rgb(strokeColourRef.current.light)
-        : toP3Rgb(strokeColourRef.current.dark);
-    ctx.strokeStyle = `color(display-p3 ${strokeColour.r} ${strokeColour.g} ${strokeColour.b})`;
-    ctx.beginPath();
-    ctx.moveTo(0, ctx.canvas.height);
-    ctx.lineTo(
-      lightnessInflect * ctx.canvas.width,
-      (1 - peakChroma / CHROMA_LIMIT) * ctx.canvas.height
-    );
-    ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
-    ctx.stroke();
-  }, [theme, lightnessInflect, peakChroma]);
-
-  const renderColours = useCallback(() => {
-    const ctx = ctxRef.current;
-    const toP3Rgb = converter('p3');
-    const colours = createColours(
-      10,
-      lightnessInflect,
-      peakChroma,
-      hueFrom,
-      hueTo
-    );
-    const rad = 5;
-    colours.forEach((aColour) => {
-      const fillColour = toP3Rgb(aColour);
-      const x = aColour.l * ctx.canvas.width;
-      const y = (1 - aColour.c / CHROMA_LIMIT) * ctx.canvas.height;
-      ctx.fillStyle = `color(display-p3 ${fillColour.r} ${fillColour.g} ${fillColour.b})`;
-      ctx.beginPath();
-      ctx.ellipse(x, y, rad, rad, 0, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.fill();
-    });
-  }, [lightnessInflect, peakChroma, hueFrom, hueTo]);
+  const coloursRef = useRef(
+    createColours(10, lightnessInflect, peakChroma, hueFrom, hueTo).map(
+      (aColour) => {
+        return {
+          ...aColour,
+          uid: crypto.randomUUID(),
+        };
+      }
+    )
+  );
 
   const render = useCallback(() => {
     const ctx = ctxRef.current;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     if (imageData) ctx.putImageData(imageData, 0, 0);
-    renderRamp();
-    renderColours();
-  }, [imageData, renderRamp, renderColours]);
+  }, [imageData]);
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = size.width;
-    canvas.height = size.height;
+    canvas.width = size.width * 1;
+    canvas.height = size.height * 1;
+    canvas.style.width = `${size.width}px`;
+    canvas.style.height = `${size.height}px`;
     const ctx = canvas.getContext('2d', { colorSpace: 'display-p3' });
     ctxRef.current = ctx;
   }, [size]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    const imageData = ctx.createImageData(canvas.width, canvas.height, {
-      colorSpace: 'display-p3',
-    });
-    const toP3Rgb = converter('p3');
-    for (let x = 0; x < imageData.width; x++) {
-      const lightness = x / (imageData.width - 1);
-      const hue = hueOfLightness(lightness, hueFrom, hueTo);
-      let isInSrgb = true;
-      let wasInSrgb = true;
+    const width = canvas.width;
+    const height = canvas.height;
 
-      for (let y = imageData.height - 1; y >= 0; y--) {
-        const chroma = CHROMA_LIMIT * (1 - y / (imageData.height - 1));
+    const imageDataArray = new Uint8ClampedArray(width * height * 4);
+    const toP3Rgb = converter('p3');
+
+    for (let x = 0; x < width; x++) {
+      const lightness = x / (width - 1);
+      const hue = hueOfLightness(lightness, hueFrom, hueTo);
+      let wasInSrgb = true;
+      for (let y = height - 1; y >= 0; y--) {
+        const chroma = CHROMA_LIMIT * (1 - y / (height - 1));
         const rawOklch = `oklch(${lightness} ${chroma} ${hue})`;
         const p3ClamppedOklch = clampChroma(rawOklch, 'oklch', 'p3');
         const inP3 = chroma <= p3ClamppedOklch.c;
-        isInSrgb = displayable(rawOklch);
+        const isInSrgb = displayable(rawOklch);
+
         if (!inP3) break;
+
         const p3ClamppedRgb = toP3Rgb(p3ClamppedOklch);
-        const idx = (y * imageData.width + x) * 4;
+        const idx = (y * width + x) * 4;
         if (!isInSrgb && isInSrgb !== wasInSrgb) {
-          imageData.data[idx] = 255;
-          imageData.data[idx + 1] = 255;
-          imageData.data[idx + 2] = 255;
-          imageData.data[idx + 3] = 255;
         } else {
-          imageData.data[idx] = Math.round(255 * p3ClamppedRgb.r);
-          imageData.data[idx + 1] = Math.round(255 * p3ClamppedRgb.g);
-          imageData.data[idx + 2] = Math.round(255 * p3ClamppedRgb.b);
-          imageData.data[idx + 3] = 255;
+          imageDataArray[idx] = Math.round(255 * p3ClamppedRgb.r);
+          imageDataArray[idx + 1] = Math.round(255 * p3ClamppedRgb.g);
+          imageDataArray[idx + 2] = Math.round(255 * p3ClamppedRgb.b);
+          imageDataArray[idx + 3] = 255;
         }
         wasInSrgb = isInSrgb;
       }
     }
+
+    const imageData = new ImageData(imageDataArray, width, height, {
+      colorSpace: 'display-p3',
+    });
     setImageData(imageData);
   }, [hueFrom, hueTo]);
 
   useEffect(() => {
     render();
   }, [render]);
+
+  const svgGraphic = useCallback(() => {
+    const toP3Rgb = converter('p3');
+    coloursRef.current = createColours(
+      10,
+      lightnessInflect,
+      peakChroma,
+      hueFrom,
+      hueTo
+    ).map((aColour, idx) => {
+      return { ...aColour, uid: coloursRef.current[idx]['uid'] };
+    });
+    return (
+      <svg className={cx('svg')} width={size.width} height={size.height}>
+        <polyline
+          points={`0 ${size.height} ${size.width * lightnessInflect} ${
+            size.height * (1 - peakChroma / CHROMA_LIMIT)
+          } ${size.width} ${size.height}`}
+          stroke={
+            theme === 'light' ? 'var(--primary-light)' : 'var(--primary-dark)'
+          }
+          fill="transparent"
+          strokeWidth="1"
+        />
+        {coloursRef.current.map((aColour) => {
+          if (aColour.inP3) return;
+          return (
+            <polyline
+              key={`${aColour.uid}-stroke`}
+              points={`${size.width * aColour.l} ${
+                size.height * (1 - aColour.c / CHROMA_LIMIT)
+              } ${size.width * aColour.l} ${
+                size.height *
+                (1 -
+                  chromaOfLightness(aColour.l, lightnessInflect, peakChroma) /
+                    CHROMA_LIMIT)
+              }`}
+              stroke={
+                aColour.inP3
+                  ? theme === 'light'
+                    ? 'var(--on-secondary-container-light)'
+                    : 'var(--on-secondary-container-dark)'
+                  : 'red'
+              }
+              fill="transparent"
+              strokeWidth="1"
+            ></polyline>
+          );
+        })}
+        {coloursRef.current.map((aColour) => {
+          const p3ClamppedRgb = toP3Rgb(aColour);
+          return (
+            <circle
+              key={aColour.uid}
+              cx={size.width * aColour.l}
+              cy={size.height * (1 - aColour.c / CHROMA_LIMIT)}
+              r={5}
+              stroke={
+                aColour.inP3
+                  ? theme === 'light'
+                    ? 'var(--on-secondary-container-light)'
+                    : 'var(--on-secondary-container-dark)'
+                  : 'red'
+              }
+              fill={`color(display-p3 ${p3ClamppedRgb.r} ${p3ClamppedRgb.g} ${p3ClamppedRgb.b})`}
+              strokeWidth="2"
+            ></circle>
+          );
+        })}
+      </svg>
+    );
+  }, [lightnessInflect, peakChroma, hueFrom, hueTo, theme, size]);
 
   return (
     <div
@@ -171,6 +195,7 @@ const GamutGraph = ({
       ref={canvasContainerRef}
     >
       <canvas className={cx('canvas')} ref={canvasRef}></canvas>
+      {svgGraphic()}
     </div>
   );
 };

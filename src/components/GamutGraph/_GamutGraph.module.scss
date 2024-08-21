@@ -3,6 +3,8 @@ $easing: cubic-bezier(0.2, 0, 0, 1);
 $track-rad: 0.25rem;
 
 .canvas-container {
+  display: grid;
+  place-items: center center;
   overflow: hidden;
   background-color: var(--secondary-container-light);
   border-radius: $track-rad;
@@ -10,4 +12,14 @@ $track-rad: 0.25rem;
   &[data-theme='dark']#{&} {
     background-color: var(--secondary-container-dark);
   }
+}
+
+.canvas {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.svg {
+  grid-row: 1;
+  grid-column: 1;
 }

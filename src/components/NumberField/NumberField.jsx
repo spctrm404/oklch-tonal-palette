@@ -54,7 +54,7 @@ const NumberField = ({
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
-    console.log(isInnerValueMatchRef.current);
+    // console.log(isInnerValueMatchRef.current);
   }, [syncInnerValueToValue]);
 
   const digitLength = useCallback(() => {
