@@ -6,15 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  CHROMA_LIMIT,
-  P3_MAX_CHROMA_OFFSET,
-  LIGHTNESS_OF_PEAK_CHROMA,
-  SECONDARY_CHROMA_RATIO,
-  NEUTRAL_VARIANT_PEAK_CHROMA,
-  NEUTRAL_PEAK_CHROMA,
-  UTILITY_PEAK_CHROMA,
-} from '../../utils/constants';
+import { CHROMA_LIMIT } from '../../utils/constants';
 import {
   createColours,
   hueOfLightness,
@@ -37,8 +29,7 @@ const GamutGraph = ({
   className = '',
   ...props
 }) => {
-  const { vividsRef, neutralVariantsRef, neutralsRef, theme } =
-    useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const [size] = useState({ width: width, height: height });
   const canvasContainerRef = useRef(null);

@@ -34,28 +34,31 @@ const NumberField = ({
   }, [value]);
 
   const onChangeHandler = useCallback((newValue) => {
-    const prevInnerValue = innerValueRef.current;
     innerValueRef.current = newValue;
-    isInnerValueMatchRef.current = prevInnerValue === innerValueRef.current;
+    isInnerValueMatchRef.current = false;
   }, []);
   const onKeyDownHandler = useCallback(
     (e) => {
-      if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
+      onChange?.(innerValueRef.current);
       if (e.key === 'Enter') inputRef.current.blur();
     },
     [onChange]
   );
   const onBlurHandler = useCallback(() => {
-    if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
+    onChange?.(innerValueRef.current);
   }, [onChange]);
   const onPressHandler = useCallback(() => {
-    if (!isInnerValueMatchRef.current) onChange?.(innerValueRef.current);
+    onChange?.(innerValueRef.current);
   }, [onChange]);
 
   useLayoutEffect(() => {
     syncInnerValueToValue();
     // console.log(isInnerValueMatchRef.current);
   }, [syncInnerValueToValue]);
+  // useLayoutEffect(() => {
+  //   innerValueRef.current = value;
+  //   isInnerValueMatchRef.current = true;
+  // }, [value]);
 
   const digitLength = useCallback(() => {
     const [minIntegerPart, minDecimalPart] = minValue.toString().split('.');
