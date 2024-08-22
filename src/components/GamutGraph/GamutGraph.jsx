@@ -31,44 +31,19 @@ const GamutGraph = ({
 }) => {
   const { theme } = useContext(ThemeContext);
 
-  const [size] = useState({ width: width, height: height });
+  const [size, setSize] = useState({ width: width, height: height });
+
   const canvasContainerRef = useRef(null);
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
+
   const [imageData, setImageData] = useState(null);
-  const coloursRef = useRef(
-    createColours(10, lightnessInflect, peakChroma, hueFrom, hueTo).map(
-      (aColour) => {
-        return {
-          ...aColour,
-          uid: crypto.randomUUID(),
-        };
-      }
-    )
-  );
-
-  const render = useCallback(() => {
-    const ctx = ctxRef.current;
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    if (imageData) ctx.putImageData(imageData, 0, 0);
-  }, [imageData]);
-
-  useLayoutEffect(() => {
-    const canvas = canvasRef.current;
-    canvas.width = size.width * 1;
-    canvas.height = size.height * 1;
-    canvas.style.width = `${size.width}px`;
-    canvas.style.height = `${size.height}px`;
-    const ctx = canvas.getContext('2d', { colorSpace: 'display-p3' });
-    ctxRef.current = ctx;
-  }, [size]);
-
-  useEffect(() => {
+  const updateImagedata = useCallback(() => {
     const canvas = canvasRef.current;
     const width = canvas.width;
     const height = canvas.height;
-
     const imageDataArray = new Uint8ClampedArray(width * height * 4);
+
     const toP3Rgb = converter('p3');
 
     for (let x = 0; x < width; x++) {
@@ -86,8 +61,7 @@ const GamutGraph = ({
 
         const p3ClamppedRgb = toP3Rgb(p3ClamppedOklch);
         const idx = (y * width + x) * 4;
-        if (!isInSrgb && isInSrgb !== wasInSrgb) {
-        } else {
+        if (isInSrgb || isInSrgb === wasInSrgb) {
           imageDataArray[idx] = Math.round(255 * p3ClamppedRgb.r);
           imageDataArray[idx + 1] = Math.round(255 * p3ClamppedRgb.g);
           imageDataArray[idx + 2] = Math.round(255 * p3ClamppedRgb.b);
@@ -97,26 +71,23 @@ const GamutGraph = ({
       }
     }
 
-    const imageData = new ImageData(imageDataArray, width, height, {
-      colorSpace: 'display-p3',
-    });
-    setImageData(imageData);
-  }, [hueFrom, hueTo]);
+    setImageData(
+      new ImageData(imageDataArray, width, height, {
+        colorSpace: 'display-p3',
+      })
+    );
+  }, [hueFrom, hueTo, size]);
 
-  useEffect(() => {
-    render();
-  }, [render]);
-
-  const svgGraphic = useCallback(() => {
+  const createSvg = useCallback(() => {
     const toP3Rgb = converter('p3');
-    coloursRef.current = createColours(
+    const colours = createColours(
       10,
       lightnessInflect,
       peakChroma,
       hueFrom,
       hueTo
     ).map((aColour, idx) => {
-      return { ...aColour, uid: coloursRef.current[idx]['uid'] };
+      return { ...aColour, uid: `#${idx}_colour_preview` };
     });
     return (
       <svg className={cx('svg')} width={size.width} height={size.height}>
@@ -130,11 +101,11 @@ const GamutGraph = ({
           fill="transparent"
           strokeWidth="1"
         />
-        {coloursRef.current.map((aColour) => {
+        {colours.map((aColour) => {
           if (aColour.inP3) return;
           return (
             <polyline
-              key={`${aColour.uid}-stroke`}
+              key={`${aColour.uid}_stroke`}
               points={`${size.width * aColour.l} ${
                 size.height * (1 - aColour.c / CHROMA_LIMIT)
               } ${size.width * aColour.l} ${
@@ -155,7 +126,7 @@ const GamutGraph = ({
             ></polyline>
           );
         })}
-        {coloursRef.current.map((aColour) => {
+        {colours.map((aColour) => {
           const p3ClamppedRgb = toP3Rgb(aColour);
           return (
             <circle
@@ -178,6 +149,62 @@ const GamutGraph = ({
       </svg>
     );
   }, [lightnessInflect, peakChroma, hueFrom, hueTo, theme, size]);
+  const [svg, setSvg] = useState(createSvg());
+  const updateSvg = useCallback(() => {
+    setSvg(createSvg());
+  }, [createSvg]);
+
+  const render = useCallback(() => {
+    const ctx = ctxRef.current;
+    ctx?.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    if (imageData) ctx?.putImageData(imageData, 0, 0);
+  }, [imageData]);
+
+  useEffect(() => {
+    const canvasContainer = canvasContainerRef.current;
+    let timeOutId = null;
+    const onResize = (entries) => {
+      entries.forEach((anEntry) => {
+        if (anEntry.target === canvasContainer) {
+          timeOutId && clearTimeout(timeOutId);
+          timeOutId = setTimeout(() => {
+            const canvasContainerRect =
+              canvasContainerRef.current.getBoundingClientRect();
+            setSize({
+              width: canvasContainerRect.width,
+              height: canvasContainerRect.height,
+            });
+          }, 50);
+        }
+      });
+    };
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(canvasContainer);
+
+    return () => {
+      timeOutId && clearTimeout(timeOutId);
+      resizeObserver.unobserve(canvasContainer);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const canvas = canvasRef.current;
+    canvas.width = size.width * 1;
+    canvas.height = size.height * 1;
+    canvas.style.width = `${size.width}px`;
+    canvas.style.height = `${size.height}px`;
+    const ctx = canvas.getContext('2d', { colorSpace: 'display-p3' });
+    ctxRef.current = ctx;
+  }, [size]);
+  useEffect(() => {
+    updateImagedata();
+  }, [updateImagedata]);
+  useEffect(() => {
+    render();
+  }, [render]);
+  useEffect(() => {
+    updateSvg();
+  }, [updateSvg]);
 
   return (
     <div
@@ -186,7 +213,7 @@ const GamutGraph = ({
       ref={canvasContainerRef}
     >
       <canvas className={cx('canvas')} ref={canvasRef}></canvas>
-      {svgGraphic()}
+      {svg}
     </div>
   );
 };

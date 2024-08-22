@@ -361,9 +361,22 @@ function App() {
                 <Button
                   buttontype="filled"
                   materialIcon="add"
-                  text="create a palette"
+                  text="create palette"
                   onPress={onPressCreateHandler}
                   isDisabled={paletteControl.selectedPalete}
+                />
+              </div>
+              <div
+                className={cx(
+                  'controller__section',
+                  'controller__section--export'
+                )}
+              >
+                <Button
+                  buttontype="tonal"
+                  materialIcon="download"
+                  text="export palette"
+                  onPress={() => {}}
                 />
               </div>
             </div>
