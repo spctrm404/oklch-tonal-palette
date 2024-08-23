@@ -14,6 +14,7 @@ import {
 } from './utils/constants.js';
 import { closestQuantized } from './utils/numberUtils.js';
 import { ThemeContext } from './context/ThemeContext.jsx';
+import { exportCss } from './utils/export.js';
 import Switch from './components/Switch/Switch';
 import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 import RadioGroup from './components/RadioGroup/RadioGroup';
@@ -36,10 +37,10 @@ function App() {
     const randomHue = closestQuantized(360 * Math.random(), HUE_STEP);
     return {
       swatchStep: 10,
-      hueFrom: randomHue,
-      hueTo: randomHue,
       lightnessInflect: 0.5,
       peakChroma: 0.11,
+      hueFrom: randomHue,
+      hueTo: randomHue,
     };
   };
   const [paletteControl, setPaletteControl] = useState(initialPaletteControl());
@@ -58,6 +59,11 @@ function App() {
   }, [paletteControl]);
 
   const [selectedPaletteUid, setSelectedPaletteUid] = useState(palettes[0].uid);
+  const selectedPalette = useCallback(() => {
+    return palettes.find((aPalette) => {
+      return aPalette.uid === selectedPaletteUid;
+    });
+  }, [palettes, selectedPaletteUid]);
   const getSelectedPalette = useCallback(
     (uid) => {
       return palettes.find((aPalette) => {
@@ -376,7 +382,9 @@ function App() {
                   buttontype="tonal"
                   materialIcon="download"
                   text="export palette"
-                  onPress={() => {}}
+                  onPress={() => {
+                    console.log(exportCss(selectedPalette()));
+                  }}
                 />
               </div>
             </div>

@@ -1,6 +1,12 @@
 import { apcach, crToBg, maxChroma } from 'apcach';
 import { clampChroma, displayable } from 'culori';
-import { CHROMA_STEP, CHROMA_LIMIT } from './constants';
+import { closestQuantized } from './numberUtils';
+import {
+  LIGHTNESS_STEP,
+  CHROMA_STEP,
+  HUE_STEP,
+  CHROMA_LIMIT,
+} from './constants';
 
 export const hueOfLightness = (lightness, hueFrom, hueTo) => {
   const hue =
@@ -86,9 +92,9 @@ export const createColour = (
 
   return {
     mode: `oklch`,
-    l: p3ClamppedOklch.l,
-    c: p3ClamppedOklch.c,
-    h: p3ClamppedOklch.h,
+    l: closestQuantized(p3ClamppedOklch.l, LIGHTNESS_STEP),
+    c: closestQuantized(p3ClamppedOklch.c, CHROMA_STEP),
+    h: closestQuantized(p3ClamppedOklch.h, HUE_STEP),
     inP3: inP3,
     inSrgb: inSrgb,
   };
