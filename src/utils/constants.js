@@ -13,6 +13,7 @@ export const LIGHTNESS_OF_PEAK_CHROMA = 0.5;
 export const SECONDARY_CHROMA_RATIO = 0.25;
 export const NEUTRAL_VARIANT_PEAK_CHROMA = 0.01;
 export const NEUTRAL_PEAK_CHROMA = 0.005;
+export const COLOUR_FLOAT_DECIMAL_PRECISION = 0.000001;
 // fix later
 export const UTILITY_PEAK_CHROMA = 0.4;
 export const WARNING_HUE = 90;
