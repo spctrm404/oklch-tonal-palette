@@ -1,4 +1,4 @@
-import { clampChroma, converter, formatHex } from 'culori';
+import { clampChroma, converter } from 'culori';
 import {
   LIGHTNESS_STEP,
   CHROMA_STEP,
@@ -17,42 +17,52 @@ export const exportCssOklch = (selectedPalette, name = 'colour') => {
     selectedPalette.hueFrom,
     selectedPalette.hueTo
   );
-  const normalGamutProperties = colours.map((aColour, idx) => {
-    const num = idx * selectedPalette.swatchStep;
-    if (aColour.inSrgb)
-      return `${'\n'}  --${name}-${num}: oklch(${aColour.l} ${aColour.c} ${
+  const normalGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const num = idx * selectedPalette.swatchStep;
+      if (aColour.inSrgb) {
+        text += `${'\n'}    --${name}-${num}: oklch(${aColour.l} ${aColour.c} ${
+          aColour.h
+        }deg);`;
+      } else {
+        const sRgbClamppedOklch = clampChroma(aColour, 'oklch', 'rgb');
+        text += `${'\n'}    --${name}-${num}: oklch(${closestQuantized(
+          sRgbClamppedOklch.l,
+          LIGHTNESS_STEP
+        )} ${closestQuantized(
+          sRgbClamppedOklch.c,
+          CHROMA_STEP
+        )} ${closestQuantized(sRgbClamppedOklch.h, HUE_STEP)}deg);`;
+      }
+    });
+    return text;
+  };
+  const wideGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const num = idx * selectedPalette.swatchStep;
+      text += `${'\n'}  --${name}-${num}: oklch(${aColour.l} ${aColour.c} ${
         aColour.h
-      }deg)`;
-    const sRgbClamppedOklch = clampChroma(aColour, 'oklch', 'rgb');
-    return `${'\n'}  --${name}-${num}: oklch(${closestQuantized(
-      sRgbClamppedOklch.l,
-      LIGHTNESS_STEP
-    )} ${closestQuantized(sRgbClamppedOklch.c, CHROMA_STEP)} ${closestQuantized(
-      sRgbClamppedOklch.h,
-      HUE_STEP
-    )}deg)`;
-  });
-  const wideGamutProperties = colours.map((aColour, idx) => {
-    const num = idx * selectedPalette.swatchStep;
-    return `${'\n'}    --${name}-${num}: oklch(${aColour.l} ${aColour.c} ${
-      aColour.h
-    }deg)`;
-  });
+      }deg);`;
+    });
+    return text;
+  };
   script += ':root {';
-  script += normalGamutProperties;
+  script += wideGamutProperties();
   script += '\n';
-  script += '};';
+  script += '}';
   script += '\n';
-  script += '@media (color-gamut: p3) {';
+  script += '@supports not(color-gamut: p3) {';
   script += '\n';
   script += '  ';
   script += ':root {';
-  script += wideGamutProperties;
+  script += normalGamutProperties();
   script += '\n';
   script += '  ';
-  script += '};';
+  script += '}';
   script += '\n';
-  script += '};';
+  script += '}';
   return script;
 };
 
@@ -65,58 +75,66 @@ export const exportCssRgb = (selectedPalette, name = 'colour') => {
     selectedPalette.hueFrom,
     selectedPalette.hueTo
   );
-  // need to fix
-  const normalGamutProperties = colours.map((aColour, idx) => {
-    const sRgbClamppedOklch = clampChroma(aColour, 'oklch', 'rgb');
-    const toSrgb = converter('rgb');
-    const sRgbClamppedRgb = toSrgb(sRgbClamppedOklch);
-    const num = idx * selectedPalette.swatchStep;
-    if (num === 0) {
-      return `${'\n'}  --${name}-${num}: rgb(0, 0, 0)`;
-    } else if (num === 100) {
-      return `${'\n'}  --${name}-${num}: rgb(255, 255, 255)`;
-    }
-    return `${'\n'}  --${name}-${num}: rgb(${Math.floor(
-      255 * sRgbClamppedRgb.r
-    )}, ${Math.floor(255 * sRgbClamppedRgb.g)}, ${Math.floor(
-      255 * sRgbClamppedRgb.b
-    )})`;
-  });
-  const wideGamutProperties = colours.map((aColour, idx) => {
-    const toP3Rgb = converter('p3');
-    const p3Rgb = toP3Rgb(aColour);
-    const num = idx * selectedPalette.swatchStep;
-    if (num === 0) {
-      return `${'\n'}    --${name}-${num}: color(display-p3 0 0 0)`;
-    } else if (num === 100) {
-      return `${'\n'}    --${name}-${num}: color(display-p3 1 1 1)`;
-    }
-    return `${'\n'}    --${name}-${num}: color(display-p3 ${closestQuantized(
-      p3Rgb.r,
-      COLOUR_FLOAT_DECIMAL_PRECISION
-    )} ${closestQuantized(
-      p3Rgb.g,
-      COLOUR_FLOAT_DECIMAL_PRECISION
-    )} ${closestQuantized(p3Rgb.b, COLOUR_FLOAT_DECIMAL_PRECISION)})`;
-    // return `${'\n'}    --${name}-${num}: color(display-p3 ${Math.floor(
-    //   255 * p3Rgb.r
-    // )} ${Math.floor(255 * p3Rgb.g)} ${Math.floor(255 * p3Rgb.b)})`;
-  });
+  const normalGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const toRgb = converter('rgb');
+      const num = idx * selectedPalette.swatchStep;
+      const sRgbClamppedRgb = toRgb(
+        aColour.inSrgb ? aColour : clampChroma(aColour, 'oklch', 'rgb')
+      );
+      if (num === 0) {
+        text += `${'\n'}    --${name}-${num}: color(srgb 0 0 0);`;
+      } else if (num === 100) {
+        text += `${'\n'}    --${name}-${num}: color(srgb 255 255 255);`;
+      } else {
+        text += `${'\n'}    --${name}-${num}: color(srgb ${Math.floor(
+          255 * sRgbClamppedRgb.r
+        )} ${Math.floor(255 * sRgbClamppedRgb.g)} ${Math.floor(
+          255 * sRgbClamppedRgb.b
+        )});`;
+      }
+    });
+    return text;
+  };
+  const wideGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const toRgb = converter('p3');
+      const p3Rgb = toRgb(aColour);
+      const num = idx * selectedPalette.swatchStep;
+      if (num === 0) {
+        text += `${'\n'}  --${name}-${num}: color(display-p3 0 0 0);`;
+      } else if (num === 100) {
+        text += `${'\n'}  --${name}-${num}: color(display-p3 1 1 1);`;
+      } else {
+        text += `${'\n'}  --${name}-${num}: color(display-p3 ${closestQuantized(
+          p3Rgb.r,
+          COLOUR_FLOAT_DECIMAL_PRECISION
+        )} ${closestQuantized(
+          p3Rgb.g,
+          COLOUR_FLOAT_DECIMAL_PRECISION
+        )} ${closestQuantized(p3Rgb.b, COLOUR_FLOAT_DECIMAL_PRECISION)});`;
+      }
+    });
+    return text;
+  };
   script += ':root {';
-  script += normalGamutProperties;
+  script += wideGamutProperties();
+  script += ';';
   script += '\n';
-  script += '};';
+  script += '}';
   script += '\n';
-  script += '@media (color-gamut: p3) {';
+  script += '@supports not(color-gamut: p3) {';
   script += '\n';
   script += '  ';
   script += ':root {';
-  script += wideGamutProperties;
+  script += normalGamutProperties();
   script += '\n';
   script += '  ';
-  script += '};';
+  script += '}';
   script += '\n';
-  script += '};';
+  script += '}';
   return script;
 };
 
@@ -129,43 +147,76 @@ export const exportCssHex = (selectedPalette, name = 'colour') => {
     selectedPalette.hueFrom,
     selectedPalette.hueTo
   );
-  const normalGamutProperties = colours.map((aColour, idx) => {
-    const sRgbClamppedOklch = clampChroma(aColour, 'oklch', 'rgb');
-    const toSrgb = converter('rgb');
-    const sRgbClamppedRgb = toSrgb(sRgbClamppedOklch);
-    const sRgbClamppedHex = formatHex(sRgbClamppedRgb);
-    const num = idx * selectedPalette.swatchStep;
-    if (num === 0) {
-      return `${'\n'}  --${name}-${num}: #000000`;
-    } else if (num === 100) {
-      return `${'\n'}  --${name}-${num}: #FFFFFF`;
-    }
-    return `${'\n'}  --${name}-${num}: ${sRgbClamppedHex}`;
-  });
-  const wideGamutProperties = colours.map((aColour, idx) => {
-    const hex = formatHex(aColour);
-    const num = idx * selectedPalette.swatchStep;
-    if (num === 0) {
-      return `${'\n'}    --${name}-${num}: #000000`;
-    } else if (num === 100) {
-      return `${'\n'}    --${name}-${num}: #FFFFFF`;
-    }
-    return `${'\n'}    --${name}-${num}: ${hex}`;
-  });
+  const normalGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const toRgb = converter('rgb');
+      const num = idx * selectedPalette.swatchStep;
+      const sRgbClamppedRgb = toRgb(
+        aColour.inSrgb ? aColour : clampChroma(aColour, 'oklch', 'rgb')
+      );
+      if (num === 0) {
+        text += `${'\n'}  --${name}-${num}: #000000;`;
+      } else if (num === 100) {
+        text += `${'\n'}  --${name}-${num}: #FFFFFF;`;
+      } else {
+        text += `${'\n'}  --${name}-${num}: #${Math.floor(
+          255 * sRgbClamppedRgb.r
+        )
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')}${Math.floor(255 * sRgbClamppedRgb.g)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')}${Math.floor(255 * sRgbClamppedRgb.b)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')};`;
+      }
+    });
+    return text;
+  };
   script += ':root {';
-  script += normalGamutProperties;
+  script += normalGamutProperties();
   script += '\n';
-  script += '};';
-  script += '\n';
-  script += '@media (color-gamut: p3) {';
-  script += '\n';
-  script += '  ';
-  script += ':root {';
-  script += wideGamutProperties;
-  script += '\n';
-  script += '  ';
-  script += '};';
-  script += '\n';
-  script += '};';
+  script += '}';
+  return script;
+};
+
+export const exportFigmaHex = (selectedPalette, name = 'colour') => {
+  let script = '';
+  const colours = createColours(
+    Math.floor(100 / selectedPalette.swatchStep),
+    selectedPalette.lightnessInflect,
+    selectedPalette.peakChroma,
+    selectedPalette.hueFrom,
+    selectedPalette.hueTo
+  );
+  const wideGamutProperties = () => {
+    let text = '';
+    colours.forEach((aColour, idx) => {
+      const toRgb = converter('p3');
+      const p3Rgb = toRgb(aColour);
+      const num = idx * selectedPalette.swatchStep;
+      if (num === 0) {
+        text += `${'\n'}${name}-${num}: #000000FF;`;
+      } else if (num === 100) {
+        text += `${'\n'}${name}-${num}: #FFFFFFFF;`;
+      } else {
+        text += `${'\n'}${name}-${num}: #${Math.floor(255 * p3Rgb.r)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')}${Math.floor(255 * p3Rgb.g)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')}${Math.floor(255 * p3Rgb.b)
+          .toString(16)
+          .toUpperCase()
+          .padStart(2, '0')}FF;`;
+      }
+    });
+    return text;
+  };
+  script += wideGamutProperties();
   return script;
 };

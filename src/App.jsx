@@ -14,7 +14,12 @@ import {
 } from './utils/constants.js';
 import { closestQuantized } from './utils/numberUtils.js';
 import { ThemeContext } from './context/ThemeContext.jsx';
-import { exportCssOklch, exportCssRgb, exportCssHex } from './utils/export.js';
+import {
+  exportCssOklch,
+  exportCssRgb,
+  exportCssHex,
+  exportFigmaHex,
+} from './utils/export.js';
 import Switch from './components/Switch/Switch';
 import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 import RadioGroup from './components/RadioGroup/RadioGroup';
@@ -383,11 +388,14 @@ function App() {
                   materialIcon="download"
                   text="export palette"
                   onPress={() => {
+                    console.log('exportCssOklch');
                     console.log(exportCssOklch(selectedPalette()));
-                    console.log('----------');
+                    console.log('exportCssRgb');
                     console.log(exportCssRgb(selectedPalette()));
-                    console.log('----------');
+                    console.log('exportCssHex');
                     console.log(exportCssHex(selectedPalette()));
+                    console.log('exportFigmaHex');
+                    console.log(exportFigmaHex(selectedPalette()));
                   }}
                 />
               </div>
