@@ -15,11 +15,10 @@ import {
 import { closestQuantized } from './utils/numberUtils.js';
 import { ThemeContext } from './context/ThemeContext.jsx';
 import {
-  exportCssOklch,
-  exportCssRgb,
-  exportCssHex,
-  exportFigmaHex,
-} from './utils/export.js';
+  DialogTrigger as AriaDialogTrigger,
+  Modal as AriaModal,
+  Dialog as AriaDialog,
+} from 'react-aria-components';
 import Switch from './components/Switch/Switch';
 import ToggleButton from './components/ToggleButton/ToggleButton.jsx';
 import RadioGroup from './components/RadioGroup/RadioGroup';
@@ -383,21 +382,19 @@ function App() {
                   'controller__section--export'
                 )}
               >
-                <Button
-                  buttontype="tonal"
-                  materialIcon="download"
-                  text="export palette"
-                  onPress={() => {
-                    console.log('exportCssOklch');
-                    console.log(exportCssOklch(selectedPalette()));
-                    console.log('exportCssRgb');
-                    console.log(exportCssRgb(selectedPalette()));
-                    console.log('exportCssHex');
-                    console.log(exportCssHex(selectedPalette()));
-                    console.log('exportFigmaHex');
-                    console.log(exportFigmaHex(selectedPalette()));
-                  }}
-                />
+                <AriaDialogTrigger>
+                  <Button
+                    buttontype="tonal"
+                    materialIcon="download"
+                    text="export palette"
+                    onPress={() => {}}
+                  />
+                  <AriaModal className={cx('modal')} isDismissable>
+                    <AriaDialog className={cx('dialog')}>
+                      <p>hello</p>
+                    </AriaDialog>
+                  </AriaModal>
+                </AriaDialogTrigger>
               </div>
             </div>
           </div>
